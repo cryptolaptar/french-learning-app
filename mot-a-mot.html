@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mot à Mot">
+<title>Mot à Mot — French Vocabulary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EFE6;
+    --paper-card:#FBFAF5;
+    --ink:#1B2A41;
+    --ink-soft:#4C5A6E;
+    --green:#4B6C4F;
+    --green-soft:#DCE6DC;
+    --gold:#C89B3C;
+    --gold-soft:#F1E4C3;
+    --rust:#A6473C;
+    --rust-soft:#F3DEDA;
+    --line:#D9D3C3;
+    --a1:#4B6C4F; --a2:#5E8C61; --b1:#C89B3C; --b2:#C17A3B; --c1:#A6473C; --c2:#7A4A6B;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Work Sans',sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:60px;}
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;}
+  .wrap{max-width:640px;margin:0 auto;padding:0 18px;}
+
+  header.top{padding:28px 0 16px;border-bottom:1px solid var(--line);}
+  header.top .brand{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  header.top h1{font-size:28px;font-weight:600;margin:0;letter-spacing:.2px;}
+  header.top p{margin:6px 0 0;color:var(--ink-soft);font-size:14px;}
+  .infobtn{border:1px solid var(--ink);background:none;color:var(--ink);border-radius:20px;padding:6px 14px;font-size:13px;font-family:'Work Sans';cursor:pointer;white-space:nowrap;}
+  .infobtn:active{background:var(--ink);color:var(--paper);}
+
+  nav.modes{display:flex;gap:6px;margin:18px 0 0;border-bottom:1px solid var(--line);}
+  nav.modes button{flex:1;padding:10px 4px;background:none;border:none;font-family:'Fraunces',serif;font-size:16px;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+  nav.modes button.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:600;}
+
+  section.view{display:none;padding-top:18px;}
+  section.view.active{display:block;}
+
+  /* level tabs */
+  .levels{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+  .levels button{flex:none;padding:8px 14px;border-radius:20px;border:1.5px solid var(--line);background:var(--paper-card);font-family:'Work Sans';font-weight:600;font-size:14px;color:var(--ink-soft);cursor:pointer;}
+  .levels button.active{color:#fff;border-color:transparent;}
+  .lvl-A1.active{background:var(--a1);} .lvl-A2.active{background:var(--a2);}
+  .lvl-B1.active{background:var(--b1);} .lvl-B2.active{background:var(--b2);}
+  .lvl-C1.active{background:var(--c1);} .lvl-C2.active{background:var(--c2);}
+
+  .levelmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .levelmeta .desc{font-size:13px;color:var(--ink-soft);max-width:70%;}
+  .progress-pill{font-size:12px;font-weight:600;background:var(--green-soft);color:var(--green);padding:4px 10px;border-radius:12px;white-space:nowrap;}
+
+  .actionrow{display:flex;gap:8px;margin-bottom:16px;}
+  .actionrow button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font-family:'Work Sans';font-weight:600;font-size:14px;cursor:pointer;}
+  .actionrow button.secondary{background:none;color:var(--ink);}
+
+  .catchip{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);margin:0 0 6px;}
+  .catgroup{margin-bottom:6px;}
+
+  .cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .flash{perspective:800px;height:96px;cursor:pointer;}
+  .flash-inner{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d;}
+  .flash.flipped .flash-inner{transform:rotateY(180deg);}
+  .flash-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;border:1px solid var(--line);background:var(--paper-card);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;}
+  .flash-face.back{transform:rotateY(180deg);background:var(--gold-soft);border-color:var(--gold);}
+  .flash-face .fr{font-family:'Fraunces',serif;font-size:16px;font-weight:600;}
+  .flash-face .en{font-size:13px;color:var(--ink-soft);}
+  .flash.known .flash-face:not(.back){border-color:var(--green);}
+  .flash .dot{position:absolute;top:6px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--line);}
+  .flash.known .dot{background:var(--green);}
+
+  .masterybtns{display:flex;gap:6px;margin-top:2px;}
+  .masterybtns button{flex:1;font-size:11px;padding:4px;border-radius:8px;border:1px solid var(--line);background:none;color:var(--ink-soft);cursor:pointer;}
+
+  /* essentials list */
+  .wordrow{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);}
+  .wordrow .fr{font-family:'Fraunces',serif;font-weight:600;font-size:15px;}
+  .wordrow .en{color:var(--ink-soft);font-size:14px;}
+  input.search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper-card);font-family:'Work Sans';font-size:14px;margin-bottom:12px;}
+
+  /* quiz */
+  .quizcard{background:var(--paper-card);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center;}
+  .quizcard .progresstext{font-size:12px;color:var(--ink-soft);margin-bottom:10px;}
+  .quizcard .prompt{font-family:'Fraunces',serif;font-size:24px;font-weight:600;margin:6px 0 18px;}
+  .quizopts{display:grid;gap:8px;}
+  .quizopts button{padding:12px;border-radius:10px;border:1px solid var(--line);background:#fff;font-family:'Work Sans';font-size:15px;cursor:pointer;text-align:left;}
+  .quizopts button.correct{background:var(--green-soft);border-color:var(--green);}
+  .quizopts button.wrong{background:var(--rust-soft);border-color:var(--rust);}
+  .quizresult h3{margin-bottom:4px;}
+  .quizresult .big{font-family:'Fraunces',serif;font-size:40px;margin:10px 0;}
+
+  /* modal */
+  .modalbg{display:none;position:fixed;inset:0;background:rgba(27,42,65,.55);z-index:50;align-items:flex-end;}
+  .modalbg.open{display:flex;}
+  .modal{background:var(--paper);width:100%;border-radius:18px 18px 0 0;padding:22px 20px 30px;max-height:80vh;overflow-y:auto;}
+  .modal h2{margin-top:0;}
+  .modal ol{padding-left:20px;line-height:1.7;}
+  .modal .close{display:block;margin:16px auto 0;padding:10px 24px;border-radius:20px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font-family:'Work Sans';font-weight:600;cursor:pointer;}
+
+  @media (min-width:420px){.cardgrid{grid-template-columns:1fr 1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div>
+        <h1>Mot à Mot</h1>
+        <p>A French vocabulary companion, A1 through C2</p>
+      </div>
+      <button class="infobtn" onclick="openModal()">Add to iPhone</button>
+    </div>
+    <nav class="modes">
+      <button class="active" onclick="switchMode('essentials')">Essentials</button>
+      <button onclick="switchMode('levels')">By Level</button>
+    </nav>
+  </header>
+
+  <!-- ESSENTIALS -->
+  <section class="view active" id="view-essentials">
+    <p class="levelmeta"><span class="desc">The ~90 most frequent words in French — mostly small grammar words and core verbs that appear constantly in real speech and writing.</span></p>
+    <input class="search" id="essSearch" placeholder="Search…" oninput="renderEssentials()">
+    <div id="essList"></div>
+  </section>
+
+  <!-- BY LEVEL -->
+  <section class="view" id="view-levels">
+    <div class="levels" id="levelTabs"></div>
+    <div class="levelmeta">
+      <span class="desc" id="levelDesc"></span>
+      <span class="progress-pill" id="levelProgress">0%</span>
+    </div>
+    <div class="actionrow">
+      <button onclick="startQuiz()">Quiz me</button>
+      <button class="secondary" onclick="toggleQuiz(false)">Flashcards</button>
+    </div>
+
+    <div id="flashArea"></div>
+
+    <div id="quizArea" style="display:none;"></div>
+  </section>
+</div>
+
+<div class="modalbg" id="modalbg">
+  <div class="modal">
+    <h2 class="serif">Add this to your iPhone</h2>
+    <p>This is a web app — once it's saved to your Home Screen it opens full-screen, just like a regular app, and works offline. Your progress is saved on your device.</p>
+    <ol>
+      <li>Open this file in <strong>Safari</strong> on your iPhone (not Chrome — the "Add to Home Screen" option needs Safari).</li>
+      <li>Tap the <strong>Share</strong> icon (the square with an arrow pointing up), in the bottom toolbar.</li>
+      <li>Scroll down and tap <strong>"Add to Home Screen."</strong></li>
+      <li>Tap <strong>"Add"</strong> in the top right. An icon called "Mot à Mot" will appear on your Home Screen.</li>
+    </ol>
+    <button class="close" onclick="closeModal()">Got it</button>
+  </div>
+</div>
+
+<script>
+/* ---------- DATA ---------- */
+const ESSENTIALS = [
+["de","of, from"],["le","the (m.)"],["la","the (f.)"],["les","the (pl.)"],["et","and"],
+["un","a / one (m.)"],["une","a / one (f.)"],["des","some / of the"],["à","to, at"],["être","to be"],
+["avoir","to have"],["que","that, which"],["qui","who, which"],["dans","in"],["ce","this, that"],
+["il","he, it"],["elle","she, it"],["je","I"],["tu","you (informal)"],["nous","we"],
+["vous","you (formal/plural)"],["ils","they (m.)"],["elles","they (f.)"],["pour","for"],["pas","not"],
+["ne","not (with pas)"],["sur","on"],["se","oneself"],["plus","more"],["par","by, through"],
+["mais","but"],["ou","or"],["si","if / yes, in response to a negative"],["leur","their / to them"],["y","there / to it"],
+["dont","of which, whose"],["comme","as, like"],["sans","without"],["aussi","also"],["faire","to do, make"],
+["dire","to say"],["tout","all, everything"],["bien","well, good"],["où","where"],["quand","when"],
+["alors","so, then"],["avec","with"],["aller","to go"],["venir","to come"],["voir","to see"],
+["savoir","to know (a fact)"],["connaître","to know (a person/place)"],["vouloir","to want"],["pouvoir","to be able to, can"],["devoir","to have to, must"],
+["prendre","to take"],["donner","to give"],["falloir","to be necessary (il faut)"],["parler","to speak"],["aimer","to like, love"],
+["penser","to think"],["trouver","to find"],["demander","to ask"],["rester","to stay"],["passer","to pass, spend (time)"],
+["mettre","to put"],["sembler","to seem"],["laisser","to let, leave"],["tenir","to hold"],["sortir","to go out"],
+["suivre","to follow"],["arriver","to arrive, happen"],["entrer","to enter"],["comprendre","to understand"],["le temps","time, weather"],
+["le jour","day"],["l'année","year"],["l'homme","man"],["la femme","woman"],["l'enfant","child"],
+["la chose","thing"],["le monde","world"],["la vie","life"],["la main","hand"],["l'œil / les yeux","eye / eyes"],
+["le moment","moment"],["la fois","time, occurrence"],["l'eau","water"],["la maison","house"],["le pays","country"]
+];
+
+const VOCAB = {
+  A1: {
+    desc: "Everyday basics: greetings, family, simple verbs, colors and numbers.",
+    groups: [
+      ["Greetings & People", [["bonjour","hello"],["merci","thank you"],["s'il vous plaît","please"],["oui","yes"],["non","no"],["au revoir","goodbye"],["je","I"],["tu","you (informal)"],["l'ami / l'amie","friend"],["la famille","family"],["la mère","mother"],["le père","father"]]],
+      ["Everyday Life", [["être","to be"],["avoir","to have"],["la maison","house"],["l'eau","water"],["le pain","bread"],["manger","to eat"],["boire","to drink"],["aller","to go"],["faire","to do, make"],["parler","to speak"],["la ville","city"],["l'école","school"]]],
+      ["Descriptions & Time", [["un","one"],["deux","two"],["trois","three"],["dix","ten"],["rouge","red"],["bleu","blue"],["grand","big"],["petit","small"],["aujourd'hui","today"],["demain","tomorrow"],["hier","yesterday"],["le jour","day"],["la nuit","night"]]]
+    ]
+  },
+  A2: {
+    desc: "Daily routine, shopping, travel, and simple social situations.",
+    groups: [
+      ["Daily Routine & Health", [["se réveiller","to wake up"],["le petit-déjeuner","breakfast"],["le travail","work"],["fatigué(e)","tired"],["malade","sick"],["la santé","health"],["le médecin","doctor"],["le rendez-vous","appointment"],["content(e)","happy"]]],
+      ["Shopping & Travel", [["acheter","to buy"],["le magasin","store"],["l'argent","money"],["cher / chère","expensive"],["bon marché","cheap"],["le voyage","trip"],["l'hôtel","hotel"],["la gare","train station"],["l'aéroport","airport"],["la valise","suitcase"],["réserver","to book"],["le billet","ticket"],["attendre","to wait"]]],
+      ["Social & Frequency", [["souvent","often"],["quelquefois","sometimes"],["jamais","never"],["toujours","always"],["le restaurant","restaurant"],["commander","to order"],["la carte","menu"],["célébrer","to celebrate"],["la fête","party"],["inviter","to invite"],["le week-end","weekend"],["sortir","to go out"],["rester","to stay"]]]
+    ]
+  },
+  B1: {
+    desc: "Giving opinions, making decisions, talking about feelings and habits.",
+    groups: [
+      ["Opinion & Reasoning", [["penser","to think"],["croire","to believe"],["l'avis","opinion"],["selon moi","in my opinion"],["par contre","on the other hand"],["cependant","however"],["donc","therefore"],["parce que","because"]]],
+      ["Goals & Decisions", [["le but","goal"],["réussir","to succeed"],["échouer","to fail"],["l'effort","effort"],["la décision","decision"],["décider","to decide"],["changer","to change"],["améliorer","to improve"],["le conseil","advice"],["conseiller","to advise"],["éviter","to avoid"]]],
+      ["Emotions, Memory & Habit", [["se plaindre","to complain"],["s'inquiéter","to worry"],["se détendre","to relax"],["l'ambiance","atmosphere, mood"],["la relation","relationship"],["se disputer","to argue"],["se réconcilier","to make up"],["la confiance","trust"],["douter","to doubt"],["l'expérience","experience"],["le souvenir","memory"],["se souvenir de","to remember"],["oublier","to forget"],["l'habitude","habit"],["s'habituer à","to get used to"],["profiter de","to enjoy, take advantage of"]]]
+    ]
+  },
+  B2: {
+    desc: "Society, environment, media, and structured argument.",
+    groups: [
+      ["Society & Environment", [["la société","society"],["l'environnement","environment"],["le réchauffement climatique","global warming"],["polluer","to pollute"],["le développement durable","sustainable development"],["les ressources","resources"],["l'économie","economy"],["le chômage","unemployment"],["la mondialisation","globalization"]]],
+      ["Media & Argument", [["les médias","media"],["l'actualité","current events"],["le journal","newspaper"],["souligner","to emphasize"],["remettre en question","to question, challenge"],["le point de vue","point of view"],["la preuve","proof, evidence"],["démontrer","to demonstrate"],["contredire","to contradict"],["nuancer","to qualify, nuance"]]],
+      ["Connectors, Law & Policy", [["néanmoins","nevertheless"],["malgré","despite"],["bien que","although"],["afin de","in order to"],["dans la mesure où","insofar as"],["la conséquence","consequence"],["entraîner","to bring about, lead to"],["la mesure","measure, policy"],["mettre en place","to implement"],["la loi","law"],["le droit","right, law"],["la responsabilité","responsibility"],["engager","to commit, engage"],["sensibiliser","to raise awareness"],["le débat","debate"],["s'opposer à","to oppose"]]]
+    ]
+  },
+  C1: {
+    desc: "Formal, nuanced language for essays, debate, and abstract topics.",
+    groups: [
+      ["Formal Connectors", [["par ailleurs","furthermore, moreover"],["or","now, yet (logical link)"],["quoi qu'il en soit","be that as it may"],["force est de constater que","it must be acknowledged that"],["en dépit de","despite"],["il n'en demeure pas moins que","the fact remains that"],["tributaire de","dependent on"]]],
+      ["Nuance & Argument", [["l'enjeu","stake, issue at hand"],["la contrainte","constraint"],["le paradoxe","paradox"],["l'ambiguïté","ambiguity"],["la subtilité","subtlety"],["le préjugé","prejudice"],["la nuance","nuance"],["le clivage","divide, split"],["le corollaire","corollary"],["la controverse","controversy"],["la légitimité","legitimacy"],["l'ampleur","scale, extent"],["anodin","trivial, harmless"]]],
+      ["Advanced Verbs & Nouns", [["pallier","to remedy, offset"],["subvenir à","to provide for"],["entériner","to ratify"],["remédier à","to remedy"],["l'essor","rise, growth"],["la pérennité","sustainability, longevity"],["le stratagème","scheme, stratagem"],["l'apogée","peak, apex"],["le vecteur","vector, means (of spread)"],["déceler","to detect"],["l'entrave","hindrance"],["occulter","to conceal, overshadow"],["le truchement","means, medium (par le truchement de)"],["l'idiosyncrasie","idiosyncrasy"],["étayer","to substantiate, support"]]]
+    ]
+  },
+  C2: {
+    desc: "Literary, rare, and highly precise vocabulary for near-native command.",
+    groups: [
+      ["Literary & Abstract", [["l'acabit","kind, sort (usu. pejorative)"],["la prégnance","salience, hold (on the mind)"],["l'acuité","acuity, sharpness"],["inextricable","inextricable"],["l'antinomie","antinomy, contradiction"],["subrepticement","surreptitiously"],["insondable","unfathomable"],["la dichotomie","dichotomy"]]],
+      ["Rhetoric & Philosophy", [["l'hégémonie","hegemony"],["le truisme","truism"],["l'ineptie","ineptitude, absurdity"],["le sophisme","sophism, fallacy"],["l'hermétisme","hermeticism, obscurity"],["la circonlocution","circumlocution"],["l'apanage","exclusive privilege, preserve"],["le déterminisme","determinism"],["l'exégèse","exegesis"],["l'aporie","aporia, insoluble puzzle"],["le solipsisme","solipsism"]]],
+      ["Style & Nuance", [["la vraisemblance","verisimilitude, plausibility"],["l'ubiquité","ubiquity"],["la velléité","half-hearted intention"],["l'atavisme","atavism"],["la réminiscence","reminiscence"],["le paroxysme","paroxysm, climax"]]]
+    ]
+  }
+};
+
+const LEVELS = ["A1","A2","B1","B2","C1","C2"];
+let currentLevel = "A1";
+let quizState = null;
+
+/* ---------- storage (works in real Safari once added to Home Screen) ---------- */
+function getMastery(){
+  try{ return JSON.parse(localStorage.getItem('motamot_mastery')||'{}'); }catch(e){ return {}; }
+}
+function setMastered(key,val){
+  try{
+    const m = getMastery();
+    if(val) m[key]=true; else delete m[key];
+    localStorage.setItem('motamot_mastery', JSON.stringify(m));
+  }catch(e){}
+}
+
+/* ---------- mode switching ---------- */
+function switchMode(mode){
+  document.getElementById('view-essentials').classList.toggle('active', mode==='essentials');
+  document.getElementById('view-levels').classList.toggle('active', mode==='levels');
+  document.querySelectorAll('nav.modes button').forEach((b,i)=>b.classList.toggle('active',(i===0&&mode==='essentials')||(i===1&&mode==='levels')));
+}
+
+/* ---------- essentials ---------- */
+function renderEssentials(){
+  const q = document.getElementById('essSearch').value.trim().toLowerCase();
+  const list = document.getElementById('essList');
+  list.innerHTML = '';
+  ESSENTIALS.filter(([fr,en])=> !q || fr.toLowerCase().includes(q) || en.toLowerCase().includes(q))
+    .forEach(([fr,en])=>{
+      const row = document.createElement('div');
+      row.className='wordrow';
+      row.innerHTML = `<span class="fr">${fr}</span><span class="en">${en}</span>`;
+      list.appendChild(row);
+    });
+}
+
+/* ---------- level tabs ---------- */
+function buildLevelTabs(){
+  const el = document.getElementById('levelTabs');
+  el.innerHTML = '';
+  LEVELS.forEach(lv=>{
+    const b = document.createElement('button');
+    b.textContent = lv;
+    b.className = 'lvl-'+lv + (lv===currentLevel?' active':'');
+    b.onclick = ()=>{ currentLevel=lv; toggleQuiz(false); buildLevelTabs(); renderLevel(); };
+    el.appendChild(b);
+  });
+}
+
+function flatWords(level){
+  const out = [];
+  VOCAB[level].groups.forEach(([cat, words])=> words.forEach(([fr,en])=> out.push({fr,en,cat})));
+  return out;
+}
+
+function renderLevel(){
+  document.getElementById('levelDesc').textContent = VOCAB[currentLevel].desc;
+  const words = flatWords(currentLevel);
+  const mastery = getMastery();
+  const known = words.filter(w=>mastery[currentLevel+':'+w.fr]).length;
+  document.getElementById('levelProgress').textContent = Math.round(100*known/words.length)+'% mastered';
+
+  const area = document.getElementById('flashArea');
+  area.innerHTML = '';
+  VOCAB[currentLevel].groups.forEach(([cat, wordsInCat])=>{
+    const catEl = document.createElement('div');
+    catEl.className = 'catgroup';
+    catEl.innerHTML = `<span class="catchip">${cat}</span>`;
+    const grid = document.createElement('div');
+    grid.className = 'cardgrid';
+    wordsInCat.forEach(([fr,en])=>{
+      const key = currentLevel+':'+fr;
+      const isKnown = !!mastery[key];
+      const card = document.createElement('div');
+      card.className = 'flash'+(isKnown?' known':'');
+      card.innerHTML = `
+        <div class="dot"></div>
+        <div class="flash-inner">
+          <div class="flash-face front"><div class="fr">${fr}</div></div>
+          <div class="flash-face back"><div class="en">${en}</div></div>
+        </div>`;
+      card.onclick = ()=> card.classList.toggle('flipped');
+      card.addEventListener('dblclick', (e)=>{
+        e.stopPropagation();
+        const nowKnown = !card.classList.contains('known');
+        card.classList.toggle('known', nowKnown);
+        setMastered(key, nowKnown);
+        document.getElementById('levelProgress').textContent = Math.round(100*flatWords(currentLevel).filter(w=>getMastery()[currentLevel+':'+w.fr]).length/words.length)+'% mastered';
+      });
+      grid.appendChild(card);
+    });
+    catEl.appendChild(grid);
+    area.appendChild(catEl);
+  });
+  const hint = document.createElement('p');
+  hint.style.cssText='font-size:12px;color:var(--ink-soft);margin-top:12px;';
+  hint.textContent = 'Tap a card to flip it. Double-tap to mark as mastered.';
+  area.appendChild(hint);
+}
+
+/* ---------- quiz ---------- */
+function toggleQuiz(show){
+  document.getElementById('quizArea').style.display = show?'block':'none';
+  document.getElementById('flashArea').style.display = show?'none':'block';
+}
+
+function startQuiz(){
+  const words = flatWords(currentLevel);
+  const shuffled = [...words].sort(()=>Math.random()-0.5).slice(0, Math.min(10, words.length));
+  quizState = { words: shuffled, i:0, score:0 };
+  toggleQuiz(true);
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const area = document.getElementById('quizArea');
+  if(quizState.i >= quizState.words.length){
+    area.innerHTML = `
+      <div class="quizcard quizresult">
+        <h3 class="serif">Session complete</h3>
+        <div class="big">${quizState.score}/${quizState.words.length}</div>
+        <div class="actionrow">
+          <button onclick="startQuiz()">Try again</button>
+          <button class="secondary" onclick="toggleQuiz(false)">Back to cards</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const words = flatWords(currentLevel);
+  const q = quizState.words[quizState.i];
+  const distractors = words.filter(w=>w.fr!==q.fr).sort(()=>Math.random()-0.5).slice(0,3).map(w=>w.en);
+  const options = [...distractors, q.en].sort(()=>Math.random()-0.5);
+
+  area.innerHTML = `
+    <div class="quizcard">
+      <div class="progresstext">Question ${quizState.i+1} of ${quizState.words.length} · Score ${quizState.score}</div>
+      <div class="prompt">${q.fr}</div>
+      <div class="quizopts" id="quizopts"></div>
+    </div>`;
+  const opts = document.getElementById('quizopts');
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.textContent = opt;
+    b.onclick = ()=>{
+      const correct = opt===q.en;
+      Array.from(opts.children).forEach(btn=>{
+        btn.disabled = true;
+        if(btn.textContent===q.en) btn.classList.add('correct');
+        else if(btn===b) btn.classList.add('wrong');
+      });
+      if(correct) quizState.score++;
+      setTimeout(()=>{ quizState.i++; renderQuizQuestion(); }, 700);
+    };
+    opts.appendChild(b);
+  });
+}
+
+/* ---------- modal ---------- */
+function openModal(){ document.getElementById('modalbg').classList.add('open'); }
+function closeModal(){ document.getElementById('modalbg').classList.remove('open'); }
+
+/* ---------- init ---------- */
+renderEssentials();
+buildLevelTabs();
+renderLevel();
+</script>
+</body>
+</html>
