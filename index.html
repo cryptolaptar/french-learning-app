@@ -905,21 +905,42 @@ function toggleConjQuiz(show){
   document.getElementById('conjTableArea').style.display = show?'none':'block';
 }
 
+const VERB_TRANSLATIONS = {
+  "être":"to be", "avoir":"to have", "aller":"to go", "faire":"to do, make",
+  "parler":"to speak", "manger":"to eat", "commencer":"to begin, start", "acheter":"to buy", "appeler":"to call", "préférer":"to prefer",
+  "finir":"to finish", "partir":"to leave", "ouvrir":"to open",
+  "vendre":"to sell",
+  "venir":"to come", "prendre":"to take", "pouvoir":"can, to be able to", "vouloir":"to want", "devoir":"must, to have to",
+  "savoir":"to know (a fact)", "voir":"to see", "dire":"to say", "écrire":"to write", "lire":"to read",
+  "mettre":"to put", "boire":"to drink", "croire":"to believe", "connaître":"to know, be acquainted with", "recevoir":"to receive"
+};
+const VERB_PATTERNS = {
+  "parler":"-er verbs", "manger":"-er, soft g", "commencer":"-er, soft c", "acheter":"-er, e→è", "appeler":"-er, doubling", "préférer":"-er, é→è",
+  "finir":"-ir verbs", "partir":"-ir, drop consonant", "ouvrir":"-ir, like -er",
+  "vendre":"-re verbs"
+};
+
 function startConjQuiz(){
   toggleConjQuiz(true);
-  // Build a pool of {fr, en} where fr = "pronoun (verb, tense)" and en = the form,
-  // reusing the shared quiz engine. Restricted to the currently selected quiz categories.
+  // Build a pool of {fr, en, sub} where fr = the pronoun (main prompt) and sub = the
+  // supporting lines (verb — translation, pattern if any, tense), reusing the shared quiz engine.
   const selected = getSelectedCats();
   const verbsInScope = [];
   CONJ_CAT_NAMES.forEach(name=>{ if(selected.includes(name)) verbsInScope.push(...CONJ_CATEGORIES[name]); });
   const pool = [];
   verbsInScope.forEach(v=>{
+    const name = v.split(' (')[0];
+    const translation = VERB_TRANSLATIONS[name] || '';
+    const pattern = VERB_PATTERNS[name] || null;
     TENSES.forEach(t=>{
       const forms = CONJUGATIONS[v][t];
       const prons = t==='Impératif' ? IMP_PRONOUNS : PRONOUNS;
       forms.forEach((f,i)=>{
         if(f==='—') return;
-        pool.push({ fr: `${prons[i]}  —  ${v}, ${t}`, en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i });
+        const sub = [`${name} — ${translation}`];
+        if(pattern) sub.push(`(${pattern})`);
+        sub.push(t);
+        pool.push({ fr: prons[i], en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i, sub });
       });
     });
   });
@@ -965,9 +986,8 @@ function renderQuizQ(container, state, onRestart, onExit, opts){
   const distractors = [...candidates].sort(()=>Math.random()-0.5).slice(0,3).map(w=>w.en);
   const options = [...new Set([...distractors, q.en])].sort(()=>Math.random()-0.5);
 
-  const promptParts = q.fr.split('  —  ');
-  const promptHtml = promptParts.length===2
-    ? `${promptParts[0]}<small>${promptParts[1]}</small>`
+  const promptHtml = (q.sub && q.sub.length)
+    ? q.fr + q.sub.map(line=>`<small>${line}</small>`).join('')
     : q.fr;
 
   container.innerHTML = `
