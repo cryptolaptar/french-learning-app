@@ -29,7 +29,7 @@
   h1,h2,h3,.serif{font-family:'Fraunces',serif;}
   .wrap{max-width:640px;margin:0 auto;padding:0 18px;}
 
-  header.top{padding:28px 0 16px;border-bottom:1px solid var(--line);}
+  header.top{padding:calc(env(safe-area-inset-top, 0px) + 34px) 0 16px;border-bottom:1px solid var(--line);}
   header.top .brand{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
   header.top h1{font-size:26px;font-weight:600;margin:0;letter-spacing:.2px;}
   header.top p{margin:6px 0 0;color:var(--ink-soft);font-size:14px;}
@@ -124,6 +124,7 @@
       <button class="active" onclick="switchMode('essentials')">Essentials</button>
       <button onclick="switchMode('levels')">By Level</button>
       <button onclick="switchMode('conj')">Conjugation</button>
+      <button onclick="switchMode('progress')">Progress</button>
     </nav>
   </header>
 
@@ -162,6 +163,8 @@
   <section class="view" id="view-conj">
     <div class="tabs" id="verbTabs"></div>
     <div class="tabs" id="tenseTabs"></div>
+    <div class="levelmeta"><span class="desc">Quiz on:</span></div>
+    <div class="tabs" id="catTabs"></div>
     <div class="actionrow">
       <button onclick="startConjQuiz()">Quiz me</button>
       <button class="secondary" onclick="toggleConjQuiz(false)">Table</button>
@@ -169,6 +172,26 @@
     <div id="conjTableArea"></div>
     <div id="conjQuizArea" style="display:none;"></div>
     <p class="conjnote">Covers the 8 tenses/moods used in everyday spoken and written French. Literary-only tenses (passé simple, subjonctif imparfait, etc.) aren't included.</p>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="view" id="view-progress">
+    <div class="tabs" id="progressTabs"></div>
+    <div id="statsPane">
+      <div id="statsSummary"></div>
+      <div class="levelmeta"><span class="desc" style="margin-top:14px;">Recent sessions</span></div>
+      <div id="statsHistory"></div>
+      <button class="infobtn" style="margin-top:14px;" onclick="clearHistory()">Clear history</button>
+    </div>
+    <div id="mistakesPane" style="display:none;">
+      <div class="levelmeta"><span class="desc" id="mistakesDesc"></span></div>
+      <div class="actionrow">
+        <button onclick="startMistakesQuiz()">Review mistakes</button>
+        <button class="secondary" onclick="clearMistakes()">Clear list</button>
+      </div>
+      <div id="mistakesList"></div>
+      <div id="mistakesQuizArea" style="display:none;"></div>
+    </div>
   </section>
 </div>
 
@@ -362,6 +385,56 @@ const CONJUGATIONS = {
     "Subjonctif présent": ["parle","parles","parle","parlions","parliez","parlent"],
     "Impératif": ["—","parle","—","parlons","parlez","—"]
   },
+  "manger (-er, soft g)": {
+    "Présent": ["mange","manges","mange","mangeons","mangez","mangent"],
+    "Passé composé": ["ai mangé","as mangé","a mangé","avons mangé","avez mangé","ont mangé"],
+    "Imparfait": ["mangeais","mangeais","mangeait","mangions","mangiez","mangeaient"],
+    "Plus-que-parfait": ["avais mangé","avais mangé","avait mangé","avions mangé","aviez mangé","avaient mangé"],
+    "Futur simple": ["mangerai","mangeras","mangera","mangerons","mangerez","mangeront"],
+    "Conditionnel présent": ["mangerais","mangerais","mangerait","mangerions","mangeriez","mangeraient"],
+    "Subjonctif présent": ["mange","manges","mange","mangions","mangiez","mangent"],
+    "Impératif": ["—","mange","—","mangeons","mangez","—"]
+  },
+  "commencer (-er, soft c)": {
+    "Présent": ["commence","commences","commence","commençons","commencez","commencent"],
+    "Passé composé": ["ai commencé","as commencé","a commencé","avons commencé","avez commencé","ont commencé"],
+    "Imparfait": ["commençais","commençais","commençait","commencions","commenciez","commençaient"],
+    "Plus-que-parfait": ["avais commencé","avais commencé","avait commencé","avions commencé","aviez commencé","avaient commencé"],
+    "Futur simple": ["commencerai","commenceras","commencera","commencerons","commencerez","commenceront"],
+    "Conditionnel présent": ["commencerais","commencerais","commencerait","commencerions","commenceriez","commenceraient"],
+    "Subjonctif présent": ["commence","commences","commence","commencions","commenciez","commencent"],
+    "Impératif": ["—","commence","—","commençons","commencez","—"]
+  },
+  "acheter (-er, e→è)": {
+    "Présent": ["achète","achètes","achète","achetons","achetez","achètent"],
+    "Passé composé": ["ai acheté","as acheté","a acheté","avons acheté","avez acheté","ont acheté"],
+    "Imparfait": ["achetais","achetais","achetait","achetions","achetiez","achetaient"],
+    "Plus-que-parfait": ["avais acheté","avais acheté","avait acheté","avions acheté","aviez acheté","avaient acheté"],
+    "Futur simple": ["achèterai","achèteras","achètera","achèterons","achèterez","achèteront"],
+    "Conditionnel présent": ["achèterais","achèterais","achèterait","achèterions","achèteriez","achèteraient"],
+    "Subjonctif présent": ["achète","achètes","achète","achetions","achetiez","achètent"],
+    "Impératif": ["—","achète","—","achetons","achetez","—"]
+  },
+  "appeler (-er, doubling)": {
+    "Présent": ["appelle","appelles","appelle","appelons","appelez","appellent"],
+    "Passé composé": ["ai appelé","as appelé","a appelé","avons appelé","avez appelé","ont appelé"],
+    "Imparfait": ["appelais","appelais","appelait","appelions","appeliez","appelaient"],
+    "Plus-que-parfait": ["avais appelé","avais appelé","avait appelé","avions appelé","aviez appelé","avaient appelé"],
+    "Futur simple": ["appellerai","appelleras","appellera","appellerons","appellerez","appelleront"],
+    "Conditionnel présent": ["appellerais","appellerais","appellerait","appellerions","appelleriez","appelleraient"],
+    "Subjonctif présent": ["appelle","appelles","appelle","appelions","appeliez","appellent"],
+    "Impératif": ["—","appelle","—","appelons","appelez","—"]
+  },
+  "préférer (-er, é→è)": {
+    "Présent": ["préfère","préfères","préfère","préférons","préférez","préfèrent"],
+    "Passé composé": ["ai préféré","as préféré","a préféré","avons préféré","avez préféré","ont préféré"],
+    "Imparfait": ["préférais","préférais","préférait","préférions","préfériez","préféraient"],
+    "Plus-que-parfait": ["avais préféré","avais préféré","avait préféré","avions préféré","aviez préféré","avaient préféré"],
+    "Futur simple": ["préférerai","préféreras","préférera","préférerons","préférerez","préféreront"],
+    "Conditionnel présent": ["préférerais","préférerais","préférerait","préférerions","préféreriez","préféreraient"],
+    "Subjonctif présent": ["préfère","préfères","préfère","préférions","préfériez","préfèrent"],
+    "Impératif": ["—","préfère","—","préférons","préférez","—"]
+  },
   "finir (-ir verbs)": {
     "Présent": ["finis","finis","finit","finissons","finissez","finissent"],
     "Passé composé": ["ai fini","as fini","a fini","avons fini","avez fini","ont fini"],
@@ -371,6 +444,26 @@ const CONJUGATIONS = {
     "Conditionnel présent": ["finirais","finirais","finirait","finirions","finiriez","finiraient"],
     "Subjonctif présent": ["finisse","finisses","finisse","finissions","finissiez","finissent"],
     "Impératif": ["—","finis","—","finissons","finissez","—"]
+  },
+  "partir (-ir, drop consonant)": {
+    "Présent": ["pars","pars","part","partons","partez","partent"],
+    "Passé composé": ["suis parti(e)","es parti(e)","est parti(e)","sommes parti(e)s","êtes parti(e)(s)","sont parti(e)s"],
+    "Imparfait": ["partais","partais","partait","partions","partiez","partaient"],
+    "Plus-que-parfait": ["étais parti(e)","étais parti(e)","était parti(e)","étions parti(e)s","étiez parti(e)(s)","étaient parti(e)s"],
+    "Futur simple": ["partirai","partiras","partira","partirons","partirez","partiront"],
+    "Conditionnel présent": ["partirais","partirais","partirait","partirions","partiriez","partiraient"],
+    "Subjonctif présent": ["parte","partes","parte","partions","partiez","partent"],
+    "Impératif": ["—","pars","—","partons","partez","—"]
+  },
+  "ouvrir (-ir, like -er)": {
+    "Présent": ["ouvre","ouvres","ouvre","ouvrons","ouvrez","ouvrent"],
+    "Passé composé": ["ai ouvert","as ouvert","a ouvert","avons ouvert","avez ouvert","ont ouvert"],
+    "Imparfait": ["ouvrais","ouvrais","ouvrait","ouvrions","ouvriez","ouvraient"],
+    "Plus-que-parfait": ["avais ouvert","avais ouvert","avait ouvert","avions ouvert","aviez ouvert","avaient ouvert"],
+    "Futur simple": ["ouvrirai","ouvriras","ouvrira","ouvrirons","ouvrirez","ouvriront"],
+    "Conditionnel présent": ["ouvrirais","ouvrirais","ouvrirait","ouvririons","ouvririez","ouvriraient"],
+    "Subjonctif présent": ["ouvre","ouvres","ouvre","ouvrions","ouvriez","ouvrent"],
+    "Impératif": ["—","ouvre","—","ouvrons","ouvrez","—"]
   },
   "vendre (-re verbs)": {
     "Présent": ["vends","vends","vend","vendons","vendez","vendent"],
@@ -431,8 +524,116 @@ const CONJUGATIONS = {
     "Conditionnel présent": ["devrais","devrais","devrait","devrions","devriez","devraient"],
     "Subjonctif présent": ["doive","doives","doive","devions","deviez","doivent"],
     "Impératif": ["—","—","—","—","—","—"]
+  },
+  "savoir (to know)": {
+    "Présent": ["sais","sais","sait","savons","savez","savent"],
+    "Passé composé": ["ai su","as su","a su","avons su","avez su","ont su"],
+    "Imparfait": ["savais","savais","savait","savions","saviez","savaient"],
+    "Plus-que-parfait": ["avais su","avais su","avait su","avions su","aviez su","avaient su"],
+    "Futur simple": ["saurai","sauras","saura","saurons","saurez","sauront"],
+    "Conditionnel présent": ["saurais","saurais","saurait","saurions","sauriez","sauraient"],
+    "Subjonctif présent": ["sache","saches","sache","sachions","sachiez","sachent"],
+    "Impératif": ["—","sache","—","sachons","sachez","—"]
+  },
+  "voir (to see)": {
+    "Présent": ["vois","vois","voit","voyons","voyez","voient"],
+    "Passé composé": ["ai vu","as vu","a vu","avons vu","avez vu","ont vu"],
+    "Imparfait": ["voyais","voyais","voyait","voyions","voyiez","voyaient"],
+    "Plus-que-parfait": ["avais vu","avais vu","avait vu","avions vu","aviez vu","avaient vu"],
+    "Futur simple": ["verrai","verras","verra","verrons","verrez","verront"],
+    "Conditionnel présent": ["verrais","verrais","verrait","verrions","verriez","verraient"],
+    "Subjonctif présent": ["voie","voies","voie","voyions","voyiez","voient"],
+    "Impératif": ["—","vois","—","voyons","voyez","—"]
+  },
+  "dire (to say)": {
+    "Présent": ["dis","dis","dit","disons","dites","disent"],
+    "Passé composé": ["ai dit","as dit","a dit","avons dit","avez dit","ont dit"],
+    "Imparfait": ["disais","disais","disait","disions","disiez","disaient"],
+    "Plus-que-parfait": ["avais dit","avais dit","avait dit","avions dit","aviez dit","avaient dit"],
+    "Futur simple": ["dirai","diras","dira","dirons","direz","diront"],
+    "Conditionnel présent": ["dirais","dirais","dirait","dirions","diriez","diraient"],
+    "Subjonctif présent": ["dise","dises","dise","disions","disiez","disent"],
+    "Impératif": ["—","dis","—","disons","dites","—"]
+  },
+  "écrire (to write)": {
+    "Présent": ["écris","écris","écrit","écrivons","écrivez","écrivent"],
+    "Passé composé": ["ai écrit","as écrit","a écrit","avons écrit","avez écrit","ont écrit"],
+    "Imparfait": ["écrivais","écrivais","écrivait","écrivions","écriviez","écrivaient"],
+    "Plus-que-parfait": ["avais écrit","avais écrit","avait écrit","avions écrit","aviez écrit","avaient écrit"],
+    "Futur simple": ["écrirai","écriras","écrira","écrirons","écrirez","écriront"],
+    "Conditionnel présent": ["écrirais","écrirais","écrirait","écririons","écririez","écriraient"],
+    "Subjonctif présent": ["écrive","écrives","écrive","écrivions","écriviez","écrivent"],
+    "Impératif": ["—","écris","—","écrivons","écrivez","—"]
+  },
+  "lire (to read)": {
+    "Présent": ["lis","lis","lit","lisons","lisez","lisent"],
+    "Passé composé": ["ai lu","as lu","a lu","avons lu","avez lu","ont lu"],
+    "Imparfait": ["lisais","lisais","lisait","lisions","lisiez","lisaient"],
+    "Plus-que-parfait": ["avais lu","avais lu","avait lu","avions lu","aviez lu","avaient lu"],
+    "Futur simple": ["lirai","liras","lira","lirons","lirez","liront"],
+    "Conditionnel présent": ["lirais","lirais","lirait","lirions","liriez","liraient"],
+    "Subjonctif présent": ["lise","lises","lise","lisions","lisiez","lisent"],
+    "Impératif": ["—","lis","—","lisons","lisez","—"]
+  },
+  "mettre (to put)": {
+    "Présent": ["mets","mets","met","mettons","mettez","mettent"],
+    "Passé composé": ["ai mis","as mis","a mis","avons mis","avez mis","ont mis"],
+    "Imparfait": ["mettais","mettais","mettait","mettions","mettiez","mettaient"],
+    "Plus-que-parfait": ["avais mis","avais mis","avait mis","avions mis","aviez mis","avaient mis"],
+    "Futur simple": ["mettrai","mettras","mettra","mettrons","mettrez","mettront"],
+    "Conditionnel présent": ["mettrais","mettrais","mettrait","mettrions","mettriez","mettraient"],
+    "Subjonctif présent": ["mette","mettes","mette","mettions","mettiez","mettent"],
+    "Impératif": ["—","mets","—","mettons","mettez","—"]
+  },
+  "boire (to drink)": {
+    "Présent": ["bois","bois","boit","buvons","buvez","boivent"],
+    "Passé composé": ["ai bu","as bu","a bu","avons bu","avez bu","ont bu"],
+    "Imparfait": ["buvais","buvais","buvait","buvions","buviez","buvaient"],
+    "Plus-que-parfait": ["avais bu","avais bu","avait bu","avions bu","aviez bu","avaient bu"],
+    "Futur simple": ["boirai","boiras","boira","boirons","boirez","boiront"],
+    "Conditionnel présent": ["boirais","boirais","boirait","boirions","boiriez","boiraient"],
+    "Subjonctif présent": ["boive","boives","boive","buvions","buviez","boivent"],
+    "Impératif": ["—","bois","—","buvons","buvez","—"]
+  },
+  "croire (to believe)": {
+    "Présent": ["crois","crois","croit","croyons","croyez","croient"],
+    "Passé composé": ["ai cru","as cru","a cru","avons cru","avez cru","ont cru"],
+    "Imparfait": ["croyais","croyais","croyait","croyions","croyiez","croyaient"],
+    "Plus-que-parfait": ["avais cru","avais cru","avait cru","avions cru","aviez cru","avaient cru"],
+    "Futur simple": ["croirai","croiras","croira","croirons","croirez","croiront"],
+    "Conditionnel présent": ["croirais","croirais","croirait","croirions","croiriez","croiraient"],
+    "Subjonctif présent": ["croie","croies","croie","croyions","croyiez","croient"],
+    "Impératif": ["—","crois","—","croyons","croyez","—"]
+  },
+  "connaître (to know/be acquainted with)": {
+    "Présent": ["connais","connais","connaît","connaissons","connaissez","connaissent"],
+    "Passé composé": ["ai connu","as connu","a connu","avons connu","avez connu","ont connu"],
+    "Imparfait": ["connaissais","connaissais","connaissait","connaissions","connaissiez","connaissaient"],
+    "Plus-que-parfait": ["avais connu","avais connu","avait connu","avions connu","aviez connu","avaient connu"],
+    "Futur simple": ["connaîtrai","connaîtras","connaîtra","connaîtrons","connaîtrez","connaîtront"],
+    "Conditionnel présent": ["connaîtrais","connaîtrais","connaîtrait","connaîtrions","connaîtriez","connaîtraient"],
+    "Subjonctif présent": ["connaisse","connaisses","connaisse","connaissions","connaissiez","connaissent"],
+    "Impératif": ["—","connais","—","connaissons","connaissez","—"]
+  },
+  "recevoir (to receive)": {
+    "Présent": ["reçois","reçois","reçoit","recevons","recevez","reçoivent"],
+    "Passé composé": ["ai reçu","as reçu","a reçu","avons reçu","avez reçu","ont reçu"],
+    "Imparfait": ["recevais","recevais","recevait","recevions","receviez","recevaient"],
+    "Plus-que-parfait": ["avais reçu","avais reçu","avait reçu","avions reçu","aviez reçu","avaient reçu"],
+    "Futur simple": ["recevrai","recevras","recevra","recevrons","recevrez","recevront"],
+    "Conditionnel présent": ["recevrais","recevrais","recevrait","recevrions","recevriez","recevraient"],
+    "Subjonctif présent": ["reçoive","reçoives","reçoive","recevions","receviez","reçoivent"],
+    "Impératif": ["—","reçois","—","recevons","recevez","—"]
   }
 };
+const CONJ_CATEGORIES = {
+  "Core irregular": ["être (to be)","avoir (to have)","aller (to go)","faire (to do/make)"],
+  "Regular -er": ["parler (-er verbs)","manger (-er, soft g)","commencer (-er, soft c)","acheter (-er, e→è)","appeler (-er, doubling)","préférer (-er, é→è)"],
+  "Regular -ir": ["finir (-ir verbs)","partir (-ir, drop consonant)","ouvrir (-ir, like -er)"],
+  "Regular -re": ["vendre (-re verbs)"],
+  "Other irregular": ["venir (to come)","prendre (to take)","pouvoir (can/to be able)","vouloir (to want)","devoir (must/to have to)","savoir (to know)","voir (to see)","dire (to say)","écrire (to write)","lire (to read)","mettre (to put)","boire (to drink)","croire (to believe)","connaître (to know/be acquainted with)","recevoir (to receive)"]
+};
+const CONJ_CAT_NAMES = Object.keys(CONJ_CATEGORIES);
 const VERBS = Object.keys(CONJUGATIONS);
 let currentVerb = VERBS[0];
 let currentTense = TENSES[0];
@@ -451,6 +652,69 @@ function setMastered(key,val){
   }catch(e){}
 }
 
+function getHistory(){
+  try{ return JSON.parse(localStorage.getItem('motamot_history')||'[]'); }catch(e){ return []; }
+}
+function addHistoryEntry(entry){
+  try{
+    const h = getHistory();
+    h.unshift(entry);
+    localStorage.setItem('motamot_history', JSON.stringify(h.slice(0,200)));
+  }catch(e){}
+}
+function clearHistory(){
+  try{ localStorage.removeItem('motamot_history'); }catch(e){}
+  renderStats();
+}
+
+function getMistakes(){
+  try{ return JSON.parse(localStorage.getItem('motamot_mistakes')||'{}'); }catch(e){ return {}; }
+}
+function addMistake(id, fr, en, section){
+  try{
+    const m = getMistakes();
+    m[id] = { fr, en, section };
+    localStorage.setItem('motamot_mistakes', JSON.stringify(m));
+  }catch(e){}
+}
+function removeMistake(id){
+  try{
+    const m = getMistakes();
+    delete m[id];
+    localStorage.setItem('motamot_mistakes', JSON.stringify(m));
+  }catch(e){}
+}
+function clearMistakes(){
+  try{ localStorage.removeItem('motamot_mistakes'); }catch(e){}
+  renderMistakes();
+}
+
+function getSelectedCats(){
+  try{
+    const raw = localStorage.getItem('motamot_conjcats');
+    if(raw===null) return CONJ_CAT_NAMES.slice(); // default: everything selected
+    const arr = JSON.parse(raw);
+    return arr.length ? arr : CONJ_CAT_NAMES.slice();
+  }catch(e){ return CONJ_CAT_NAMES.slice(); }
+}
+function setSelectedCats(arr){
+  try{ localStorage.setItem('motamot_conjcats', JSON.stringify(arr)); }catch(e){}
+}
+function toggleCat(name){
+  let cats = getSelectedCats();
+  if(cats.includes(name)){
+    if(cats.length>1) cats = cats.filter(c=>c!==name); // keep at least one selected
+  } else {
+    cats = cats.concat([name]);
+  }
+  setSelectedCats(cats);
+  buildCatTabs();
+}
+function selectAllCats(){
+  setSelectedCats(CONJ_CAT_NAMES.slice());
+  buildCatTabs();
+}
+
 /* =====================================================================
    MODE SWITCHING
    ===================================================================== */
@@ -458,8 +722,10 @@ function switchMode(mode){
   document.getElementById('view-essentials').classList.toggle('active', mode==='essentials');
   document.getElementById('view-levels').classList.toggle('active', mode==='levels');
   document.getElementById('view-conj').classList.toggle('active', mode==='conj');
-  const order=['essentials','levels','conj'];
+  document.getElementById('view-progress').classList.toggle('active', mode==='progress');
+  const order=['essentials','levels','conj','progress'];
   document.querySelectorAll('nav.modes button').forEach((b,i)=>b.classList.toggle('active', order[i]===mode));
+  if(mode==='progress'){ renderStats(); renderMistakes(); }
 }
 
 /* =====================================================================
@@ -499,8 +765,8 @@ function toggleEssQuiz(show){
 
 function startEssQuiz(){
   toggleEssQuiz(true);
-  const words = ESSENTIALS[currentEssTier].map(([fr,en])=>({fr,en}));
-  runQuiz(document.getElementById('essQuizArea'), words, startEssQuiz, ()=>toggleEssQuiz(false));
+  const words = ESSENTIALS[currentEssTier].map(([fr,en])=>({fr,en,id:'ess:'+currentEssTier+':'+fr}));
+  runQuiz(document.getElementById('essQuizArea'), words, startEssQuiz, ()=>toggleEssQuiz(false), { section: 'Essentials — '+currentEssTier.split(' (')[0] });
 }
 
 /* =====================================================================
@@ -520,7 +786,7 @@ function buildLevelTabs(){
 
 function flatWords(level){
   const out = [];
-  VOCAB[level].groups.forEach(([cat, words])=> words.forEach(([fr,en])=> out.push({fr,en,cat})));
+  VOCAB[level].groups.forEach(([cat, words])=> words.forEach(([fr,en])=> out.push({fr,en,cat,id:'lvl:'+level+':'+fr})));
   return out;
 }
 
@@ -577,12 +843,29 @@ function toggleQuiz(show){
 function startQuiz(){
   toggleQuiz(true);
   const words = flatWords(currentLevel);
-  runQuiz(document.getElementById('quizArea'), words, startQuiz, ()=>toggleQuiz(false));
+  runQuiz(document.getElementById('quizArea'), words, startQuiz, ()=>toggleQuiz(false), { section: currentLevel });
 }
 
 /* =====================================================================
    CONJUGATION VIEW
    ===================================================================== */
+function buildCatTabs(){
+  const el = document.getElementById('catTabs');
+  el.innerHTML = '';
+  const selected = getSelectedCats();
+  const allBtn = document.createElement('button');
+  allBtn.textContent = 'All';
+  allBtn.className = selected.length===CONJ_CAT_NAMES.length ? 'active' : '';
+  allBtn.onclick = selectAllCats;
+  el.appendChild(allBtn);
+  CONJ_CAT_NAMES.forEach(name=>{
+    const b = document.createElement('button');
+    b.textContent = name;
+    b.className = selected.includes(name) ? 'active' : '';
+    b.onclick = ()=> toggleCat(name);
+    el.appendChild(b);
+  });
+}
 function buildVerbTabs(){
   const el = document.getElementById('verbTabs');
   el.innerHTML = '';
@@ -625,34 +908,45 @@ function toggleConjQuiz(show){
 function startConjQuiz(){
   toggleConjQuiz(true);
   // Build a pool of {fr, en} where fr = "pronoun (verb, tense)" and en = the form,
-  // reusing the shared quiz engine.
+  // reusing the shared quiz engine. Restricted to the currently selected quiz categories.
+  const selected = getSelectedCats();
+  const verbsInScope = [];
+  CONJ_CAT_NAMES.forEach(name=>{ if(selected.includes(name)) verbsInScope.push(...CONJ_CATEGORIES[name]); });
   const pool = [];
-  VERBS.forEach(v=>{
+  verbsInScope.forEach(v=>{
     TENSES.forEach(t=>{
       const forms = CONJUGATIONS[v][t];
       const prons = t==='Impératif' ? IMP_PRONOUNS : PRONOUNS;
       forms.forEach((f,i)=>{
         if(f==='—') return;
-        pool.push({ fr: `${prons[i]}  —  ${v}, ${t}`, en: f, group: v+'|'+t });
+        pool.push({ fr: `${prons[i]}  —  ${v}, ${t}`, en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i });
       });
     });
   });
-  runQuiz(document.getElementById('conjQuizArea'), pool, startConjQuiz, ()=>toggleConjQuiz(false), true);
+  runQuiz(document.getElementById('conjQuizArea'), pool, startConjQuiz, ()=>toggleConjQuiz(false), { isConj:true, section:'Conjugation' });
 }
 
 /* =====================================================================
    SHARED QUIZ ENGINE
-   words: [{fr, en, group?}]  group (optional) restricts distractors to the
-   same group so conjugation-quiz distractors come from the same verb+tense.
+   words: [{fr, en, id, group?}]  group (optional) restricts distractors to
+   the same group so conjugation-quiz distractors come from the same verb+tense.
+   opts: { isConj, section, reviewMode }
+     section    — label recorded in quiz history ("A1", "Conjugation", …)
+     reviewMode — if true, a correct answer removes the word from Mistakes
    ===================================================================== */
-function runQuiz(container, words, onRestart, onExit, isConj){
+function runQuiz(container, words, onRestart, onExit, opts){
+  opts = opts || {};
   const shuffled = [...words].sort(()=>Math.random()-0.5).slice(0, Math.min(10, words.length));
-  const state = { words: shuffled, i:0, score:0, pool: words };
-  renderQuizQ(container, state, onRestart, onExit, isConj);
+  const state = { words: shuffled, i:0, score:0, pool: words, recorded:false };
+  renderQuizQ(container, state, onRestart, onExit, opts);
 }
 
-function renderQuizQ(container, state, onRestart, onExit, isConj){
+function renderQuizQ(container, state, onRestart, onExit, opts){
   if(state.i >= state.words.length){
+    if(!state.recorded){
+      state.recorded = true;
+      addHistoryEntry({ date: new Date().toISOString(), section: opts.section || 'Quiz', score: state.score, total: state.words.length });
+    }
     container.innerHTML = `
       <div class="quizcard quizresult">
         <h3 class="serif">Session complete</h3>
@@ -666,7 +960,7 @@ function renderQuizQ(container, state, onRestart, onExit, isConj){
   }
   const q = state.words[state.i];
   let candidates = state.pool.filter(w=>w.en!==q.en);
-  if(isConj && q.group){ candidates = candidates.filter(w=>w.group===q.group); }
+  if(opts.isConj && q.group){ candidates = candidates.filter(w=>w.group===q.group); }
   if(candidates.length < 3){ candidates = state.pool.filter(w=>w.en!==q.en); }
   const distractors = [...candidates].sort(()=>Math.random()-0.5).slice(0,3).map(w=>w.en);
   const options = [...new Set([...distractors, q.en])].sort(()=>Math.random()-0.5);
@@ -682,22 +976,108 @@ function renderQuizQ(container, state, onRestart, onExit, isConj){
       <div class="prompt">${promptHtml}</div>
       <div class="quizopts" id="quizoptsLive"></div>
     </div>`;
-  const opts = container.querySelector('#quizoptsLive');
+  const opts_el = container.querySelector('#quizoptsLive');
   options.forEach(opt=>{
     const b = document.createElement('button');
     b.textContent = opt;
     b.onclick = ()=>{
       const correct = opt===q.en;
-      Array.from(opts.children).forEach(btn=>{
+      Array.from(opts_el.children).forEach(btn=>{
         btn.disabled = true;
         if(btn.textContent===q.en) btn.classList.add('correct');
         else if(btn===b) btn.classList.add('wrong');
       });
-      if(correct) state.score++;
-      setTimeout(()=>{ state.i++; renderQuizQ(container, state, onRestart, onExit, isConj); }, 700);
+      if(correct){
+        state.score++;
+        if(opts.reviewMode && q.id) removeMistake(q.id);
+      } else if(q.id){
+        addMistake(q.id, q.fr, q.en, opts.section || '');
+      }
+      setTimeout(()=>{ state.i++; renderQuizQ(container, state, onRestart, onExit, opts); }, 700);
     };
-    opts.appendChild(b);
+    opts_el.appendChild(b);
   });
+}
+
+/* =====================================================================
+   PROGRESS VIEW — Stats + Mistakes
+   ===================================================================== */
+let currentProgressTab = 'Stats';
+function buildProgressTabs(){
+  const el = document.getElementById('progressTabs');
+  el.innerHTML = '';
+  ['Stats','Mistakes'].forEach(t=>{
+    const b = document.createElement('button');
+    b.textContent = t;
+    b.className = t===currentProgressTab?'active':'';
+    b.onclick = ()=>{
+      currentProgressTab = t;
+      buildProgressTabs();
+      document.getElementById('statsPane').style.display = t==='Stats'?'block':'none';
+      document.getElementById('mistakesPane').style.display = t==='Mistakes'?'block':'none';
+    };
+    el.appendChild(b);
+  });
+}
+
+function renderStats(){
+  const history = getHistory();
+  const summaryEl = document.getElementById('statsSummary');
+  if(history.length===0){
+    summaryEl.innerHTML = `<p style="font-size:13px;color:var(--ink-soft);">No quizzes taken yet — results will show up here once you complete one.</p>`;
+  } else {
+    const bySection = {};
+    history.forEach(h=>{
+      if(!bySection[h.section]) bySection[h.section] = { attempts:0, correct:0, total:0, best:0 };
+      const s = bySection[h.section];
+      s.attempts++; s.correct += h.score; s.total += h.total;
+      s.best = Math.max(s.best, Math.round(100*h.score/h.total));
+    });
+    const totalAttempts = history.length;
+    const totalCorrect = history.reduce((a,h)=>a+h.score,0);
+    const totalQ = history.reduce((a,h)=>a+h.total,0);
+    let html = `<div class="levelmeta"><span class="progress-pill">${totalAttempts} quiz${totalAttempts===1?'':'zes'} taken</span><span class="progress-pill">${Math.round(100*totalCorrect/totalQ)}% overall</span></div>`;
+    html += Object.keys(bySection).map(sec=>{
+      const s = bySection[sec];
+      return `<div class="wordrow"><span class="fr">${sec}</span><span class="en">${s.attempts} attempt${s.attempts===1?'':'s'} · best ${s.best}%</span></div>`;
+    }).join('');
+    summaryEl.innerHTML = html;
+  }
+
+  const histEl = document.getElementById('statsHistory');
+  histEl.innerHTML = history.slice(0,25).map(h=>{
+    const d = new Date(h.date);
+    const dateStr = d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' · ' + d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+    return `<div class="wordrow"><span class="fr" style="font-size:14px;">${h.section}</span><span class="en">${h.score}/${h.total} · ${dateStr}</span></div>`;
+  }).join('') || `<p style="font-size:13px;color:var(--ink-soft);">—</p>`;
+}
+
+function renderMistakes(){
+  const mistakes = getMistakes();
+  const ids = Object.keys(mistakes);
+  document.getElementById('mistakesDesc').textContent = ids.length
+    ? `${ids.length} word${ids.length===1?'':'s'} you've gotten wrong in a quiz. Review them until they're cleared.`
+    : `No missed words right now — they'll collect here when you answer a quiz question wrong.`;
+  const listEl = document.getElementById('mistakesList');
+  listEl.innerHTML = ids.map(id=>{
+    const m = mistakes[id];
+    return `<div class="wordrow"><span class="fr">${m.fr}</span><span class="en">${m.en} <span style="opacity:.6;">· ${m.section}</span></span></div>`;
+  }).join('');
+  toggleMistakesQuiz(false);
+}
+
+function toggleMistakesQuiz(show){
+  document.getElementById('mistakesQuizArea').style.display = show?'block':'none';
+  document.getElementById('mistakesList').style.display = show?'none':'block';
+}
+
+function startMistakesQuiz(){
+  const mistakes = getMistakes();
+  const ids = Object.keys(mistakes);
+  if(ids.length===0) return;
+  toggleMistakesQuiz(true);
+  const words = ids.map(id=>({ fr: mistakes[id].fr, en: mistakes[id].en, id }));
+  runQuiz(document.getElementById('mistakesQuizArea'), words, startMistakesQuiz, ()=>{ renderMistakes(); }, { section:'Review mistakes', reviewMode:true });
 }
 
 /* ---------- modal ---------- */
@@ -712,6 +1092,8 @@ renderLevel();
 buildVerbTabs();
 buildTenseTabs();
 renderConjTable();
+buildCatTabs();
+buildProgressTabs();
 </script>
 </body>
 </html>
