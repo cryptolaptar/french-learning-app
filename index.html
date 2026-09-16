@@ -163,6 +163,8 @@
   <section class="view" id="view-conj">
     <div class="tabs" id="verbTabs"></div>
     <div class="tabs" id="tenseTabs"></div>
+    <div class="levelmeta"><span class="desc">Tenses:</span></div>
+    <div class="tabs" id="tenseCatTabs"></div>
     <div class="levelmeta"><span class="desc">Quiz on:</span></div>
     <div class="tabs" id="catTabs"></div>
     <div class="actionrow">
@@ -715,6 +717,32 @@ function selectAllCats(){
   buildCatTabs();
 }
 
+function getSelectedQuizTenses(){
+  try{
+    const raw = localStorage.getItem('motamot_conjtenses');
+    if(raw===null) return TENSES.slice(); // default: everything selected
+    const arr = JSON.parse(raw);
+    return arr.length ? arr : TENSES.slice();
+  }catch(e){ return TENSES.slice(); }
+}
+function setSelectedQuizTenses(arr){
+  try{ localStorage.setItem('motamot_conjtenses', JSON.stringify(arr)); }catch(e){}
+}
+function toggleQuizTense(name){
+  let tenses = getSelectedQuizTenses();
+  if(tenses.includes(name)){
+    if(tenses.length>1) tenses = tenses.filter(t=>t!==name); // keep at least one selected
+  } else {
+    tenses = tenses.concat([name]);
+  }
+  setSelectedQuizTenses(tenses);
+  buildTenseCatTabs();
+}
+function selectAllQuizTenses(){
+  setSelectedQuizTenses(TENSES.slice());
+  buildTenseCatTabs();
+}
+
 /* =====================================================================
    MODE SWITCHING
    ===================================================================== */
@@ -849,6 +877,23 @@ function startQuiz(){
 /* =====================================================================
    CONJUGATION VIEW
    ===================================================================== */
+function buildTenseCatTabs(){
+  const el = document.getElementById('tenseCatTabs');
+  el.innerHTML = '';
+  const selected = getSelectedQuizTenses();
+  const allBtn = document.createElement('button');
+  allBtn.textContent = 'All';
+  allBtn.className = selected.length===TENSES.length ? 'active' : '';
+  allBtn.onclick = selectAllQuizTenses;
+  el.appendChild(allBtn);
+  TENSES.forEach(name=>{
+    const b = document.createElement('button');
+    b.textContent = name;
+    b.className = selected.includes(name) ? 'active' : '';
+    b.onclick = ()=> toggleQuizTense(name);
+    el.appendChild(b);
+  });
+}
 function buildCatTabs(){
   const el = document.getElementById('catTabs');
   el.innerHTML = '';
@@ -927,12 +972,13 @@ function startConjQuiz(){
   const selected = getSelectedCats();
   const verbsInScope = [];
   CONJ_CAT_NAMES.forEach(name=>{ if(selected.includes(name)) verbsInScope.push(...CONJ_CATEGORIES[name]); });
+  const tensesInScope = getSelectedQuizTenses();
   const pool = [];
   verbsInScope.forEach(v=>{
     const name = v.split(' (')[0];
     const translation = VERB_TRANSLATIONS[name] || '';
     const pattern = VERB_PATTERNS[name] || null;
-    TENSES.forEach(t=>{
+    tensesInScope.forEach(t=>{
       const forms = CONJUGATIONS[v][t];
       const prons = t==='Impératif' ? IMP_PRONOUNS : PRONOUNS;
       forms.forEach((f,i)=>{
@@ -940,7 +986,7 @@ function startConjQuiz(){
         const sub = [`${name} — ${translation}`];
         if(pattern) sub.push(`(${pattern})`);
         sub.push(t);
-        pool.push({ fr: prons[i], en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i, sub });
+        pool.push({ fr: `${prons[i]} _____`, en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i, sub });
       });
     });
   });
@@ -1113,6 +1159,7 @@ buildVerbTabs();
 buildTenseTabs();
 renderConjTable();
 buildCatTabs();
+buildTenseCatTabs();
 buildProgressTabs();
 </script>
 </body>
