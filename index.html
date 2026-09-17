@@ -104,7 +104,7 @@
   .verbintro .ex{margin-top:8px;font-size:14px;}
   .verbintro .ex .fr{font-style:italic;}
   .verbintro .ex .en{color:var(--ink-soft);}
-  .tenseusage{background:var(--gold-soft);border:1px solid var(--gold);border-radius:12px;padding:12px 16px;margin-bottom:12px;font-size:13px;}
+  .tenseusage{background:var(--gold-soft);border:1px solid var(--gold);border-radius:12px;padding:12px 16px;margin-top:12px;margin-bottom:12px;font-size:13px;}
   .tenseusage .ex{margin-top:6px;font-style:italic;}
   .tenseusage .ex .en{display:block;font-style:normal;color:var(--ink-soft);}
 
@@ -1096,6 +1096,8 @@ function renderConjTable(){
 function toggleConjQuiz(show){
   document.getElementById('conjQuizArea').style.display = show?'block':'none';
   document.getElementById('conjTableArea').style.display = show?'none':'block';
+  document.getElementById('verbIntroArea').style.display = show?'none':'block';
+  document.getElementById('tenseUsageArea').style.display = show?'none':'block';
 }
 
 const VERB_TRANSLATIONS = {
