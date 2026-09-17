@@ -181,8 +181,8 @@
       <button class="secondary" onclick="toggleConjQuiz(false)">Table</button>
     </div>
     <div id="verbIntroArea"></div>
-    <div id="tenseUsageArea"></div>
     <div id="conjTableArea"></div>
+    <div id="tenseUsageArea"></div>
     <div id="conjQuizArea" style="display:none;"></div>
     <p class="conjnote">Covers the 8 tenses/moods used in everyday spoken and written French. Literary-only tenses (passé simple, subjonctif imparfait, etc.) aren't included. Pronunciations in the table are a simplified, approximate guide — read them like English, stress the last syllable, and "(n)" means a light nasal touch rather than a hard N.</p>
   </section>
@@ -294,6 +294,28 @@ const ESSENTIALS = {
     ["paraître","to appear, seem","pah-REH-truh"],["demeurer","to remain, stay","duh-muh-RAY"],["poursuivre","to pursue, continue","poor-SWEE-vruh"],["cependant","however","suh-pah(n)-DAH(N)"],["pourtant","however, yet","poor-TAH(N)"],
     ["ainsi","thus, so","a(n)-SEE"],["donc","so, therefore","doh(n)k"],["certainement","certainly","sehr-tehn-MAH(N)"],["probablement","probably","proh-bah-bluh-MAH(N)"],["vraiment","really, truly","vray-MAH(N)"],
     ["exactement","exactly","eg-zahk-tuh-MAH(N)"],["environ","about, approximately","ah(n)-vee-ROH(N)"],["presque","almost","PRES-kuh"],["parfois","sometimes","pahr-FWAH"],["d'habitude","usually","dah-bee-TEWD"]
+  ],
+  "Tier 5 (~400–500)": [
+    ["le corps","body","luh kor"],["la tête","head","lah teht"],["le visage","face","luh vee-ZAHZH"],["le dos","back","luh doh"],["le pied","foot","luh pyay"],
+    ["la jambe","leg","lah zhahmb"],["le bras","arm","luh brah"],["le doigt","finger","luh dwah"],["le cœur","heart","luh kuhr"],["la bouche","mouth","lah boosh"],
+    ["le nez","nose","luh nay"],["l'oreille","ear","loh-RAY"],["les cheveux","hair","lay shuh-VUH"],["la peau","skin","lah poh"],["le sang","blood","luh sah(n)"],
+    ["la voix","voice","lah vwah"],["le sourire","smile","luh soo-REER"],["la larme","tear","lah lahrm"],["la peur","fear","lah puhr"],["la colère","anger","lah koh-LEHR"],
+    ["la joie","joy","lah zhwah"],["la tristesse","sadness","lah tree-STES"],["l'amour","love","lah-MOOR"],["la haine","hate","lah ehn"],["l'espoir","hope","les-PWAHR"],
+    ["le rêve","dream","luh rehv"],["le but","goal","luh bewt"],["le choix","choice","luh shwah"],["l'erreur","mistake, error","leh-RUHR"],["la faute","fault, mistake","lah foht"],
+    ["le succès","success","luh sewk-SEH"],["l'échec","failure","lay-SHEK"],["la chance","luck","lah shah(n)s"],["le risque","risk","luh reesk"],["le danger","danger","luh dah(n)-ZHAY"],
+    ["la sécurité","safety","lah say-kew-ree-TAY"],["la paix","peace","lah peh"],["la guerre","war","lah gehr"],["la mort","death","lah mor"],["la naissance","birth","lah neh-SAH(N)S"],
+    ["le mariage","marriage","luh mah-RYAHZH"],["l'enfance","childhood","lah(n)-FAH(N)S"],["la jeunesse","youth","lah zhuh-NES"],["la vieillesse","old age","lah vyay-YES"],["le futur","the future","luh few-TEWR"],
+    ["le passé","the past","luh pah-SAY"],["le présent","the present (time)","luh pray-ZAH(N)"],["la fin","the end","lah fa(n)"],["le début","the beginning","luh day-BEW"],["l'origine","origin","loh-ree-ZHEEN"],
+    ["la cause","cause","lah kohz"],["l'effet","effect","leh-FEH"],["la conclusion","conclusion","lah kohn-klew-ZYOH(N)"],["le détail","detail","luh day-TAH-yuh"],["l'exception","exception","lek-sep-SYOH(N)"],
+    ["la règle","rule","lah REH-gluh"],["le principe","principle","luh pra(n)-SEEP"],["la théorie","theory","lah tay-oh-REE"],["la pratique","practice","lah prah-TEEK"],["l'expérience","experience","lek-spay-RYAH(N)S"],
+    ["le fait","fact","luh feh"],["la vérité","truth","lah vay-ree-TAY"],["le mensonge","lie","luh mah(n)-SOH(N)ZH"],["le secret","secret","luh suh-KREH"],["la surprise","surprise","lah sewr-PREEZ"],
+    ["le doute","doubt","luh doot"],["la certitude","certainty","lah sehr-tee-TEWD"],["l'inquiétude","worry","la(n)-kyay-TEWD"],["le soulagement","relief","luh soo-lahzh-MAH(N)"],["la satisfaction","satisfaction","lah sah-tees-fahk-SYOH(N)"],
+    ["la déception","disappointment","lah day-sep-SYOH(N)"],["le regret","regret","luh ruh-GREH"],["le plaisir","pleasure","luh pleh-ZEER"],["la douleur","pain","lah doo-LUHR"],["la fatigue","tiredness","lah fah-TEEG"],
+    ["l'énergie","energy","lay-nehr-ZHEE"],["la force","strength","lah fors"],["le pouvoir","power","luh poo-VWAHR"],["l'autorité","authority","loh-toh-ree-TAY"],["la liberté","freedom","lah lee-behr-TAY"],
+    ["le devoir","duty","luh duh-VWAHR"],["le droit","right (legal)","luh drwah"],["l'interdiction","ban, prohibition","la(n)-tehr-deek-SYOH(N)"],["la permission","permission","lah pehr-mee-SYOH(N)"],["l'autorisation","authorization","loh-toh-ree-zah-SYOH(N)"],
+    ["l'obligation","obligation","loh-blee-gah-SYOH(N)"],["la limite","limit","lah lee-MEET"],["la frontière","border","lah frohn-TYEHR"],["le territoire","territory","luh teh-ree-TWAHR"],["la région","region","lah ray-ZHYOH(N)"],
+    ["la zone","zone, area","lah zohn"],["l'espace","space","les-PAHS"],["la distance","distance","lah dees-TAH(N)S"],["la direction","direction","lah dee-rek-SYOH(N)"],["le chemin","path, way","luh shuh-MA(N)"],
+    ["la route","road","lah root"],["le trajet","journey, route","luh trah-ZHEH"],["l'arrivée","arrival","lah-ree-VAY"],["le départ","departure","luh day-PAHR"],["la destination","destination","lah des-tee-nah-SYOH(N)"]
   ]
 };
 const ESS_TIERS = Object.keys(ESSENTIALS);
@@ -853,7 +875,7 @@ function renderEssentials(){
     .forEach(([fr,en,pron])=>{
       const row = document.createElement('div');
       row.className='wordrow';
-      row.innerHTML = `<span class="fr">${fr}${pron?` <span style="font-weight:400;font-size:12px;color:var(--ink-soft);">/ ${pron}/</span>`:''}</span><span class="en">${en}</span>`;
+      row.innerHTML = `<span class="fr">${fr}${pron?` <span style="font-weight:400;font-size:12px;color:var(--ink-soft);">— /${pron}/</span>`:''}</span><span class="en">${en}</span>`;
       list.appendChild(row);
     });
 }
