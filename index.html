@@ -95,9 +95,18 @@
   .conjtable{width:100%;border-collapse:collapse;background:var(--paper-card);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
   .conjtable td{padding:10px 14px;border-bottom:1px solid var(--line);font-size:15px;}
   .conjtable tr:last-child td{border-bottom:none;}
-  .conjtable td.pron{color:var(--ink-soft);width:38%;}
+  .conjtable td.pron{color:var(--ink-soft);width:32%;}
   .conjtable td.form{font-family:'Fraunces',serif;font-weight:600;}
+  .conjtable td.phon{color:var(--ink-soft);font-size:13px;text-align:right;white-space:nowrap;}
   .conjnote{font-size:12px;color:var(--ink-soft);margin-top:10px;}
+  .verbintro{background:var(--paper-card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;}
+  .verbintro .inf{font-family:'Fraunces',serif;font-size:19px;font-weight:600;}
+  .verbintro .ex{margin-top:8px;font-size:14px;}
+  .verbintro .ex .fr{font-style:italic;}
+  .verbintro .ex .en{color:var(--ink-soft);}
+  .tenseusage{background:var(--gold-soft);border:1px solid var(--gold);border-radius:12px;padding:12px 16px;margin-bottom:12px;font-size:13px;}
+  .tenseusage .ex{margin-top:6px;font-style:italic;}
+  .tenseusage .ex .en{display:block;font-style:normal;color:var(--ink-soft);}
 
   /* modal */
   .modalbg{display:none;position:fixed;inset:0;background:rgba(27,42,65,.55);z-index:50;align-items:flex-end;}
@@ -171,9 +180,11 @@
       <button onclick="startConjQuiz()">Quiz me</button>
       <button class="secondary" onclick="toggleConjQuiz(false)">Table</button>
     </div>
+    <div id="verbIntroArea"></div>
+    <div id="tenseUsageArea"></div>
     <div id="conjTableArea"></div>
     <div id="conjQuizArea" style="display:none;"></div>
-    <p class="conjnote">Covers the 8 tenses/moods used in everyday spoken and written French. Literary-only tenses (passé simple, subjonctif imparfait, etc.) aren't included.</p>
+    <p class="conjnote">Covers the 8 tenses/moods used in everyday spoken and written French. Literary-only tenses (passé simple, subjonctif imparfait, etc.) aren't included. Pronunciations in the table are a simplified, approximate guide — read them like English, stress the last syllable, and "(n)" means a light nasal touch rather than a hard N.</p>
   </section>
 
   <!-- PROGRESS -->
@@ -217,50 +228,72 @@
    ===================================================================== */
 const ESSENTIALS = {
   "Tier 1 (top ~100)": [
-    ["de","of, from"],["le","the (m.)"],["la","the (f.)"],["les","the (pl.)"],["et","and"],
-    ["un","a / one (m.)"],["une","a / one (f.)"],["des","some / of the"],["à","to, at"],["être","to be"],
-    ["avoir","to have"],["que","that, which"],["qui","who, which"],["dans","in"],["ce","this, that"],
-    ["il","he, it"],["elle","she, it"],["je","I"],["tu","you (informal)"],["nous","we"],
-    ["vous","you (formal/plural)"],["ils","they (m.)"],["elles","they (f.)"],["pour","for"],["pas","not"],
-    ["ne","not (with pas)"],["sur","on"],["se","oneself"],["plus","more"],["par","by, through"],
-    ["mais","but"],["ou","or"],["si","if / yes, in response to a negative"],["leur","their / to them"],["y","there / to it"],
-    ["dont","of which, whose"],["comme","as, like"],["sans","without"],["aussi","also"],["faire","to do, make"],
-    ["dire","to say"],["tout","all, everything"],["bien","well, good"],["où","where"],["quand","when"],
-    ["alors","so, then"],["avec","with"],["aller","to go"],["venir","to come"],["voir","to see"],
-    ["savoir","to know (a fact)"],["connaître","to know (a person/place)"],["vouloir","to want"],["pouvoir","to be able to, can"],["devoir","to have to, must"],
-    ["prendre","to take"],["donner","to give"],["falloir","to be necessary (il faut)"],["parler","to speak"],["aimer","to like, love"],
-    ["penser","to think"],["trouver","to find"],["demander","to ask"],["rester","to stay"],["passer","to pass, spend (time)"],
-    ["mettre","to put"],["sembler","to seem"],["laisser","to let, leave"],["tenir","to hold"],["sortir","to go out"],
-    ["suivre","to follow"],["arriver","to arrive, happen"],["entrer","to enter"],["comprendre","to understand"],["le temps","time, weather"],
-    ["le jour","day"],["l'année","year"],["l'homme","man"],["la femme","woman"],["l'enfant","child"],
-    ["la chose","thing"],["le monde","world"],["la vie","life"],["la main","hand"],["l'œil / les yeux","eye / eyes"],
-    ["le moment","moment"],["la fois","time, occurrence"],["l'eau","water"],["la maison","house"],["le pays","country"]
+    ["de","of, from","duh"],["le","the (m.)","luh"],["la","the (f.)","lah"],["les","the (pl.)","lay"],["et","and","ay"],
+    ["un","a / one (m.)","uh(n)"],["une","a / one (f.)","ewn"],["des","some / of the","day"],["à","to, at","ah"],["être","to be","EH-truh"],
+    ["avoir","to have","ah-VWAHR"],["que","that, which","kuh"],["qui","who, which","kee"],["dans","in","dah(n)"],["ce","this, that","suh"],
+    ["il","he, it","eel"],["elle","she, it","ehl"],["je","I","zhuh"],["tu","you (informal)","tew"],["nous","we","noo"],
+    ["vous","you (formal/plural)","voo"],["ils","they (m.)","eel"],["elles","they (f.)","ehl"],["pour","for","poor"],["pas","not","pah"],
+    ["ne","not (with pas)","nuh"],["sur","on","sewr"],["se","oneself","suh"],["plus","more","plew"],["par","by, through","pahr"],
+    ["mais","but","meh"],["ou","or","oo"],["si","if / yes, in response to a negative","see"],["leur","their / to them","luhr"],["y","there / to it","ee"],
+    ["dont","of which, whose","doh(n)"],["comme","as, like","kum"],["sans","without","sah(n)"],["aussi","also","oh-SEE"],["faire","to do, make","fehr"],
+    ["dire","to say","deer"],["tout","all, everything","too"],["bien","well, good","bya(n)"],["où","where","oo"],["quand","when","kah(n)"],
+    ["alors","so, then","ah-LOR"],["avec","with","ah-VEK"],["aller","to go","ah-LAY"],["venir","to come","vuh-NEER"],["voir","to see","vwahr"],
+    ["savoir","to know (a fact)","sah-VWAHR"],["connaître","to know (a person/place)","kuh-NEH-truh"],["vouloir","to want","voo-LWAHR"],["pouvoir","to be able to, can","poo-VWAHR"],["devoir","to have to, must","duh-VWAHR"],
+    ["prendre","to take","PRAHN-druh"],["donner","to give","duh-NAY"],["falloir","to be necessary (il faut)","fah-LWAHR"],["parler","to speak","pahr-LAY"],["aimer","to like, love","eh-MAY"],
+    ["penser","to think","pahn-SAY"],["trouver","to find","troo-VAY"],["demander","to ask","duh-mahn-DAY"],["rester","to stay","res-TAY"],["passer","to pass, spend (time)","pah-SAY"],
+    ["mettre","to put","MEH-truh"],["sembler","to seem","sahn-BLAY"],["laisser","to let, leave","leh-SAY"],["tenir","to hold","tuh-NEER"],["sortir","to go out","sor-TEER"],
+    ["suivre","to follow","SWEE-vruh"],["arriver","to arrive, happen","ah-ree-VAY"],["entrer","to enter","ahn-TRAY"],["comprendre","to understand","kohn-PRAHN-druh"],["le temps","time, weather","luh tah(n)"],
+    ["le jour","day","luh zhoor"],["l'année","year","lah-NAY"],["l'homme","man","lum"],["la femme","woman","lah fahm"],["l'enfant","child","lah(n)-FAH(N)"],
+    ["la chose","thing","lah shohz"],["le monde","world","luh moh(n)d"],["la vie","life","lah vee"],["la main","hand","lah ma(n)"],["l'œil / les yeux","eye / eyes","luhy / lay zyuh"],
+    ["le moment","moment","luh moh-MAH(N)"],["la fois","time, occurrence","lah fwah"],["l'eau","water","loh"],["la maison","house","lah meh-ZOH(N)"],["le pays","country","luh pay-EE"]
   ],
   "Tier 2 (~100–200)": [
-    ["chercher","to look for"],["garder","to keep"],["devenir","to become"],["sentir","to feel, smell"],["regarder","to watch, look at"],
-    ["écouter","to listen to"],["ouvrir","to open"],["fermer","to close"],["apporter","to bring"],["porter","to carry, wear"],
-    ["jouer","to play"],["gagner","to win, earn"],["perdre","to lose"],["nouveau / nouvelle","new"],["vieux / vieille","old"],
-    ["jeune","young"],["beau / belle","beautiful"],["joli(e)","pretty"],["difficile","difficult"],["facile","easy"],
-    ["important(e)","important"],["possible","possible"],["nécessaire","necessary"],["certain(e)","certain"],["vrai(e)","true"],
-    ["faux / fausse","false"],["différent(e)","different"],["autre","other"],["chaque","each"],["plusieurs","several"],
-    ["quelque","some"],["aucun(e)","none, no"],["peu","little, few"],["beaucoup","a lot"],["assez","enough, rather"],
-    ["trop","too much"],["encore","again, still"],["déjà","already"],["bientôt","soon"],["tard","late"],
-    ["tôt","early"],["ici","here"],["là","there"],["ailleurs","elsewhere"],["dehors","outside"],
-    ["dedans","inside"],["devant","in front of"],["derrière","behind"],["entre","between"],["chez","at the home/place of"],
-    ["vers","toward"],["jusqu'à","until"],["pendant","during"],["depuis","since"]
+    ["chercher","to look for","shehr-SHAY"],["garder","to keep","gahr-DAY"],["devenir","to become","duh-vuh-NEER"],["sentir","to feel, smell","sahn-TEER"],["regarder","to watch, look at","ruh-gahr-DAY"],
+    ["écouter","to listen to","ay-koo-TAY"],["ouvrir","to open","oo-VREER"],["fermer","to close","fehr-MAY"],["apporter","to bring","ah-por-TAY"],["porter","to carry, wear","por-TAY"],
+    ["jouer","to play","zhoo-AY"],["gagner","to win, earn","gah-NYAY"],["perdre","to lose","PEHR-druh"],["nouveau / nouvelle","new","noo-VOH / noo-VEHL"],["vieux / vieille","old","vyuh / vyay"],
+    ["jeune","young","zhuhn"],["beau / belle","beautiful","boh / behl"],["joli(e)","pretty","zho-LEE"],["difficile","difficult","dee-fee-SEEL"],["facile","easy","fah-SEEL"],
+    ["important(e)","important","am-por-TAH(N)(T)"],["possible","possible","poh-SEE-bluh"],["nécessaire","necessary","nay-seh-SEHR"],["certain(e)","certain","sehr-TA(N) / sehr-TEHN"],["vrai(e)","true","vray"],
+    ["faux / fausse","false","foh / fohs"],["différent(e)","different","dee-fay-RAH(N)(T)"],["autre","other","OH-truh"],["chaque","each","shahk"],["plusieurs","several","plew-ZYUHR"],
+    ["quelque","some","KEL-kuh"],["aucun(e)","none, no","oh-KUH(N) / oh-KEWN"],["peu","little, few","puh"],["beaucoup","a lot","boh-KOO"],["assez","enough, rather","ah-SAY"],
+    ["trop","too much","troh"],["encore","again, still","ah(n)-KOR"],["déjà","already","day-ZHAH"],["bientôt","soon","bya(n)-TOH"],["tard","late","tahr"],
+    ["tôt","early","toh"],["ici","here","ee-SEE"],["là","there","lah"],["ailleurs","elsewhere","ah-YUHR"],["dehors","outside","duh-OR"],
+    ["dedans","inside","duh-DAH(N)"],["devant","in front of","duh-VAH(N)"],["derrière","behind","deh-RYEHR"],["entre","between","AH(N)-truh"],["chez","at the home/place of","shay"],
+    ["vers","toward","vehr"],["jusqu'à","until","zhews-KAH"],["pendant","during","pah(n)-DAH(N)"],["depuis","since","duh-PWEE"]
   ],
   "Tier 3 (~200–300)": [
-    ["le problème","problem"],["la question","question"],["la raison","reason"],["le résultat","result"],["l'idée","idea"],
-    ["le sujet","subject, topic"],["l'exemple","example"],["le cas","case"],["la façon","way, manner"],["le genre","kind, type"],
-    ["le niveau","level"],["le rôle","role"],["la partie","part"],["le groupe","group"],["le système","system"],
-    ["la méthode","method"],["le projet","project"],["le service","service"],["l'entreprise","company"],["le produit","product"],
-    ["le marché","market"],["la valeur","value"],["le prix","price"],["le nombre","number"],["la quantité","quantity"],
-    ["la qualité","quality"],["la différence","difference"],["la situation","situation"],["la condition","condition"],["la possibilité","possibility"],
-    ["la capacité","ability"],["la nécessité","necessity"],["l'importance","importance"],["la difficulté","difficulty"],["la solution","solution"],
-    ["la réponse","answer"],["commencer","to begin"],["continuer","to continue"],["terminer","to finish, end"],["essayer","to try"],
-    ["permettre","to allow"],["empêcher","to prevent"],["obliger","to oblige, force"],["refuser","to refuse"],["accepter","to accept"],
-    ["proposer","to propose"],["choisir","to choose"],["préférer","to prefer"],["préparer","to prepare"],["organiser","to organize"],
-    ["expliquer","to explain"],["montrer","to show"]
+    ["le problème","problem","luh proh-BLEHM"],["la question","question","lah kes-TYOH(N)"],["la raison","reason","lah reh-ZOH(N)"],["le résultat","result","luh ray-zewl-TAH"],["l'idée","idea","lee-DAY"],
+    ["le sujet","subject, topic","luh sew-ZHEH"],["l'exemple","example","leg-ZAHM-pluh"],["le cas","case","luh kah"],["la façon","way, manner","lah fah-SOH(N)"],["le genre","kind, type","luh ZHAH(N)-ruh"],
+    ["le niveau","level","luh nee-VOH"],["le rôle","role","luh rohl"],["la partie","part","lah pahr-TEE"],["le groupe","group","luh groop"],["le système","system","luh sees-TEHM"],
+    ["la méthode","method","lah may-TOD"],["le projet","project","luh proh-ZHEH"],["le service","service","luh sehr-VEES"],["l'entreprise","company","lah(n)-truh-PREEZ"],["le produit","product","luh proh-DWEE"],
+    ["le marché","market","luh mahr-SHAY"],["la valeur","value","lah vah-LUHR"],["le prix","price","luh pree"],["le nombre","number","luh NOHM-bruh"],["la quantité","quantity","lah kah(n)-tee-TAY"],
+    ["la qualité","quality","lah kah-lee-TAY"],["la différence","difference","lah dee-fay-RAH(N)S"],["la situation","situation","lah see-twah-SYOH(N)"],["la condition","condition","lah kohn-dee-SYOH(N)"],["la possibilité","possibility","lah poh-see-bee-lee-TAY"],
+    ["la capacité","ability","lah kah-pah-see-TAY"],["la nécessité","necessity","lah nay-seh-see-TAY"],["l'importance","importance","lam-por-TAH(N)S"],["la difficulté","difficulty","lah dee-fee-kewl-TAY"],["la solution","solution","lah soh-lew-SYOH(N)"],
+    ["la réponse","answer","lah ray-POH(N)S"],["commencer","to begin","koh-mah(n)-SAY"],["continuer","to continue","kohn-tee-new-AY"],["terminer","to finish, end","tehr-mee-NAY"],["essayer","to try","eh-say-YAY"],
+    ["permettre","to allow","pehr-MEH-truh"],["empêcher","to prevent","ah(n)-peh-SHAY"],["obliger","to oblige, force","oh-blee-ZHAY"],["refuser","to refuse","ruh-few-ZAY"],["accepter","to accept","ahk-sep-TAY"],
+    ["proposer","to propose","proh-poh-ZAY"],["choisir","to choose","shwah-ZEER"],["préférer","to prefer","pray-fay-RAY"],["préparer","to prepare","pray-pah-RAY"],["organiser","to organize","or-gah-nee-ZAY"],
+    ["expliquer","to explain","ek-splee-KAY"],["montrer","to show","mohn-TRAY"]
+  ],
+  "Tier 4 (~300–400)": [
+    ["quelqu'un","someone","kel-KUH(N)"],["quelque chose","something","KEL-kuh shohz"],["rien","nothing","rya(n)"],["personne","nobody, no one","pehr-SUN"],["chacun(e)","each one","shah-KUH(N) / shah-KEWN"],
+    ["tous / toutes","all","too / toot"],["ensemble","together","ah(n)-SAHM-bluh"],["seul(e)","alone","suhl"],["même","same, even","mehm"],["propre","own; clean","PROH-pruh"],
+    ["dernier / dernière","last","dehr-NYAY / dehr-NYEHR"],["prochain(e)","next","proh-SHA(N) / proh-SHEHN"],["premier / première","first","pruh-MYAY / pruh-MYEHR"],["deuxième","second","duh-ZYEHM"],["troisième","third","trwah-ZYEHM"],
+    ["plein(e)","full","pla(n) / plehn"],["vide","empty","veed"],["ouvert(e)","open","oo-VEHR(T)"],["fermé(e)","closed","fehr-MAY"],["libre","free (available)","LEE-bruh"],
+    ["occupé(e)","busy, occupied","oh-kew-PAY"],["disponible","available","dees-poh-NEE-bluh"],["gratuit(e)","free (no cost)","grah-TWEE(T)"],["simple","simple","SAM-pluh"],["compliqué(e)","complicated","kohm-plee-KAY"],
+    ["normal(e)","normal","nor-MAHL"],["spécial(e)","special","spay-SYAHL"],["particulier / particulière","particular, specific","pahr-tee-kew-LYAY / pahr-tee-kew-LYEHR"],["général(e)","general","zhay-nay-RAHL"],["principal(e)","main","pra(n)-see-PAHL"],
+    ["essentiel(le)","essential","eh-sah(n)-SYEHL"],["suffisant(e)","sufficient","sew-fee-ZAH(N)(T)"],["utile","useful","ew-TEEL"],["inutile","useless","ee-new-TEEL"],["agréable","pleasant","ah-gray-AH-bluh"],
+    ["désagréable","unpleasant","day-zah-gray-AH-bluh"],["gentil(le)","kind, nice","zhah(n)-TEE / zhah(n)-TEE-yuh"],["méchant(e)","mean, nasty","may-SHAH(N)(T)"],["heureux / heureuse","happy","uh-RUH / uh-RUHZ"],["malheureux / malheureuse","unhappy","mah-luh-RUH / mah-luh-RUHZ"],
+    ["calme","calm","kahlm"],["nerveux / nerveuse","nervous","nehr-VUH / nehr-VUHZ"],["curieux / curieuse","curious","kew-RYUH / kew-RYUHZ"],["fier / fière","proud","fyehr"],["honnête","honest","oh-NEHT"],
+    ["rapide","fast","rah-PEED"],["lent(e)","slow","lah(n)(t)"],["fort(e)","strong","for(t)"],["faible","weak","FEH-bluh"],["sale","dirty","sahl"],
+    ["léger / légère","light (weight)","lay-ZHAY / lay-ZHEHR"],["lourd(e)","heavy","loor(d)"],["haut(e)","high, tall","oh(t)"],["bas(se)","low","bah / bahs"],["long(ue)","long","loh(n)g"],
+    ["court(e)","short","koor(t)"],["large","wide","lahrzh"],["étroit(e)","narrow","ay-TRWAH(T)"],["profond(e)","deep","proh-FOH(N)(D)"],["plat(e)","flat","plah(t)"],
+    ["rond(e)","round","roh(n)(d)"],["carré(e)","square","kah-RAY"],["droit(e)","right (direction); straight","drwah(t)"],["gauche","left","gohsh"],["en haut","upstairs, at the top","ah(n) oh"],
+    ["en bas","downstairs, at the bottom","ah(n) bah"],["au milieu","in the middle","oh mee-LYUH"],["à côté de","next to","ah koh-TAY duh"],["au-dessus de","above","oh duh-SEW duh"],["au-dessous de","below","oh duh-SOO duh"],
+    ["tourner","to turn","toor-NAY"],["monter","to go up","mohn-TAY"],["traverser","to cross","trah-vehr-SAY"],["arrêter","to stop","ah-reh-TAY"],["tomber","to fall","tohm-BAY"],
+    ["sauter","to jump","soh-TAY"],["courir","to run","koo-REER"],["marcher","to walk","mahr-SHAY"],["voler","to fly; to steal","voh-LAY"],["pousser","to push","poo-SAY"],
+    ["tirer","to pull","tee-RAY"],["lever","to raise, lift","luh-VAY"],["baisser","to lower","beh-SAY"],["toucher","to touch","too-SHAY"],["goûter","to taste","goo-TAY"],
+    ["paraître","to appear, seem","pah-REH-truh"],["demeurer","to remain, stay","duh-muh-RAY"],["poursuivre","to pursue, continue","poor-SWEE-vruh"],["cependant","however","suh-pah(n)-DAH(N)"],["pourtant","however, yet","poor-TAH(N)"],
+    ["ainsi","thus, so","a(n)-SEE"],["donc","so, therefore","doh(n)k"],["certainement","certainly","sehr-tehn-MAH(N)"],["probablement","probably","proh-bah-bluh-MAH(N)"],["vraiment","really, truly","vray-MAH(N)"],
+    ["exactement","exactly","eg-zahk-tuh-MAH(N)"],["environ","about, approximately","ah(n)-vee-ROH(N)"],["presque","almost","PRES-kuh"],["parfois","sometimes","pahr-FWAH"],["d'habitude","usually","dah-bee-TEWD"]
   ]
 };
 const ESS_TIERS = Object.keys(ESSENTIALS);
@@ -477,6 +510,46 @@ const CONJUGATIONS = {
     "Subjonctif présent": ["vende","vendes","vende","vendions","vendiez","vendent"],
     "Impératif": ["—","vends","—","vendons","vendez","—"]
   },
+  "attendre (-re verbs)": {
+    "Présent": ["attends","attends","attend","attendons","attendez","attendent"],
+    "Passé composé": ["ai attendu","as attendu","a attendu","avons attendu","avez attendu","ont attendu"],
+    "Imparfait": ["attendais","attendais","attendait","attendions","attendiez","attendaient"],
+    "Plus-que-parfait": ["avais attendu","avais attendu","avait attendu","avions attendu","aviez attendu","avaient attendu"],
+    "Futur simple": ["attendrai","attendras","attendra","attendrons","attendrez","attendront"],
+    "Conditionnel présent": ["attendrais","attendrais","attendrait","attendrions","attendriez","attendraient"],
+    "Subjonctif présent": ["attende","attendes","attende","attendions","attendiez","attendent"],
+    "Impératif": ["—","attends","—","attendons","attendez","—"]
+  },
+  "répondre (-re verbs)": {
+    "Présent": ["réponds","réponds","répond","répondons","répondez","répondent"],
+    "Passé composé": ["ai répondu","as répondu","a répondu","avons répondu","avez répondu","ont répondu"],
+    "Imparfait": ["répondais","répondais","répondait","répondions","répondiez","répondaient"],
+    "Plus-que-parfait": ["avais répondu","avais répondu","avait répondu","avions répondu","aviez répondu","avaient répondu"],
+    "Futur simple": ["répondrai","répondras","répondra","répondrons","répondrez","répondront"],
+    "Conditionnel présent": ["répondrais","répondrais","répondrait","répondrions","répondriez","répondraient"],
+    "Subjonctif présent": ["réponde","répondes","réponde","répondions","répondiez","répondent"],
+    "Impératif": ["—","réponds","—","répondons","répondez","—"]
+  },
+  "descendre (-re verbs)": {
+    "Présent": ["descends","descends","descend","descendons","descendez","descendent"],
+    "Passé composé": ["suis descendu(e)","es descendu(e)","est descendu(e)","sommes descendu(e)s","êtes descendu(e)(s)","sont descendu(e)s"],
+    "Imparfait": ["descendais","descendais","descendait","descendions","descendiez","descendaient"],
+    "Plus-que-parfait": ["étais descendu(e)","étais descendu(e)","était descendu(e)","étions descendu(e)s","étiez descendu(e)(s)","étaient descendu(e)s"],
+    "Futur simple": ["descendrai","descendras","descendra","descendrons","descendrez","descendront"],
+    "Conditionnel présent": ["descendrais","descendrais","descendrait","descendrions","descendriez","descendraient"],
+    "Subjonctif présent": ["descende","descendes","descende","descendions","descendiez","descendent"],
+    "Impératif": ["—","descends","—","descendons","descendez","—"]
+  },
+  "perdre (-re verbs)": {
+    "Présent": ["perds","perds","perd","perdons","perdez","perdent"],
+    "Passé composé": ["ai perdu","as perdu","a perdu","avons perdu","avez perdu","ont perdu"],
+    "Imparfait": ["perdais","perdais","perdait","perdions","perdiez","perdaient"],
+    "Plus-que-parfait": ["avais perdu","avais perdu","avait perdu","avions perdu","aviez perdu","avaient perdu"],
+    "Futur simple": ["perdrai","perdras","perdra","perdrons","perdrez","perdront"],
+    "Conditionnel présent": ["perdrais","perdrais","perdrait","perdrions","perdriez","perdraient"],
+    "Subjonctif présent": ["perde","perdes","perde","perdions","perdiez","perdent"],
+    "Impératif": ["—","perds","—","perdons","perdez","—"]
+  },
   "venir (to come)": {
     "Présent": ["viens","viens","vient","venons","venez","viennent"],
     "Passé composé": ["suis venu(e)","es venu(e)","est venu(e)","sommes venu(e)s","êtes venu(e)(s)","sont venu(e)s"],
@@ -632,7 +705,7 @@ const CONJ_CATEGORIES = {
   "Core irregular": ["être (to be)","avoir (to have)","aller (to go)","faire (to do/make)"],
   "Regular -er": ["parler (-er verbs)","manger (-er, soft g)","commencer (-er, soft c)","acheter (-er, e→è)","appeler (-er, doubling)","préférer (-er, é→è)"],
   "Regular -ir": ["finir (-ir verbs)","partir (-ir, drop consonant)","ouvrir (-ir, like -er)"],
-  "Regular -re": ["vendre (-re verbs)"],
+  "Regular -re": ["vendre (-re verbs)","attendre (-re verbs)","répondre (-re verbs)","descendre (-re verbs)","perdre (-re verbs)"],
   "Other irregular": ["venir (to come)","prendre (to take)","pouvoir (can/to be able)","vouloir (to want)","devoir (must/to have to)","savoir (to know)","voir (to see)","dire (to say)","écrire (to write)","lire (to read)","mettre (to put)","boire (to drink)","croire (to believe)","connaître (to know/be acquainted with)","recevoir (to receive)"]
 };
 const CONJ_CAT_NAMES = Object.keys(CONJ_CATEGORIES);
@@ -777,10 +850,10 @@ function renderEssentials(){
   const list = document.getElementById('essList');
   list.innerHTML = '';
   ESSENTIALS[currentEssTier].filter(([fr,en])=> !q || fr.toLowerCase().includes(q) || en.toLowerCase().includes(q))
-    .forEach(([fr,en])=>{
+    .forEach(([fr,en,pron])=>{
       const row = document.createElement('div');
       row.className='wordrow';
-      row.innerHTML = `<span class="fr">${fr}</span><span class="en">${en}</span>`;
+      row.innerHTML = `<span class="fr">${fr}${pron?` <span style="font-weight:400;font-size:12px;color:var(--ink-soft);">/ ${pron}/</span>`:''}</span><span class="en">${en}</span>`;
       list.appendChild(row);
     });
 }
@@ -933,14 +1006,67 @@ function buildTenseTabs(){
     el.appendChild(b);
   });
 }
+/* Simplified, approximate phonetic respelling for conjugated verb forms.
+   Not IPA — just a "read it like English" guide for learners. */
+function autoPhon(raw){
+  if(!raw || raw==='—') return '';
+  return raw.split(' ').map(w=>{
+    let s = w.toLowerCase().replace(/\(e\)|\(s\)/g,'');
+    const digraphs = [
+      ['eaux','oh'],['eau','oh'],['aux','oh'],
+      ['œu','uh'],['oeu','uh'],['eu','uh'],
+      ['ai','eh'],['ei','eh'],
+      ['oi','wah'],
+      ['ou','oo'],
+      ['on','oh(n)'],['om','oh(n)'],
+      ['ain','a(n)'],['ein','a(n)'],
+      ['an','ah(n)'],['am','ah(n)'],['en','ah(n)'],['em','ah(n)'],
+      ['in','a(n)'],['im','a(n)'],
+      ['un','uh(n)'],
+      ['gn','ny'],['ch','sh'],['qu','k'],['ç','s'],['ph','f'],
+      ['é','ay'],['è','eh'],['ê','eh'],['ë','eh'],
+      ['â','ah'],['î','ee'],['ï','ee'],['ô','oh'],['û','ew'],['ü','ew']
+    ];
+    digraphs.forEach(([a,b])=>{ s = s.split(a).join(b); });
+    if(/ez$/.test(s)) s = s.replace(/ez$/,'ay');
+    else if(/ent$/.test(s)) s = s.replace(/ent$/,'');
+    else if(/es$/.test(s)) s = s.replace(/es$/,'');
+    else {
+      s = s.replace(/s$/,'').replace(/d$/,'').replace(/t$/,'');
+    }
+    s = s.replace(/e$/,'');
+    return s || w.toLowerCase();
+  }).join(' ');
+}
+
 function renderConjTable(){
+  const info = VERB_EXAMPLES[currentVerb];
+  const introEl = document.getElementById('verbIntroArea');
+  if(info){
+    introEl.innerHTML = `
+      <div class="verbintro">
+        <div class="inf">${currentVerb}</div>
+        <div class="ex"><span class="fr">${info.fr}</span><br><span class="en">${info.en}</span></div>
+      </div>`;
+  } else { introEl.innerHTML = ''; }
+
+  const usage = TENSE_USAGE[currentTense];
+  const usageEl = document.getElementById('tenseUsageArea');
+  if(usage){
+    usageEl.innerHTML = `
+      <div class="tenseusage">
+        <strong>${currentTense}</strong> — ${usage.note}
+        <div class="ex">${usage.fr}<span class="en">${usage.en}</span></div>
+      </div>`;
+  } else { usageEl.innerHTML = ''; }
+
   const forms = CONJUGATIONS[currentVerb][currentTense];
   const prons = currentTense==='Impératif' ? IMP_PRONOUNS : PRONOUNS;
   const area = document.getElementById('conjTableArea');
   let rows = '';
   forms.forEach((f,i)=>{
     if(f==='—') return;
-    rows += `<tr><td class="pron">${prons[i]}</td><td class="form">${f}</td></tr>`;
+    rows += `<tr><td class="pron">${prons[i]}</td><td class="form">${f}</td><td class="phon">${autoPhon(f)}</td></tr>`;
   });
   area.innerHTML = `<table class="conjtable"><tbody>${rows}</tbody></table>`;
 }
@@ -954,7 +1080,7 @@ const VERB_TRANSLATIONS = {
   "être":"to be", "avoir":"to have", "aller":"to go", "faire":"to do, make",
   "parler":"to speak", "manger":"to eat", "commencer":"to begin, start", "acheter":"to buy", "appeler":"to call", "préférer":"to prefer",
   "finir":"to finish", "partir":"to leave", "ouvrir":"to open",
-  "vendre":"to sell",
+  "vendre":"to sell", "attendre":"to wait", "répondre":"to answer", "descendre":"to go down, get off", "perdre":"to lose",
   "venir":"to come", "prendre":"to take", "pouvoir":"can, to be able to", "vouloir":"to want", "devoir":"must, to have to",
   "savoir":"to know (a fact)", "voir":"to see", "dire":"to say", "écrire":"to write", "lire":"to read",
   "mettre":"to put", "boire":"to drink", "croire":"to believe", "connaître":"to know, be acquainted with", "recevoir":"to receive"
@@ -962,7 +1088,52 @@ const VERB_TRANSLATIONS = {
 const VERB_PATTERNS = {
   "parler":"-er verbs", "manger":"-er, soft g", "commencer":"-er, soft c", "acheter":"-er, e→è", "appeler":"-er, doubling", "préférer":"-er, é→è",
   "finir":"-ir verbs", "partir":"-ir, drop consonant", "ouvrir":"-ir, like -er",
-  "vendre":"-re verbs"
+  "vendre":"-re verbs", "attendre":"-re verbs", "répondre":"-re verbs", "descendre":"-re verbs", "perdre":"-re verbs"
+};
+const VERB_EXAMPLES = {
+  "être (to be)": { fr:"Elle est médecin.", en:"She is a doctor." },
+  "avoir (to have)": { fr:"J'ai deux frères.", en:"I have two brothers." },
+  "aller (to go)": { fr:"Nous allons au marché.", en:"We are going to the market." },
+  "faire (to do/make)": { fr:"Il fait ses devoirs.", en:"He is doing his homework." },
+  "parler (-er verbs)": { fr:"Tu parles très bien français.", en:"You speak French very well." },
+  "manger (-er, soft g)": { fr:"Nous mangeons à midi.", en:"We eat at noon." },
+  "commencer (-er, soft c)": { fr:"Le film commence à huit heures.", en:"The film starts at eight o'clock." },
+  "acheter (-er, e→è)": { fr:"J'achète du pain tous les matins.", en:"I buy bread every morning." },
+  "appeler (-er, doubling)": { fr:"Elle appelle sa sœur ce soir.", en:"She's calling her sister tonight." },
+  "préférer (-er, é→è)": { fr:"Je préfère le café au thé.", en:"I prefer coffee to tea." },
+  "finir (-ir verbs)": { fr:"Vous finissez le travail demain.", en:"You finish the work tomorrow." },
+  "partir (-ir, drop consonant)": { fr:"Le train part dans dix minutes.", en:"The train leaves in ten minutes." },
+  "ouvrir (-ir, like -er)": { fr:"Elle ouvre la fenêtre.", en:"She opens the window." },
+  "vendre (-re verbs)": { fr:"Ils vendent leur maison.", en:"They are selling their house." },
+  "attendre (-re verbs)": { fr:"Nous attendons le bus.", en:"We are waiting for the bus." },
+  "répondre (-re verbs)": { fr:"Il répond à la question.", en:"He answers the question." },
+  "descendre (-re verbs)": { fr:"Je descends à la prochaine station.", en:"I'm getting off at the next station." },
+  "perdre (-re verbs)": { fr:"Tu perds toujours tes clés.", en:"You always lose your keys." },
+  "venir (to come)": { fr:"Ils viennent de Paris.", en:"They come from Paris." },
+  "prendre (to take)": { fr:"Elle prend le métro.", en:"She takes the subway." },
+  "pouvoir (can/to be able)": { fr:"Je peux t'aider.", en:"I can help you." },
+  "vouloir (to want)": { fr:"Nous voulons partir tôt.", en:"We want to leave early." },
+  "devoir (must/to have to)": { fr:"Tu dois étudier ce soir.", en:"You have to study tonight." },
+  "savoir (to know)": { fr:"Il sait la réponse.", en:"He knows the answer." },
+  "voir (to see)": { fr:"Nous voyons la mer d'ici.", en:"We can see the sea from here." },
+  "dire (to say)": { fr:"Elle dit toujours la vérité.", en:"She always tells the truth." },
+  "écrire (to write)": { fr:"J'écris une lettre à mon ami.", en:"I'm writing a letter to my friend." },
+  "lire (to read)": { fr:"Vous lisez un bon livre.", en:"You are reading a good book." },
+  "mettre (to put)": { fr:"Il met la table.", en:"He's setting the table." },
+  "boire (to drink)": { fr:"Nous buvons de l'eau.", en:"We drink water." },
+  "croire (to believe)": { fr:"Je crois que c'est vrai.", en:"I believe it's true." },
+  "connaître (to know/be acquainted with)": { fr:"Elle connaît bien la ville.", en:"She knows the city well." },
+  "recevoir (to receive)": { fr:"Ils reçoivent beaucoup de courrier.", en:"They receive a lot of mail." }
+};
+const TENSE_USAGE = {
+  "Présent": { note:"Actions happening right now, general facts, and habits.", fr:"Je parle français.", en:"I speak French." },
+  "Passé composé": { note:"Completed actions in the past — the everyday past tense for finished events.", fr:"J'ai mangé une pomme.", en:"I ate an apple." },
+  "Imparfait": { note:"Ongoing or repeated past actions, descriptions, and background — 'used to' or 'was doing'.", fr:"Je parlais français quand j'étais enfant.", en:"I used to speak French when I was a child." },
+  "Plus-que-parfait": { note:"An action that had already happened before another past action — 'had done'.", fr:"J'avais fini avant qu'il arrive.", en:"I had finished before he arrived." },
+  "Futur simple": { note:"Actions that will happen in the future.", fr:"Je parlerai à mon professeur demain.", en:"I will speak to my teacher tomorrow." },
+  "Conditionnel présent": { note:"Hypothetical actions, polite requests, and 'would' statements.", fr:"Je voudrais un café, s'il vous plaît.", en:"I would like a coffee, please." },
+  "Subjonctif présent": { note:"After expressions of doubt, emotion, necessity, or wish — usually following 'que'.", fr:"Il faut que tu parles au professeur.", en:"You need to speak to the teacher." },
+  "Impératif": { note:"Giving commands or instructions directly.", fr:"Parle plus lentement, s'il te plaît !", en:"Speak more slowly, please!" }
 };
 
 function startConjQuiz(){
