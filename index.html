@@ -35,6 +35,22 @@
   header.top p{margin:6px 0 0;color:var(--ink-soft);font-size:14px;}
   .infobtn{border:1px solid var(--ink);background:none;color:var(--ink);border-radius:20px;padding:6px 14px;font-size:13px;font-family:'Work Sans';cursor:pointer;white-space:nowrap;}
   .infobtn:active{background:var(--ink);color:var(--paper);}
+  .headerbtns{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+
+  body.dark{
+    --paper:#1B2027;
+    --paper-card:#252C36;
+    --ink:#ECE8DD;
+    --ink-soft:#9BA3B2;
+    --green-soft:#243329;
+    --gold-soft:#3A2F17;
+    --rust-soft:#3A211D;
+    --line:#38414D;
+  }
+  body.dark .quizopts button{background:var(--paper-card);color:var(--ink);border-color:var(--line);}
+  body.dark .wordrow, body.dark .flash-face{background:var(--paper-card);}
+  body.dark input.search{color:var(--ink);}
+  body.dark .tabs button.active{color:#1B2027;}
 
   nav.modes{display:flex;gap:2px;margin:18px 0 0;border-bottom:1px solid var(--line);}
   nav.modes button{flex:1;padding:10px 2px;background:none;border:none;font-family:'Fraunces',serif;font-size:14px;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
@@ -69,6 +85,7 @@
   .flash-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;border:1px solid var(--line);background:var(--paper-card);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;}
   .flash-face.back{transform:rotateY(180deg);background:var(--gold-soft);border-color:var(--gold);}
   .flash-face .fr{font-family:'Fraunces',serif;font-size:16px;font-weight:600;}
+  .flash-face .pron{font-size:11px;color:var(--ink-soft);margin-top:2px;}
   .flash-face .en{font-size:13px;color:var(--ink-soft);}
   .flash.known .flash-face:not(.back){border-color:var(--green);}
   .flash .dot{position:absolute;top:6px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--line);}
@@ -128,7 +145,10 @@
         <h1>Mot à Mot</h1>
         <p>A French vocabulary companion, A1 through C2</p>
       </div>
-      <button class="infobtn" onclick="openModal()">Add to iPhone</button>
+      <div class="headerbtns">
+        <button class="infobtn" onclick="openModal()">Add to iPhone</button>
+        <button class="infobtn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Dark mode</button>
+      </div>
     </div>
     <nav class="modes">
       <button class="active" onclick="switchMode('essentials')">Essentials</button>
@@ -329,55 +349,55 @@ const VOCAB = {
   A1: {
     desc: "Everyday basics: greetings, family, simple verbs, colors and numbers.",
     groups: [
-      ["Greetings & People", [["bonjour","hello"],["merci","thank you"],["s'il vous plaît","please"],["oui","yes"],["non","no"],["au revoir","goodbye"],["je","I"],["tu","you (informal)"],["l'ami / l'amie","friend"],["la famille","family"],["la mère","mother"],["le père","father"]]],
-      ["Everyday Life", [["être","to be"],["avoir","to have"],["la maison","house"],["l'eau","water"],["le pain","bread"],["manger","to eat"],["boire","to drink"],["aller","to go"],["faire","to do, make"],["parler","to speak"],["la ville","city"],["l'école","school"]]],
-      ["Descriptions & Time", [["un","one"],["deux","two"],["trois","three"],["dix","ten"],["rouge","red"],["bleu","blue"],["grand","big"],["petit","small"],["aujourd'hui","today"],["demain","tomorrow"],["hier","yesterday"],["le jour","day"],["la nuit","night"]]],
-      ["Home & Nature", [["le chat","cat"],["le chien","dog"],["l'oiseau","bird"],["la voiture","car"],["le vélo","bike"],["le livre","book"],["la table","table"],["la chaise","chair"],["le lit","bed"],["la porte","door"],["la fenêtre","window"],["le soleil","sun"],["la lune","moon"],["l'étoile","star"],["la pluie","rain"],["la neige","snow"],["le vent","wind"],["chaud","hot"],["froid","cold"],["triste","sad"],["jaune","yellow"],["vert","green"],["noir","black"],["blanc","white"],["quatre","four"],["cinq","five"],["six","six"],["sept","seven"],["huit","eight"],["neuf","nine"],["la semaine","week"],["le mois","month"],["l'heure","hour"]]]
+      ["Greetings & People", [["bonjour","hello","bon-ZHOOR"],["merci","thank you","mehr-SEE"],["s'il vous plaît","please","seel voo PLEH"],["oui","yes","wee"],["non","no","noh(n)"],["au revoir","goodbye","oh ruh-VWAHR"],["je","I","zhuh"],["tu","you (informal)","tew"],["l'ami / l'amie","friend","lah-MEE"],["la famille","family","lah fah-MEE-yuh"],["la mère","mother","lah mehr"],["le père","father","luh pehr"]]],
+      ["Everyday Life", [["être","to be","EH-truh"],["avoir","to have","ah-VWAHR"],["la maison","house","lah meh-ZOH(N)"],["l'eau","water","loh"],["le pain","bread","luh pa(n)"],["manger","to eat","mah(n)-ZHAY"],["boire","to drink","bwahr"],["aller","to go","ah-LAY"],["faire","to do, make","fehr"],["parler","to speak","pahr-LAY"],["la ville","city","lah veel"],["l'école","school","lay-KOL"]]],
+      ["Descriptions & Time", [["un","one","uh(n)"],["deux","two","duh"],["trois","three","trwah"],["dix","ten","dees"],["rouge","red","roozh"],["bleu","blue","bluh"],["grand","big","grah(n)"],["petit","small","puh-TEE"],["aujourd'hui","today","oh-zhoor-DWEE"],["demain","tomorrow","duh-MA(N)"],["hier","yesterday","yehr"],["le jour","day","luh zhoor"],["la nuit","night","lah nwee"]]],
+      ["Home & Nature", [["le chat","cat","luh shah"],["le chien","dog","luh shya(n)"],["l'oiseau","bird","lwah-ZOH"],["la voiture","car","lah vwah-TEWR"],["le vélo","bike","luh vay-LOH"],["le livre","book","luh LEE-vruh"],["la table","table","lah TAH-bluh"],["la chaise","chair","lah shehz"],["le lit","bed","luh lee"],["la porte","door","lah port"],["la fenêtre","window","lah fuh-NEH-truh"],["le soleil","sun","luh soh-LAY"],["la lune","moon","lah lewn"],["l'étoile","star","lay-TWAHL"],["la pluie","rain","lah plwee"],["la neige","snow","lah nehzh"],["le vent","wind","luh vah(n)"],["chaud","hot","shoh"],["froid","cold","frwah"],["triste","sad","treest"],["jaune","yellow","zhohn"],["vert","green","vehr"],["noir","black","nwahr"],["blanc","white","blah(n)"],["quatre","four","KAH-truh"],["cinq","five","sank"],["six","six","sees"],["sept","seven","seht"],["huit","eight","weet"],["neuf","nine","nuhf"],["la semaine","week","lah suh-MEHN"],["le mois","month","luh mwah"],["l'heure","hour","luhr"]]]
     ]
   },
   A2: {
     desc: "Daily routine, shopping, travel, and simple social situations.",
     groups: [
-      ["Daily Routine & Health", [["se réveiller","to wake up"],["le petit-déjeuner","breakfast"],["le travail","work"],["fatigué(e)","tired"],["malade","sick"],["la santé","health"],["le médecin","doctor"],["le rendez-vous","appointment"],["content(e)","happy"]]],
-      ["Shopping & Travel", [["acheter","to buy"],["le magasin","store"],["l'argent","money"],["cher / chère","expensive"],["bon marché","cheap"],["le voyage","trip"],["l'hôtel","hotel"],["la gare","train station"],["l'aéroport","airport"],["la valise","suitcase"],["réserver","to book"],["le billet","ticket"],["attendre","to wait"]]],
-      ["Social & Frequency", [["souvent","often"],["quelquefois","sometimes"],["jamais","never"],["toujours","always"],["le restaurant","restaurant"],["commander","to order"],["la carte","menu"],["célébrer","to celebrate"],["la fête","party"],["inviter","to invite"],["le week-end","weekend"],["sortir","to go out"],["rester","to stay"]]],
-      ["Home & Around Town", [["la cuisine","kitchen"],["la chambre","bedroom"],["la salle de bain","bathroom"],["le salon","living room"],["le jardin","garden"],["le quartier","neighborhood"],["la rue","street"],["le parc","park"],["la banque","bank"],["la poste","post office"],["la pharmacie","pharmacy"],["la boulangerie","bakery"],["le supermarché","supermarket"],["la bibliothèque","library"],["le musée","museum"],["l'église","church"],["la piscine","swimming pool"],["le cinéma","cinema"],["le théâtre","theater"],["la plage","beach"],["la montagne","mountain"],["la campagne","countryside"],["la forêt","forest"],["le lac","lake"],["la rivière","river"],["la mer","sea"],["laver","to wash"],["nettoyer","to clean"],["ranger","to tidy up"],["cuisiner","to cook"],["réparer","to repair"],["construire","to build"],["déménager","to move (house)"],["habiter","to live (somewhere)"]]]
+      ["Daily Routine & Health", [["se réveiller","to wake up","suh ray-vay-YAY"],["le petit-déjeuner","breakfast","luh puh-tee day-zhuh-NAY"],["le travail","work","luh trah-VAH-yuh"],["fatigué(e)","tired","fah-tee-GAY"],["malade","sick","mah-LAHD"],["la santé","health","lah sahn-TAY"],["le médecin","doctor","luh mayd-SA(N)"],["le rendez-vous","appointment","luh rahn-day-VOO"],["content(e)","happy","kohn-TAH(N)"]]],
+      ["Shopping & Travel", [["acheter","to buy","ahsh-TAY"],["le magasin","store","luh mah-gah-ZA(N)"],["l'argent","money","lahr-ZHAH(N)"],["cher / chère","expensive","shehr"],["bon marché","cheap","boh(n) mahr-SHAY"],["le voyage","trip","luh vwah-YAHZH"],["l'hôtel","hotel","loh-TEL"],["la gare","train station","lah gahr"],["l'aéroport","airport","lah-ay-roh-POR"],["la valise","suitcase","lah vah-LEEZ"],["réserver","to book","ray-zehr-VAY"],["le billet","ticket","luh bee-YAY"],["attendre","to wait","ah-TAHN-druh"]]],
+      ["Social & Frequency", [["souvent","often","soo-VAH(N)"],["quelquefois","sometimes","kel-kuh-FWAH"],["jamais","never","zhah-MAY"],["toujours","always","too-ZHOOR"],["le restaurant","restaurant","luh res-toh-RAH(N)"],["commander","to order","koh-mahn-DAY"],["la carte","menu","lah kahrt"],["célébrer","to celebrate","say-lay-BRAY"],["la fête","party","lah feht"],["inviter","to invite","a(n)-vee-TAY"],["le week-end","weekend","luh week-end"],["sortir","to go out","sor-TEER"],["rester","to stay","res-TAY"]]],
+      ["Home & Around Town", [["la cuisine","kitchen","lah kwee-ZEEN"],["la chambre","bedroom","lah SHAHN-bruh"],["la salle de bain","bathroom","lah sahl duh ba(n)"],["le salon","living room","luh sah-LOH(N)"],["le jardin","garden","luh zhahr-DA(N)"],["le quartier","neighborhood","luh kahr-TYAY"],["la rue","street","lah rew"],["le parc","park","luh pahrk"],["la banque","bank","lah bah(n)k"],["la poste","post office","lah post"],["la pharmacie","pharmacy","lah fahr-mah-SEE"],["la boulangerie","bakery","lah boo-lahn-zhuh-REE"],["le supermarché","supermarket","luh sew-pehr-mahr-SHAY"],["la bibliothèque","library","lah bee-blee-oh-TEK"],["le musée","museum","luh mew-ZAY"],["l'église","church","lay-GLEEZ"],["la piscine","swimming pool","lah pee-SEEN"],["le cinéma","cinema","luh see-nay-MAH"],["le théâtre","theater","luh tay-AH-truh"],["la plage","beach","lah plahzh"],["la montagne","mountain","lah mohn-TAH-nyuh"],["la campagne","countryside","lah kahm-PAH-nyuh"],["la forêt","forest","lah for-EH"],["le lac","lake","luh lahk"],["la rivière","river","lah ree-VYEHR"],["la mer","sea","lah mehr"],["laver","to wash","lah-VAY"],["nettoyer","to clean","neh-twah-YAY"],["ranger","to tidy up","rah(n)-ZHAY"],["cuisiner","to cook","kwee-zee-NAY"],["réparer","to repair","ray-pah-RAY"],["construire","to build","kohn-STRWEER"],["déménager","to move (house)","day-may-nah-ZHAY"],["habiter","to live (somewhere)","ah-bee-TAY"]]]
     ]
   },
   B1: {
     desc: "Giving opinions, making decisions, talking about feelings and habits.",
     groups: [
-      ["Opinion & Reasoning", [["penser","to think"],["croire","to believe"],["l'avis","opinion"],["selon moi","in my opinion"],["par contre","on the other hand"],["cependant","however"],["donc","therefore"],["parce que","because"]]],
-      ["Goals & Decisions", [["le but","goal"],["réussir","to succeed"],["échouer","to fail"],["l'effort","effort"],["la décision","decision"],["décider","to decide"],["changer","to change"],["améliorer","to improve"],["le conseil","advice"],["conseiller","to advise"],["éviter","to avoid"]]],
-      ["Emotions, Memory & Habit", [["se plaindre","to complain"],["s'inquiéter","to worry"],["se détendre","to relax"],["l'ambiance","atmosphere, mood"],["la relation","relationship"],["se disputer","to argue"],["se réconcilier","to make up"],["la confiance","trust"],["douter","to doubt"],["l'expérience","experience"],["le souvenir","memory"],["se souvenir de","to remember"],["oublier","to forget"],["l'habitude","habit"],["s'habituer à","to get used to"],["profiter de","to enjoy, take advantage of"]]],
-      ["Work & Study", [["l'entretien","interview"],["le CV","résumé, CV"],["l'employeur","employer"],["l'employé(e)","employee"],["le patron","boss"],["le/la collègue","colleague"],["le salaire","salary"],["la formation","training"],["le diplôme","diploma, degree"],["l'université","university"],["le cours","class, course"],["l'examen","exam"],["la note","grade"],["apprendre","to learn"],["enseigner","to teach"],["étudier","to study"],["rédiger","to write, draft"],["présenter","to present"],["la présentation","presentation"],["l'objectif","objective"],["la tâche","task"],["le délai","deadline"],["la réunion","meeting"],["collaborer","to collaborate"],["gérer","to manage"],["planifier","to plan"],["embaucher","to hire"],["licencier","to lay off, fire"],["démissionner","to resign"],["la carrière","career"],["la promotion","promotion"],["postuler","to apply (for a job)"]]]
+      ["Opinion & Reasoning", [["penser","to think","pahn-SAY"],["croire","to believe","krwahr"],["l'avis","opinion","lah-VEE"],["selon moi","in my opinion","suh-LOH(N) mwah"],["par contre","on the other hand","pahr KOHN-truh"],["cependant","however","suh-pahn-DAH(N)"],["donc","therefore","doh(n)k"],["parce que","because","pahrs-kuh"]]],
+      ["Goals & Decisions", [["le but","goal","luh bewt"],["réussir","to succeed","ray-ew-SEER"],["échouer","to fail","ay-shoo-AY"],["l'effort","effort","leh-FOR"],["la décision","decision","lah day-see-ZYOH(N)"],["décider","to decide","day-see-DAY"],["changer","to change","shahn-ZHAY"],["améliorer","to improve","ah-may-lyor-AY"],["le conseil","advice","luh kohn-SAY"],["conseiller","to advise","kohn-say-YAY"],["éviter","to avoid","ay-vee-TAY"]]],
+      ["Emotions, Memory & Habit", [["se plaindre","to complain","suh PLA(N)-druh"],["s'inquiéter","to worry","sa(n)-kyay-TAY"],["se détendre","to relax","suh day-TAHN-druh"],["l'ambiance","atmosphere, mood","lahm-BYAH(N)S"],["la relation","relationship","lah ruh-lah-SYOH(N)"],["se disputer","to argue","suh dees-pew-TAY"],["se réconcilier","to make up","suh ray-koh(n)-see-LYAY"],["la confiance","trust","lah kohn-FYAH(N)S"],["douter","to doubt","doo-TAY"],["l'expérience","experience","lek-spay-RYAH(N)S"],["le souvenir","memory","luh soov-NEER"],["se souvenir de","to remember","suh soov-NEER duh"],["oublier","to forget","oo-blee-AY"],["l'habitude","habit","lah-bee-TEWD"],["s'habituer à","to get used to","sah-bee-tew-AY ah"],["profiter de","to enjoy, take advantage of","proh-fee-TAY duh"]]],
+      ["Work & Study", [["l'entretien","interview","lahn-truh-TYA(N)"],["le CV","résumé, CV","luh say-VAY"],["l'employeur","employer","lahm-plwah-YUHR"],["l'employé(e)","employee","lahm-plwah-YAY"],["le patron","boss","luh pah-TROH(N)"],["le/la collègue","colleague","luh koh-LEG"],["le salaire","salary","luh sah-LEHR"],["la formation","training","lah for-mah-SYOH(N)"],["le diplôme","diploma, degree","luh dee-PLOHM"],["l'université","university","lew-nee-vehr-see-TAY"],["le cours","class, course","luh koor"],["l'examen","exam","leg-zah-MA(N)"],["la note","grade","lah not"],["apprendre","to learn","ah-PRAHN-druh"],["enseigner","to teach","ahn-say-NYAY"],["étudier","to study","ay-tew-DYAY"],["rédiger","to write, draft","ray-dee-ZHAY"],["présenter","to present","pray-zahn-TAY"],["la présentation","presentation","lah pray-zahn-tah-SYOH(N)"],["l'objectif","objective","lohb-zhek-TEEF"],["la tâche","task","lah tahsh"],["le délai","deadline","luh day-LAY"],["la réunion","meeting","lah ray-ew-NYOH(N)"],["collaborer","to collaborate","koh-lah-bor-AY"],["gérer","to manage","zhay-RAY"],["planifier","to plan","plah-nee-FYAY"],["embaucher","to hire","ahm-boh-SHAY"],["licencier","to lay off, fire","lee-sahn-SYAY"],["démissionner","to resign","day-mee-syoh-NAY"],["la carrière","career","lah kah-RYEHR"],["la promotion","promotion","lah proh-moh-SYOH(N)"],["postuler","to apply (for a job)","pos-tew-LAY"]]]
     ]
   },
   B2: {
     desc: "Society, environment, media, and structured argument.",
     groups: [
-      ["Society & Environment", [["la société","society"],["l'environnement","environment"],["le réchauffement climatique","global warming"],["polluer","to pollute"],["le développement durable","sustainable development"],["les ressources","resources"],["l'économie","economy"],["le chômage","unemployment"],["la mondialisation","globalization"]]],
-      ["Media & Argument", [["les médias","media"],["l'actualité","current events"],["le journal","newspaper"],["souligner","to emphasize"],["remettre en question","to question, challenge"],["le point de vue","point of view"],["la preuve","proof, evidence"],["démontrer","to demonstrate"],["contredire","to contradict"],["nuancer","to qualify, nuance"]]],
-      ["Connectors, Law & Policy", [["néanmoins","nevertheless"],["malgré","despite"],["bien que","although"],["afin de","in order to"],["dans la mesure où","insofar as"],["la conséquence","consequence"],["entraîner","to bring about, lead to"],["la mesure","measure, policy"],["mettre en place","to implement"],["la loi","law"],["le droit","right, law"],["la responsabilité","responsibility"],["engager","to commit, engage"],["sensibiliser","to raise awareness"],["le débat","debate"],["s'opposer à","to oppose"]]],
-      ["Politics & Culture", [["le gouvernement","government"],["l'État","the State"],["le président","president"],["le ministre","minister"],["l'élection","election"],["voter","to vote"],["le parti","party (political)"],["la politique","politics, policy"],["la démocratie","democracy"],["la manifestation","protest"],["la grève","strike"],["le citoyen","citizen"],["la liberté","freedom"],["l'égalité","equality"],["la justice","justice"],["la culture","culture"],["le patrimoine","heritage"],["la tradition","tradition"],["la langue","language"],["l'identité","identity"],["l'immigration","immigration"],["l'intégration","integration"],["la diversité","diversity"],["la religion","religion"],["la croyance","belief"],["la morale","morality"],["l'éthique","ethics"],["la génération","generation"],["l'héritage","inheritance, legacy"],["le siècle","century"],["l'époque","era, period"],["historique","historical"],["contemporain(e)","contemporary"],["actuel(le)","current"],["mondial(e)","global, worldwide"]]]
+      ["Society & Environment", [["la société","society","lah soh-syay-TAY"],["l'environnement","environment","lah(n)-vee-ron-MAH(N)"],["le réchauffement climatique","global warming","luh ray-shohf-MAH(N) klee-mah-TEEK"],["polluer","to pollute","poh-lew-AY"],["le développement durable","sustainable development","luh day-vlop-MAH(N) dew-RAH-bluh"],["les ressources","resources","lay ruh-SOORS"],["l'économie","economy","lay-koh-noh-MEE"],["le chômage","unemployment","luh shoh-MAHZH"],["la mondialisation","globalization","lah moh(n)-dyah-lee-zah-SYOH(N)"]]],
+      ["Media & Argument", [["les médias","media","lay may-DYAH"],["l'actualité","current events","lahk-twah-lee-TAY"],["le journal","newspaper","luh zhoor-NAHL"],["souligner","to emphasize","soo-lee-NYAY"],["remettre en question","to question, challenge","ruh-MEH-truh ah(n) kes-TYOH(N)"],["le point de vue","point of view","luh pwa(n) duh vew"],["la preuve","proof, evidence","lah pruhv"],["démontrer","to demonstrate","day-mohn-TRAY"],["contredire","to contradict","kohn-truh-DEER"],["nuancer","to qualify, nuance","new-ah(n)-SAY"]]],
+      ["Connectors, Law & Policy", [["néanmoins","nevertheless","nay-ah(n)-MWA(N)"],["malgré","despite","mahl-GRAY"],["bien que","although","bya(n) kuh"],["afin de","in order to","ah-FA(N) duh"],["dans la mesure où","insofar as","dah(n) lah muh-ZEWR oo"],["la conséquence","consequence","lah kohn-say-KAH(N)S"],["entraîner","to bring about, lead to","ah(n)-treh-NAY"],["la mesure","measure, policy","lah muh-ZEWR"],["mettre en place","to implement","MEH-truh ah(n) plahs"],["la loi","law","lah lwah"],["le droit","right, law","luh drwah"],["la responsabilité","responsibility","lah res-pohn-sah-bee-lee-TAY"],["engager","to commit, engage","ah(n)-gah-ZHAY"],["sensibiliser","to raise awareness","sah(n)-see-bee-lee-ZAY"],["le débat","debate","luh day-BAH"],["s'opposer à","to oppose","soh-poh-ZAY ah"]]],
+      ["Politics & Culture", [["le gouvernement","government","luh goo-vehr-nuh-MAH(N)"],["l'État","the State","lay-TAH"],["le président","president","luh pray-zee-DAH(N)"],["le ministre","minister","luh mee-NEES-truh"],["l'élection","election","lay-lek-SYOH(N)"],["voter","to vote","voh-TAY"],["le parti","party (political)","luh pahr-TEE"],["la politique","politics, policy","lah poh-lee-TEEK"],["la démocratie","democracy","lah day-moh-krah-SEE"],["la manifestation","protest","lah mah-nee-fes-tah-SYOH(N)"],["la grève","strike","lah grehv"],["le citoyen","citizen","luh see-twah-YA(N)"],["la liberté","freedom","lah lee-behr-TAY"],["l'égalité","equality","lay-gah-lee-TAY"],["la justice","justice","lah zhew-STEES"],["la culture","culture","lah kewl-TEWR"],["le patrimoine","heritage","luh pah-tree-MWAHN"],["la tradition","tradition","lah trah-dee-SYOH(N)"],["la langue","language","lah lah(n)g"],["l'identité","identity","lee-dahn-tee-TAY"],["l'immigration","immigration","lee-mee-grah-SYOH(N)"],["l'intégration","integration","la(n)-tay-grah-SYOH(N)"],["la diversité","diversity","lah dee-vehr-see-TAY"],["la religion","religion","lah ruh-lee-ZHYOH(N)"],["la croyance","belief","lah krwah-YAH(N)S"],["la morale","morality","lah moh-RAHL"],["l'éthique","ethics","lay-TEEK"],["la génération","generation","lah zhay-nay-rah-SYOH(N)"],["l'héritage","inheritance, legacy","lay-ree-TAHZH"],["le siècle","century","luh SYEH-kluh"],["l'époque","era, period","lay-POK"],["historique","historical","ees-toh-REEK"],["contemporain(e)","contemporary","kohn-tahm-poh-RA(N)"],["actuel(le)","current","ahk-TWEHL"],["mondial(e)","global, worldwide","mohn-DYAHL"]]]
     ]
   },
   C1: {
     desc: "Formal, nuanced language for essays, debate, and abstract topics.",
     groups: [
-      ["Formal Connectors", [["par ailleurs","furthermore, moreover"],["or","now, yet (logical link)"],["quoi qu'il en soit","be that as it may"],["force est de constater que","it must be acknowledged that"],["en dépit de","despite"],["il n'en demeure pas moins que","the fact remains that"],["tributaire de","dependent on"]]],
-      ["Nuance & Argument", [["l'enjeu","stake, issue at hand"],["la contrainte","constraint"],["le paradoxe","paradox"],["l'ambiguïté","ambiguity"],["la subtilité","subtlety"],["le préjugé","prejudice"],["la nuance","nuance"],["le clivage","divide, split"],["le corollaire","corollary"],["la controverse","controversy"],["la légitimité","legitimacy"],["l'ampleur","scale, extent"],["anodin","trivial, harmless"]]],
-      ["Advanced Verbs & Nouns", [["pallier","to remedy, offset"],["subvenir à","to provide for"],["entériner","to ratify"],["remédier à","to remedy"],["l'essor","rise, growth"],["la pérennité","sustainability, longevity"],["le stratagème","scheme, stratagem"],["l'apogée","peak, apex"],["le vecteur","vector, means (of spread)"],["déceler","to detect"],["l'entrave","hindrance"],["occulter","to conceal, overshadow"],["le truchement","means, medium (par le truchement de)"],["l'idiosyncrasie","idiosyncrasy"],["étayer","to substantiate, support"]]],
-      ["Precision & Register", [["d'emblée","right away, from the outset"],["d'ores et déjà","already, henceforth"],["qui plus est","what's more"],["ceci dit","that being said"],["à l'instar de","just like"],["au demeurant","moreover"],["de surcroît","moreover, in addition"],["en l'occurrence","in this case"],["à cet égard","in this regard"],["eu égard à","in view of"],["le constat","observation, finding"],["la démarche","approach, process"],["l'approche","approach"],["le dispositif","mechanism, system"],["le cadre","framework"],["la portée","scope, reach"],["le fondement","foundation"],["la finalité","purpose, end goal"],["l'aboutissement","outcome, culmination"],["l'incidence","impact"],["la répercussion","repercussion"],["la retombée","fallout, consequence"],["la recrudescence","resurgence, upsurge"],["la propension","propensity"],["l'aptitude","aptitude"],["la volonté","will, willpower"],["l'aspiration","aspiration"],["engendrer","to generate, engender"],["susciter","to arouse, give rise to"],["favoriser","to favor, promote"],["freiner","to slow down, hinder"],["atténuer","to mitigate"]]]
+      ["Formal Connectors", [["par ailleurs","furthermore, moreover","pahr ah-YUHR"],["or","now, yet (logical link)","or"],["quoi qu'il en soit","be that as it may","kwah keel ah(n) swah"],["force est de constater que","it must be acknowledged that","fors eh duh kohn-stah-TAY kuh"],["en dépit de","despite","ah(n) day-PEE duh"],["il n'en demeure pas moins que","the fact remains that","eel nah(n) duh-MUHR pah mwa(n) kuh"],["tributaire de","dependent on","tree-bew-TEHR duh"]]],
+      ["Nuance & Argument", [["l'enjeu","stake, issue at hand","lah(n)-ZHUH"],["la contrainte","constraint","lah kohn-TRA(N)T"],["le paradoxe","paradox","luh pah-rah-DOKS"],["l'ambiguïté","ambiguity","lah(n)-bee-gwee-TAY"],["la subtilité","subtlety","lah sewb-tee-lee-TAY"],["le préjugé","prejudice","luh pray-zhew-ZHAY"],["la nuance","nuance","lah new-AH(N)S"],["le clivage","divide, split","luh klee-VAHZH"],["le corollaire","corollary","luh kor-oh-LEHR"],["la controverse","controversy","lah kohn-troh-VEHRS"],["la légitimité","legitimacy","lah lay-zhee-tee-mee-TAY"],["l'ampleur","scale, extent","lahm-PLUHR"],["anodin","trivial, harmless","ah-noh-DA(N)"]]],
+      ["Advanced Verbs & Nouns", [["pallier","to remedy, offset","pah-LYAY"],["subvenir à","to provide for","sewb-vuh-NEER ah"],["entériner","to ratify","ah(n)-tay-ree-NAY"],["remédier à","to remedy","ruh-may-DYAY ah"],["l'essor","rise, growth","leh-SOR"],["la pérennité","sustainability, longevity","lah pay-rehn-ee-TAY"],["le stratagème","scheme, stratagem","luh strah-tah-ZHEHM"],["l'apogée","peak, apex","lah-poh-ZHAY"],["le vecteur","vector, means (of spread)","luh vek-TUHR"],["déceler","to detect","day-suh-LAY"],["l'entrave","hindrance","lah(n)-TRAHV"],["occulter","to conceal, overshadow","oh-kewl-TAY"],["le truchement","means, medium (par le truchement de)","luh trewsh-MAH(N)"],["l'idiosyncrasie","idiosyncrasy","lee-dyoh-sa(n)-krah-ZEE"],["étayer","to substantiate, support","ay-tay-YAY"]]],
+      ["Precision & Register", [["d'emblée","right away, from the outset","dah(n)-BLAY"],["d'ores et déjà","already, henceforth","dor ay day-ZHAH"],["qui plus est","what's more","kee plew zeh"],["ceci dit","that being said","suh-SEE dee"],["à l'instar de","just like","ah la(n)-STAHR duh"],["au demeurant","moreover","oh duh-muh-RAH(N)"],["de surcroît","moreover, in addition","duh sewr-KRWAH"],["en l'occurrence","in this case","ah(n) loh-kew-RAH(N)S"],["à cet égard","in this regard","ah seht ay-GAHR"],["eu égard à","in view of","ew ay-GAHR ah"],["le constat","observation, finding","luh kohn-STAH"],["la démarche","approach, process","lah day-MAHRSH"],["l'approche","approach","lah-PROSH"],["le dispositif","mechanism, system","luh dees-poh-zee-TEEF"],["le cadre","framework","luh KAH-druh"],["la portée","scope, reach","lah por-TAY"],["le fondement","foundation","luh fohnd-MAH(N)"],["la finalité","purpose, end goal","lah fee-nah-lee-TAY"],["l'aboutissement","outcome, culmination","lah-boo-tees-MAH(N)"],["l'incidence","impact","la(n)-see-DAH(N)S"],["la répercussion","repercussion","lah ray-pehr-kew-SYOH(N)"],["la retombée","fallout, consequence","lah ruh-tohm-BAY"],["la recrudescence","resurgence, upsurge","lah ruh-krew-deh-SAH(N)S"],["la propension","propensity","lah proh-pah(n)-SYOH(N)"],["l'aptitude","aptitude","lahp-tee-TEWD"],["la volonté","will, willpower","lah voh-lohn-TAY"],["l'aspiration","aspiration","lahs-pee-rah-SYOH(N)"],["engendrer","to generate, engender","ah(n)-zhahn-DRAY"],["susciter","to arouse, give rise to","sew-see-TAY"],["favoriser","to favor, promote","fah-voh-ree-ZAY"],["freiner","to slow down, hinder","fray-NAY"],["atténuer","to mitigate","ah-tay-new-AY"]]]
     ]
   },
   C2: {
     desc: "Literary, rare, and highly precise vocabulary for near-native command.",
     groups: [
-      ["Literary & Abstract", [["l'acabit","kind, sort (usu. pejorative)"],["la prégnance","salience, hold (on the mind)"],["l'acuité","acuity, sharpness"],["inextricable","inextricable"],["l'antinomie","antinomy, contradiction"],["subrepticement","surreptitiously"],["insondable","unfathomable"],["la dichotomie","dichotomy"]]],
-      ["Rhetoric & Philosophy", [["l'hégémonie","hegemony"],["le truisme","truism"],["l'ineptie","ineptitude, absurdity"],["le sophisme","sophism, fallacy"],["l'hermétisme","hermeticism, obscurity"],["la circonlocution","circumlocution"],["l'apanage","exclusive privilege, preserve"],["le déterminisme","determinism"],["l'exégèse","exegesis"],["l'aporie","aporia, insoluble puzzle"],["le solipsisme","solipsism"]]],
-      ["Style & Nuance", [["la vraisemblance","verisimilitude, plausibility"],["l'ubiquité","ubiquity"],["la velléité","half-hearted intention"],["l'atavisme","atavism"],["la réminiscence","reminiscence"],["le paroxysme","paroxysm, climax"]]],
-      ["Rare & Literary II", [["l'acrimonie","acrimony"],["la mansuétude","leniency, clemency"],["l'incurie","negligence"],["la turpitude","turpitude, depravity"],["la faconde","glibness, loquacity"],["la forfaiture","breach of public trust"],["la spoliation","despoliation, plundering"],["l'anathème","anathema"],["le simulacre","sham, simulacrum"],["l'artifice","artifice"],["la duplicité","duplicity"],["la spéciosité","speciousness"],["l'outrecuidance","arrogance, presumptuousness"],["la pusillanimité","pusillanimity, cowardice"],["la mégalomanie","megalomania"],["l'invective","invective"],["le vitriol","vitriol (as in propos au vitriol)"]]]
+      ["Literary & Abstract", [["l'acabit","kind, sort (usu. pejorative)","lah-kah-BEE"],["la prégnance","salience, hold (on the mind)","lah pray-NYAH(N)S"],["l'acuité","acuity, sharpness","lah-kwee-TAY"],["inextricable","inextricable","ee-nek-stree-KAH-bluh"],["l'antinomie","antinomy, contradiction","lah(n)-tee-noh-MEE"],["subrepticement","surreptitiously","sew-brep-tees-MAH(N)"],["insondable","unfathomable","a(n)-sohn-DAH-bluh"],["la dichotomie","dichotomy","lah dee-koh-toh-MEE"]]],
+      ["Rhetoric & Philosophy", [["l'hégémonie","hegemony","lay-zhay-moh-NEE"],["le truisme","truism","luh trew-EEZ-muh"],["l'ineptie","ineptitude, absurdity","lee-nep-SEE"],["le sophisme","sophism, fallacy","luh soh-FEEZ-muh"],["l'hermétisme","hermeticism, obscurity","lehr-may-TEEZ-muh"],["la circonlocution","circumlocution","lah seer-koh(n)-loh-kew-SYOH(N)"],["l'apanage","exclusive privilege, preserve","lah-pah-NAHZH"],["le déterminisme","determinism","luh day-tehr-mee-NEEZ-muh"],["l'exégèse","exegesis","lek-say-ZHEHZ"],["l'aporie","aporia, insoluble puzzle","lah-poh-REE"],["le solipsisme","solipsism","luh soh-leep-SEEZ-muh"]]],
+      ["Style & Nuance", [["la vraisemblance","verisimilitude, plausibility","lah vray-sahm-BLAH(N)S"],["l'ubiquité","ubiquity","lew-bee-kwee-TAY"],["la velléité","half-hearted intention","lah veh-lay-ee-TAY"],["l'atavisme","atavism","lah-tah-VEEZ-muh"],["la réminiscence","reminiscence","lah ray-mee-nee-SAH(N)S"],["le paroxysme","paroxysm, climax","luh pah-rok-SEEZ-muh"]]],
+      ["Rare & Literary II", [["l'acrimonie","acrimony","lah-kree-moh-NEE"],["la mansuétude","leniency, clemency","lah mahn-sway-TEWD"],["l'incurie","negligence","la(n)-kew-REE"],["la turpitude","turpitude, depravity","lah tewr-pee-TEWD"],["la faconde","glibness, loquacity","lah fah-KOHND"],["la forfaiture","breach of public trust","lah for-fay-TEWR"],["la spoliation","despoliation, plundering","lah spoh-lyah-SYOH(N)"],["l'anathème","anathema","lah-nah-TEHM"],["le simulacre","sham, simulacrum","luh see-mew-LAH-kruh"],["l'artifice","artifice","lahr-tee-FEES"],["la duplicité","duplicity","lah dew-plee-see-TAY"],["la spéciosité","speciousness","lah spay-syoh-zee-TAY"],["l'outrecuidance","arrogance, presumptuousness","loo-truh-kwee-DAH(N)S"],["la pusillanimité","pusillanimity, cowardice","lah pew-see-lah-nee-mee-TAY"],["la mégalomanie","megalomania","lah may-gah-loh-mah-NEE"],["l'invective","invective","la(n)-vek-TEEV"],["le vitriol","vitriol (as in propos au vitriol)","luh vee-tree-OL"]]]
     ]
   }
 };
@@ -797,6 +817,21 @@ const VERBS = Object.keys(CONJUGATIONS);
 let currentVerb = VERBS[0];
 let currentTense = TENSES[0];
 
+function getTheme(){
+  try{ return localStorage.getItem('motamot_theme') || 'light'; }catch(e){ return 'light'; }
+}
+function applyTheme(){
+  const dark = getTheme()==='dark';
+  document.body.classList.toggle('dark', dark);
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn) btn.textContent = dark ? '☀️ Light mode' : '🌙 Dark mode';
+}
+function toggleTheme(){
+  const next = getTheme()==='dark' ? 'light' : 'dark';
+  try{ localStorage.setItem('motamot_theme', next); }catch(e){}
+  applyTheme();
+}
+
 /* =====================================================================
    STORAGE (localStorage — works once added to Home Screen in real Safari)
    ===================================================================== */
@@ -990,7 +1025,7 @@ function renderLevel(){
     catEl.innerHTML = `<span class="catchip">${cat}</span>`;
     const grid = document.createElement('div');
     grid.className = 'cardgrid';
-    wordsInCat.forEach(([fr,en])=>{
+    wordsInCat.forEach(([fr,en,pron])=>{
       const key = currentLevel+':'+fr;
       const isKnown = !!mastery[key];
       const card = document.createElement('div');
@@ -998,7 +1033,7 @@ function renderLevel(){
       card.innerHTML = `
         <div class="dot"></div>
         <div class="flash-inner">
-          <div class="flash-face front"><div class="fr">${fr}</div></div>
+          <div class="flash-face front"><div class="fr">${fr}</div>${pron?`<div class="pron">/${pron}/</div>`:''}</div>
           <div class="flash-face back"><div class="en">${en}</div></div>
         </div>`;
       card.onclick = ()=> card.classList.toggle('flipped');
@@ -1290,9 +1325,18 @@ function startConjQuiz(){
      section    — label recorded in quiz history ("A1", "Conjugation", …)
      reviewMode — if true, a correct answer removes the word from Mistakes
    ===================================================================== */
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
 function runQuiz(container, words, onRestart, onExit, opts){
   opts = opts || {};
-  const shuffled = [...words].sort(()=>Math.random()-0.5).slice(0, Math.min(10, words.length));
+  const shuffled = shuffleArray(words).slice(0, Math.min(10, words.length));
   const state = { words: shuffled, i:0, score:0, pool: words, recorded:false };
   renderQuizQ(container, state, onRestart, onExit, opts);
 }
@@ -1304,7 +1348,19 @@ function poolForCtx(ctx){
   if(ctx.type==='conj'){
     const [v,t] = ctx.key.split('|');
     if(CONJUGATIONS[v] && CONJUGATIONS[v][t]){
-      return CONJUGATIONS[v][t].filter(f=>f!=='—').map(f=>({en:f}));
+      let pool = CONJUGATIONS[v][t].filter(f=>f!=='—').map(f=>({en:f}));
+      // Some tenses (Impératif especially) only have 2-3 forms for a single verb, not
+      // enough for 3 good distractors. Top up with the SAME tense from other verbs, so
+      // wrong answers are still grammatically plausible (other imperatives, not a
+      // random different tense) rather than falling back to the whole mixed session pool.
+      if(pool.length < 4){
+        Object.keys(CONJUGATIONS).forEach(otherV=>{
+          if(otherV===v) return;
+          const otherForms = CONJUGATIONS[otherV][t];
+          if(otherForms) pool = pool.concat(otherForms.filter(f=>f!=='—').map(f=>({en:f})));
+        });
+      }
+      return pool;
     }
   }
   return null;
@@ -1331,8 +1387,8 @@ function renderQuizQ(container, state, onRestart, onExit, opts){
   let candidates = poolForCtx(q.ctx);
   candidates = candidates ? candidates.filter(w=>w.en!==q.en) : null;
   if(!candidates || candidates.length < 3){ candidates = state.pool.filter(w=>w.en!==q.en); }
-  const distractors = [...candidates].sort(()=>Math.random()-0.5).slice(0,3).map(w=>w.en);
-  const options = [...new Set([...distractors, q.en])].sort(()=>Math.random()-0.5);
+  const distractors = shuffleArray(candidates).slice(0,3).map(w=>w.en);
+  const options = shuffleArray([...new Set([...distractors, q.en])]);
 
   const promptHtml = (q.sub && q.sub.length)
     ? q.fr + q.sub.map(line=>`<small>${line}</small>`).join('')
@@ -1453,6 +1509,7 @@ function openModal(){ document.getElementById('modalbg').classList.add('open'); 
 function closeModal(){ document.getElementById('modalbg').classList.remove('open'); }
 
 /* ---------- init ---------- */
+applyTheme();
 buildEssTabs();
 renderEssentials();
 buildLevelTabs();
