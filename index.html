@@ -98,6 +98,7 @@
   .conjtable td.pron{color:var(--ink-soft);width:32%;}
   .conjtable td.form{font-family:'Fraunces',serif;font-weight:600;}
   .conjtable td.phon{color:var(--ink-soft);font-size:13px;text-align:right;white-space:nowrap;}
+  .conjtable td.pron .contraction{font-size:12px;font-weight:400;color:var(--ink-soft);}
   .conjnote{font-size:12px;color:var(--ink-soft);margin-top:10px;}
   .verbintro{background:var(--paper-card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;}
   .verbintro .inf{font-family:'Fraunces',serif;font-size:19px;font-weight:600;}
@@ -1095,6 +1096,22 @@ function autoPhon(raw){
   if(!raw || raw==='—') return '';
   return raw.split(' ').map(w=>{
     let s = w.toLowerCase().replace(/\(e\)|\(s\)/g,'');
+    // Exact "ai" (j'ai / il y a) and the futur-simple "-rai" ending use a CLOSED e ("ay"),
+    // unlike most other "ai" spellings (mais, avais) which are open ("eh"). Mask before
+    // the generic digraph pass so the ai→eh rule below doesn't touch these.
+    let closedAiTail = null;
+    if(s === 'ai'){ s = '§'; closedAiTail = 'ay'; }
+    else if(/rai$/.test(s)){ s = s.slice(0,-2) + '§'; closedAiTail = 'ay'; }
+    // A doubled m/n after a nasal-looking vowel blocks nasalization (commence, comme,
+    // donne) — mask it so the on/om/an/am rules below don't wrongly nasalize it.
+    s = s.replace(/omm/g, '‡1').replace(/onn/g, '‡2').replace(/amm/g, '‡3').replace(/ann/g, '‡4').replace(/emm/g, '‡5').replace(/enn/g, '‡6');
+    // Soft c: 'c' before e/é/è/ê/i/y sounds like "s" (commence, ici), not hard "k".
+    s = s.replace(/c(?=[eéèêiy])/g, 's');
+    // Soft g: 'g' before e/é/è/ê/i/y sounds like "zh" (mangé, mangeons), not hard "g".
+    s = s.replace(/g(?=[eéèêiy])/g, 'zh');
+    // manger-style verbs insert a silent e before a/o purely to keep the g soft
+    // (mangeons, mangeais) — that e isn't pronounced, so drop it.
+    s = s.replace(/zhe(?=[ao])/g, 'zh');
     const digraphs = [
       ['eaux','oh'],['eau','oh'],['aux','oh'],
       ['œu','uh'],['oeu','uh'],['eu','uh'],
@@ -1111,11 +1128,13 @@ function autoPhon(raw){
       ['â','ah'],['î','ee'],['ï','ee'],['ô','oh'],['û','ew'],['ü','ew']
     ];
     digraphs.forEach(([a,b])=>{ s = s.split(a).join(b); });
+    s = s.replace(/‡1/g,'om').replace(/‡2/g,'on').replace(/‡3/g,'am').replace(/‡4/g,'an').replace(/‡5/g,'em').replace(/‡6/g,'en');
+    if(closedAiTail) s = s.replace('§', closedAiTail);
     if(/ez$/.test(s)) s = s.replace(/ez$/,'ay');
     else if(/ent$/.test(s)) s = s.replace(/ent$/,'');
     else if(/es$/.test(s)) s = s.replace(/es$/,'');
     else {
-      s = s.replace(/s$/,'').replace(/d$/,'').replace(/t$/,'');
+      s = s.replace(/s$/,'').replace(/x$/,'').replace(/d$/,'').replace(/t$/,'');
     }
     s = s.replace(/e$/,'');
     return s || w.toLowerCase();
@@ -1149,7 +1168,11 @@ function renderConjTable(){
   let rows = '';
   forms.forEach((f,i)=>{
     if(f==='—') return;
-    rows += `<tr><td class="pron">${prons[i]}</td><td class="form">${f}</td><td class="phon">${autoPhon(f)}</td></tr>`;
+    let pronCell = prons[i];
+    if(pronCell==='je' && /^[aeiouéèêëàâîïôûüh]/i.test(f)){
+      pronCell = `je <span class="contraction">(j'${f})</span>`;
+    }
+    rows += `<tr><td class="pron">${pronCell}</td><td class="form">${f}</td><td class="phon">${autoPhon(f)}</td></tr>`;
   });
   area.innerHTML = `<table class="conjtable"><tbody>${rows}</tbody></table>`;
 }
