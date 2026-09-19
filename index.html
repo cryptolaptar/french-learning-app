@@ -53,7 +53,7 @@
   body.dark .tabs button.active{color:#1B2027;}
 
   nav.modes{display:flex;gap:2px;margin:18px 0 0;border-bottom:1px solid var(--line);}
-  nav.modes button{flex:1;padding:10px 2px;background:none;border:none;font-family:'Fraunces',serif;font-size:14px;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+  nav.modes button{flex:1;padding:10px 2px;background:none;border:none;font-family:'Fraunces',serif;font-size:13px;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
   nav.modes button.active{color:var(--ink);border-bottom-color:var(--ink);font-weight:600;}
 
   section.view{display:none;padding-top:18px;}
@@ -388,6 +388,29 @@ const ESSENTIALS = {
     ["la minute","minute","lah mee-NEWT"],["lundi","Monday","luh(n)-DEE"],["mardi","Tuesday","mahr-DEE"],["mercredi","Wednesday","mehr-kruh-DEE"],["jeudi","Thursday","zhuh-DEE"],
     ["vendredi","Friday","vah(n)-druh-DEE"],["samedi","Saturday","sahm-DEE"],["dimanche","Sunday","dee-MAH(N)SH"],["janvier","January","zhah(n)-VYAY"],["printemps","spring","pra(n)-TAH(N)"],
     ["automne","autumn","oh-TON"]
+  ],
+  "Tier 8 (~700–800)": [
+    ["le bureau","office, desk","luh bew-ROH"],["le contrat","contract","luh kohn-TRAH"],["le budget","budget","luh bewd-ZHEH"],["le rapport","report","luh rah-POR"],["la stratégie","strategy","lah strah-tay-ZHEE"],
+    ["l'investissement","investment","la(n)-ves-tees-MAH(N)"],["le fournisseur","supplier","luh foor-nee-SUHR"],["la vente","sale","lah vah(n)t"],["l'achat","purchase","lah-SHAH"],["la comptabilité","accounting","lah kohn-tah-bee-lee-TAY"],
+    ["le stock","stock, inventory","luh stok"],["la livraison","delivery","lah lee-vreh-ZOH(N)"],["le siège social","headquarters","luh syehzh soh-SYAHL"],["l'agence","agency","lah-ZHAH(N)S"],["la facture","invoice","lah fahk-TEWR"],
+    ["emporter","to take away","ah(n)-por-TAY"],["rapporter","to bring back, report","rah-por-TAY"],["réfléchir","to think over, reflect","ray-flay-SHEER"],["deviner","to guess","duh-vee-NAY"],["imaginer","to imagine","ee-mah-zhee-NAY"],
+    ["rêver","to dream","reh-VAY"],["espérer","to hope","es-pay-RAY"],["souhaiter","to wish","sweh-TAY"],["remarquer","to notice","ruh-mahr-KAY"],["observer","to observe","ohb-sehr-VAY"],
+    ["examiner","to examine","eg-zah-mee-NAY"],["vérifier","to check, verify","vay-ree-FYAY"],["confirmer","to confirm","kohn-feer-MAY"],["annuler","to cancel","ah-new-LAY"],["reporter","to postpone","ruh-por-TAY"],
+    ["réussir","to succeed","ray-ew-SEER"],["échouer","to fail","ay-shoo-AY"],["abandonner","to give up","ah-bah(n)-doh-NAY"],["insister","to insist","a(n)-sees-TAY"],["hésiter","to hesitate","ay-zee-TAY"],
+    ["le bois","wood","luh bwah"],["le métal","metal","luh may-TAHL"],["le plastique","plastic","luh plahs-TEEK"],["le verre","glass","luh vehr"],["le papier","paper","luh pah-PYAY"],
+    ["le carton","cardboard","luh kahr-TOH(N)"],["la pierre","stone","lah pyehr"],["le cuir","leather","luh kweer"],["la laine","wool","lah lehn"],["le coton","cotton","luh koh-TOH(N)"],
+    ["la soie","silk","lah swah"],["l'or","gold","lor"],["l'acier","steel","lah-SYAY"],["le béton","concrete","luh bay-TOH(N)"],["la brique","brick","lah breek"],
+    ["le continent","continent","luh kohn-tee-NAH(N)"],["l'océan","ocean","loh-say-AH(N)"],["le fleuve","river (to the sea)","luh fluhv"],["la côte","coast","lah koht"],["la plaine","plain (geography)","lah plehn"],
+    ["le sommet","summit, peak","luh soh-MEH"],["la capitale","capital (city)","lah kah-pee-TAHL"],["le village","village","luh vee-LAHZH"],["le centre-ville","downtown","luh sah(n)-truh-VEEL"],["la banlieue","suburb","lah bah(n)-LYUH"],
+    ["l'usine","factory","lew-ZEEN"],["le port","port, harbor","luh por"],["le monument","monument","luh moh-new-MAH(N)"],["le paysage","landscape","luh pay-ee-ZAHZH"],["la carte","map","lah kahrt"],
+    ["la musique","music","lah mew-ZEEK"],["la chanson","song","lah shah(n)-SOH(N)"],["l'artiste","artist","lahr-TEEST"],["le peintre","painter","luh PA(N)-truh"],["la peinture","painting","lah pa(n)-TEWR"],
+    ["la sculpture","sculpture","lah skewlp-TEWR"],["le spectacle","show","luh spek-TAH-kluh"],["la scène","stage, scene","lah sehn"],["l'acteur / l'actrice","actor, actress","lahk-TUHR / lahk-TREES"],["le réalisateur","director (film)","luh ray-ah-lee-zah-TUHR"],
+    ["le concert","concert","luh kohn-SEHR"],["l'orchestre","orchestra","lor-KES-truh"],["la danse","dance","lah dah(n)s"],["le rythme","rhythm","luh reetm"],["l'instrument","instrument","la(n)-strew-MAH(N)"],
+    ["étonné(e)","surprised","ay-toh-NAY"],["déçu(e)","disappointed","day-SEW"],["inquiet / inquiète","worried","a(n)-KYEH / a(n)-KYEHT"],["soulagé(e)","relieved","soo-lah-ZHAY"],["fâché(e)","angry","fah-SHAY"],
+    ["gêné(e)","embarrassed","zheh-NAY"],["épuisé(e)","exhausted","ay-pwee-ZAY"],["détendu(e)","relaxed","day-tah(n)-DEW"],["impatient(e)","impatient","a(n)-pah-SYAH(N)(T)"],["patient(e)","patient","pah-SYAH(N)(T)"],
+    ["poli(e)","polite","poh-LEE"],["impoli(e)","impolite","a(n)-poh-LEE"],["juste","fair, just","zhewst"],["injuste","unfair","a(n)-ZHEWST"],["logique","logical","loh-ZHEEK"],
+    ["illogique","illogical","eel-loh-ZHEEK"],["pratique","practical","prah-TEEK"],["théorique","theoretical","tay-oh-REEK"],["moderne","modern","moh-DEHRN"],["ancien(ne)","old, former","ah(n)-SYA(N) / ah(n)-SYEN"],
+    ["traditionnel(le)","traditional","trah-dee-syoh-NEL"],["classique","classic","klah-SEEK"]
   ]
 };
 const ESS_TIERS = Object.keys(ESSENTIALS);
