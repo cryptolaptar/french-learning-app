@@ -1177,13 +1177,20 @@ function autoPhon(raw){
 }
 
 function renderConjTable(){
-  const info = VERB_EXAMPLES[currentVerb];
+  const verbInfo = VERB_EXAMPLES[currentVerb];
+  const info = verbInfo ? verbInfo[currentTense] : null;
   const introEl = document.getElementById('verbIntroArea');
   if(info){
     introEl.innerHTML = `
       <div class="verbintro">
         <div class="inf">${currentVerb}</div>
         <div class="ex"><span class="fr">${info.fr}</span><br><span class="en">${info.en}</span></div>
+      </div>`;
+  } else if(currentTense==='Impératif'){
+    introEl.innerHTML = `
+      <div class="verbintro">
+        <div class="inf">${currentVerb}</div>
+        <div class="ex" style="font-style:italic;color:var(--ink-soft);">This verb doesn't have an imperative form — it's a modal verb (used with another verb), so French doesn't use it to give direct commands.</div>
       </div>`;
   } else { introEl.innerHTML = ''; }
 
@@ -1238,45 +1245,394 @@ const VERB_PATTERNS = {
   "s'asseoir":"reflexive, irregular", "se souvenir":"reflexive, irregular (like venir)", "se taire":"reflexive, irregular"
 };
 const VERB_EXAMPLES = {
-  "être (to be)": { fr:"Elle est médecin.", en:"She is a doctor." },
-  "avoir (to have)": { fr:"J'ai deux frères.", en:"I have two brothers." },
-  "aller (to go)": { fr:"Nous allons au marché.", en:"We are going to the market." },
-  "faire (to do/make)": { fr:"Il fait ses devoirs.", en:"He is doing his homework." },
-  "parler (-er verbs)": { fr:"Tu parles très bien français.", en:"You speak French very well." },
-  "manger (-er, soft g)": { fr:"Nous mangeons à midi.", en:"We eat at noon." },
-  "commencer (-er, soft c)": { fr:"Le film commence à huit heures.", en:"The film starts at eight o'clock." },
-  "acheter (-er, e→è)": { fr:"J'achète du pain tous les matins.", en:"I buy bread every morning." },
-  "appeler (-er, doubling)": { fr:"Elle appelle sa sœur ce soir.", en:"She's calling her sister tonight." },
-  "préférer (-er, é→è)": { fr:"Je préfère le café au thé.", en:"I prefer coffee to tea." },
-  "finir (-ir verbs)": { fr:"Vous finissez le travail demain.", en:"You finish the work tomorrow." },
-  "partir (-ir, drop consonant)": { fr:"Le train part dans dix minutes.", en:"The train leaves in ten minutes." },
-  "ouvrir (-ir, like -er)": { fr:"Elle ouvre la fenêtre.", en:"She opens the window." },
-  "vendre (-re verbs)": { fr:"Ils vendent leur maison.", en:"They are selling their house." },
-  "attendre (-re verbs)": { fr:"Nous attendons le bus.", en:"We are waiting for the bus." },
-  "répondre (-re verbs)": { fr:"Il répond à la question.", en:"He answers the question." },
-  "descendre (-re verbs)": { fr:"Je descends à la prochaine station.", en:"I'm getting off at the next station." },
-  "perdre (-re verbs)": { fr:"Tu perds toujours tes clés.", en:"You always lose your keys." },
-  "venir (to come)": { fr:"Ils viennent de Paris.", en:"They come from Paris." },
-  "prendre (to take)": { fr:"Elle prend le métro.", en:"She takes the subway." },
-  "pouvoir (can/to be able)": { fr:"Je peux t'aider.", en:"I can help you." },
-  "vouloir (to want)": { fr:"Nous voulons partir tôt.", en:"We want to leave early." },
-  "devoir (must/to have to)": { fr:"Tu dois étudier ce soir.", en:"You have to study tonight." },
-  "savoir (to know)": { fr:"Il sait la réponse.", en:"He knows the answer." },
-  "voir (to see)": { fr:"Nous voyons la mer d'ici.", en:"We can see the sea from here." },
-  "dire (to say)": { fr:"Elle dit toujours la vérité.", en:"She always tells the truth." },
-  "écrire (to write)": { fr:"J'écris une lettre à mon ami.", en:"I'm writing a letter to my friend." },
-  "lire (to read)": { fr:"Vous lisez un bon livre.", en:"You are reading a good book." },
-  "mettre (to put)": { fr:"Il met la table.", en:"He's setting the table." },
-  "boire (to drink)": { fr:"Nous buvons de l'eau.", en:"We drink water." },
-  "croire (to believe)": { fr:"Je crois que c'est vrai.", en:"I believe it's true." },
-  "connaître (to know/be acquainted with)": { fr:"Elle connaît bien la ville.", en:"She knows the city well." },
-  "recevoir (to receive)": { fr:"Ils reçoivent beaucoup de courrier.", en:"They receive a lot of mail." },
-  "se lever (reflexive, e→è)": { fr:"Je me lève à sept heures.", en:"I get up at seven o'clock." },
-  "se laver (reflexive -er)": { fr:"Elle se lave les mains.", en:"She washes her hands." },
-  "s'habiller (reflexive -er)": { fr:"Nous nous habillons rapidement.", en:"We get dressed quickly." },
-  "s'asseoir (reflexive, irregular)": { fr:"Il s'assied près de la fenêtre.", en:"He sits down near the window." },
-  "se souvenir (reflexive, irregular)": { fr:"Je me souviens de mon enfance.", en:"I remember my childhood." },
-  "se taire (reflexive, irregular)": { fr:"Elle se tait pendant le film.", en:"She stays quiet during the movie." }
+  "être (to be)": {
+    "Présent": { fr:"Elle est médecin.", en:"She is a doctor." },
+    "Passé composé": { fr:"Elle a été malade la semaine dernière.", en:"She was sick last week." },
+    "Imparfait": { fr:"Elle était très jeune à l'époque.", en:"She was very young back then." },
+    "Plus-que-parfait": { fr:"Elle avait été professeure avant de déménager.", en:"She had been a teacher before moving." },
+    "Futur simple": { fr:"Elle sera à Paris demain.", en:"She will be in Paris tomorrow." },
+    "Conditionnel présent": { fr:"Elle serait ravie de te voir.", en:"She would be delighted to see you." },
+    "Subjonctif présent": { fr:"Il faut qu'elle soit à l'heure.", en:"She needs to be on time." },
+    "Impératif": { fr:"Sois patient !", en:"Be patient!" }
+  },
+  "avoir (to have)": {
+    "Présent": { fr:"J'ai deux frères.", en:"I have two brothers." },
+    "Passé composé": { fr:"J'ai eu un problème hier.", en:"I had a problem yesterday." },
+    "Imparfait": { fr:"J'avais beaucoup de devoirs au lycée.", en:"I used to have a lot of homework in high school." },
+    "Plus-que-parfait": { fr:"J'avais eu peur avant l'examen.", en:"I had been afraid before the exam." },
+    "Futur simple": { fr:"J'aurai trente ans l'année prochaine.", en:"I will turn thirty next year." },
+    "Conditionnel présent": { fr:"J'aurais besoin d'aide.", en:"I would need help." },
+    "Subjonctif présent": { fr:"Il faut que j'aie plus de patience.", en:"I need to have more patience." },
+    "Impératif": { fr:"Aie confiance en toi !", en:"Have confidence in yourself!" }
+  },
+  "aller (to go)": {
+    "Présent": { fr:"Nous allons au marché.", en:"We are going to the market." },
+    "Passé composé": { fr:"Nous sommes allés au cinéma hier soir.", en:"We went to the cinema last night." },
+    "Imparfait": { fr:"Nous allions à la plage tous les étés.", en:"We used to go to the beach every summer." },
+    "Plus-que-parfait": { fr:"Nous étions déjà allés à Rome avant ce voyage.", en:"We had already been to Rome before this trip." },
+    "Futur simple": { fr:"Nous irons en vacances en juillet.", en:"We will go on vacation in July." },
+    "Conditionnel présent": { fr:"Nous irions volontiers avec toi.", en:"We would gladly go with you." },
+    "Subjonctif présent": { fr:"Il faut que nous allions à la réunion.", en:"We need to go to the meeting." },
+    "Impératif": { fr:"Allons-y !", en:"Let's go!" }
+  },
+  "faire (to do/make)": {
+    "Présent": { fr:"Il fait ses devoirs.", en:"He is doing his homework." },
+    "Passé composé": { fr:"Il a fait une erreur.", en:"He made a mistake." },
+    "Imparfait": { fr:"Il faisait beau ce jour-là.", en:"The weather was nice that day." },
+    "Plus-que-parfait": { fr:"Il avait déjà fait ses valises.", en:"He had already packed his bags." },
+    "Futur simple": { fr:"Il fera froid demain.", en:"It will be cold tomorrow." },
+    "Conditionnel présent": { fr:"Il ferait n'importe quoi pour elle.", en:"He would do anything for her." },
+    "Subjonctif présent": { fr:"Il faut qu'il fasse attention.", en:"He needs to be careful." },
+    "Impératif": { fr:"Fais tes devoirs !", en:"Do your homework!" }
+  },
+  "parler (-er verbs)": {
+    "Présent": { fr:"Tu parles très bien français.", en:"You speak French very well." },
+    "Passé composé": { fr:"Tu as parlé trop vite.", en:"You spoke too fast." },
+    "Imparfait": { fr:"Tu parlais souvent de tes voyages.", en:"You used to talk often about your travels." },
+    "Plus-que-parfait": { fr:"Tu avais déjà parlé à ton patron.", en:"You had already spoken to your boss." },
+    "Futur simple": { fr:"Tu parleras au directeur demain.", en:"You will speak to the director tomorrow." },
+    "Conditionnel présent": { fr:"Tu parlerais mieux avec un peu de pratique.", en:"You would speak better with a bit of practice." },
+    "Subjonctif présent": { fr:"Il faut que tu parles plus fort.", en:"You need to speak louder." },
+    "Impératif": { fr:"Parle plus lentement, s'il te plaît !", en:"Speak more slowly, please!" }
+  },
+  "manger (-er, soft g)": {
+    "Présent": { fr:"Nous mangeons à midi.", en:"We eat at noon." },
+    "Passé composé": { fr:"Nous avons mangé au restaurant hier.", en:"We ate at a restaurant yesterday." },
+    "Imparfait": { fr:"Nous mangions ensemble tous les dimanches.", en:"We used to eat together every Sunday." },
+    "Plus-que-parfait": { fr:"Nous avions déjà mangé avant leur arrivée.", en:"We had already eaten before they arrived." },
+    "Futur simple": { fr:"Nous mangerons chez mes parents ce soir.", en:"We will eat at my parents' place tonight." },
+    "Conditionnel présent": { fr:"Nous mangerions dehors s'il faisait beau.", en:"We would eat outside if the weather were nice." },
+    "Subjonctif présent": { fr:"Il faut que nous mangions plus de légumes.", en:"We need to eat more vegetables." },
+    "Impératif": { fr:"Mangeons avant qu'il soit trop tard !", en:"Let's eat before it's too late!" }
+  },
+  "commencer (-er, soft c)": {
+    "Présent": { fr:"Le film commence à huit heures.", en:"The film starts at eight o'clock." },
+    "Passé composé": { fr:"Le film a commencé en retard.", en:"The film started late." },
+    "Imparfait": { fr:"Le cours commençait toujours à neuf heures.", en:"The class always used to start at nine o'clock." },
+    "Plus-que-parfait": { fr:"Le spectacle avait déjà commencé quand nous sommes arrivés.", en:"The show had already started when we arrived." },
+    "Futur simple": { fr:"La réunion commencera à dix heures.", en:"The meeting will start at ten o'clock." },
+    "Conditionnel présent": { fr:"Le projet commencerait plus tôt avec plus de budget.", en:"The project would start earlier with more budget." },
+    "Subjonctif présent": { fr:"Il faut que le spectacle commence à l'heure.", en:"The show needs to start on time." },
+    "Impératif": { fr:"Commence sans moi !", en:"Start without me!" }
+  },
+  "acheter (-er, e→è)": {
+    "Présent": { fr:"J'achète du pain tous les matins.", en:"I buy bread every morning." },
+    "Passé composé": { fr:"J'ai acheté une nouvelle voiture.", en:"I bought a new car." },
+    "Imparfait": { fr:"J'achetais toujours mes légumes au marché.", en:"I always used to buy my vegetables at the market." },
+    "Plus-que-parfait": { fr:"J'avais déjà acheté les billets.", en:"I had already bought the tickets." },
+    "Futur simple": { fr:"J'achèterai un cadeau pour son anniversaire.", en:"I will buy a gift for her birthday." },
+    "Conditionnel présent": { fr:"J'achèterais cette maison si j'avais l'argent.", en:"I would buy this house if I had the money." },
+    "Subjonctif présent": { fr:"Il faut que j'achète du lait.", en:"I need to buy milk." },
+    "Impératif": { fr:"Achète du pain en rentrant !", en:"Buy some bread on your way home!" }
+  },
+  "appeler (-er, doubling)": {
+    "Présent": { fr:"Elle appelle sa sœur ce soir.", en:"She's calling her sister tonight." },
+    "Passé composé": { fr:"Elle a appelé le médecin ce matin.", en:"She called the doctor this morning." },
+    "Imparfait": { fr:"Elle appelait ses parents chaque dimanche.", en:"She used to call her parents every Sunday." },
+    "Plus-que-parfait": { fr:"Elle avait déjà appelé avant de partir.", en:"She had already called before leaving." },
+    "Futur simple": { fr:"Elle appellera le plombier demain.", en:"She will call the plumber tomorrow." },
+    "Conditionnel présent": { fr:"Elle appellerait si elle avait le temps.", en:"She would call if she had the time." },
+    "Subjonctif présent": { fr:"Il faut qu'elle appelle son avocat.", en:"She needs to call her lawyer." },
+    "Impératif": { fr:"Appelle-moi ce soir !", en:"Call me tonight!" }
+  },
+  "préférer (-er, é→è)": {
+    "Présent": { fr:"Je préfère le café au thé.", en:"I prefer coffee to tea." },
+    "Passé composé": { fr:"J'ai préféré rester à la maison.", en:"I preferred to stay home." },
+    "Imparfait": { fr:"Je préférais les films d'aventure quand j'étais jeune.", en:"I used to prefer adventure movies when I was young." },
+    "Plus-que-parfait": { fr:"J'avais préféré ne rien dire.", en:"I had preferred to say nothing." },
+    "Futur simple": { fr:"Je préférerai sûrement l'autre option.", en:"I will surely prefer the other option." },
+    "Conditionnel présent": { fr:"Je préférerais partir plus tôt.", en:"I would prefer to leave earlier." },
+    "Subjonctif présent": { fr:"Bien que je préfère le café, je bois du thé ce matin.", en:"Although I prefer coffee, I'm drinking tea this morning." },
+    "Impératif": { fr:"Préfère toujours la qualité à la quantité.", en:"Always prefer quality over quantity." }
+  },
+  "finir (-ir verbs)": {
+    "Présent": { fr:"Vous finissez le travail demain.", en:"You finish the work tomorrow." },
+    "Passé composé": { fr:"Vous avez fini vos devoirs ?", en:"Did you finish your homework?" },
+    "Imparfait": { fr:"Vous finissiez toujours en retard.", en:"You always used to finish late." },
+    "Plus-que-parfait": { fr:"Vous aviez déjà fini quand je suis arrivé.", en:"You had already finished when I arrived." },
+    "Futur simple": { fr:"Vous finirez ce rapport avant vendredi.", en:"You will finish this report before Friday." },
+    "Conditionnel présent": { fr:"Vous finiriez plus vite avec de l'aide.", en:"You would finish faster with help." },
+    "Subjonctif présent": { fr:"Il faut que vous finissiez ce projet.", en:"You need to finish this project." },
+    "Impératif": { fr:"Finissez votre assiette !", en:"Finish your plate!" }
+  },
+  "partir (-ir, drop consonant)": {
+    "Présent": { fr:"Le train part dans dix minutes.", en:"The train leaves in ten minutes." },
+    "Passé composé": { fr:"Le train est parti sans nous.", en:"The train left without us." },
+    "Imparfait": { fr:"Le bus partait toujours à huit heures.", en:"The bus always used to leave at eight o'clock." },
+    "Plus-que-parfait": { fr:"Le vol était déjà parti quand nous sommes arrivés.", en:"The flight had already left when we arrived." },
+    "Futur simple": { fr:"Le bateau partira au lever du soleil.", en:"The boat will leave at sunrise." },
+    "Conditionnel présent": { fr:"Le train partirait à l'heure s'il n'y avait pas de grève.", en:"The train would leave on time if there weren't a strike." },
+    "Subjonctif présent": { fr:"Il faut que le train parte à l'heure.", en:"The train needs to leave on time." },
+    "Impératif": { fr:"Pars maintenant, tu vas être en retard !", en:"Leave now, you're going to be late!" }
+  },
+  "ouvrir (-ir, like -er)": {
+    "Présent": { fr:"Elle ouvre la fenêtre.", en:"She opens the window." },
+    "Passé composé": { fr:"Elle a ouvert la porte.", en:"She opened the door." },
+    "Imparfait": { fr:"Elle ouvrait toujours les rideaux le matin.", en:"She always used to open the curtains in the morning." },
+    "Plus-que-parfait": { fr:"Elle avait déjà ouvert le magasin.", en:"She had already opened the shop." },
+    "Futur simple": { fr:"Elle ouvrira son propre restaurant.", en:"She will open her own restaurant." },
+    "Conditionnel présent": { fr:"Elle ouvrirait la fenêtre s'il faisait chaud.", en:"She would open the window if it were hot." },
+    "Subjonctif présent": { fr:"Il faut qu'elle ouvre la boutique à neuf heures.", en:"She needs to open the shop at nine o'clock." },
+    "Impératif": { fr:"Ouvre la porte, s'il te plaît !", en:"Open the door, please!" }
+  },
+  "vendre (-re verbs)": {
+    "Présent": { fr:"Ils vendent leur maison.", en:"They are selling their house." },
+    "Passé composé": { fr:"Ils ont vendu leur voiture.", en:"They sold their car." },
+    "Imparfait": { fr:"Ils vendaient des fruits au marché.", en:"They used to sell fruit at the market." },
+    "Plus-que-parfait": { fr:"Ils avaient déjà vendu tous les billets.", en:"They had already sold all the tickets." },
+    "Futur simple": { fr:"Ils vendront la maison l'année prochaine.", en:"They will sell the house next year." },
+    "Conditionnel présent": { fr:"Ils vendraient plus s'ils baissaient les prix.", en:"They would sell more if they lowered the prices." },
+    "Subjonctif présent": { fr:"Il faut qu'ils vendent la maison rapidement.", en:"They need to sell the house quickly." },
+    "Impératif": { fr:"Vendez vos vieux meubles en ligne !", en:"Sell your old furniture online!" }
+  },
+  "attendre (-re verbs)": {
+    "Présent": { fr:"Nous attendons le bus.", en:"We are waiting for the bus." },
+    "Passé composé": { fr:"Nous avons attendu une heure.", en:"We waited an hour." },
+    "Imparfait": { fr:"Nous attendions le train tous les matins.", en:"We used to wait for the train every morning." },
+    "Plus-que-parfait": { fr:"Nous avions déjà attendu longtemps.", en:"We had already waited a long time." },
+    "Futur simple": { fr:"Nous attendrons devant le cinéma.", en:"We will wait in front of the cinema." },
+    "Conditionnel présent": { fr:"Nous attendrions volontiers un peu plus.", en:"We would gladly wait a bit longer." },
+    "Subjonctif présent": { fr:"Il faut que nous attendions le bon moment.", en:"We need to wait for the right moment." },
+    "Impératif": { fr:"Attendons encore un peu.", en:"Let's wait a little longer." }
+  },
+  "répondre (-re verbs)": {
+    "Présent": { fr:"Il répond à la question.", en:"He answers the question." },
+    "Passé composé": { fr:"Il a répondu rapidement.", en:"He answered quickly." },
+    "Imparfait": { fr:"Il répondait toujours poliment.", en:"He always used to answer politely." },
+    "Plus-que-parfait": { fr:"Il avait déjà répondu à l'email.", en:"He had already replied to the email." },
+    "Futur simple": { fr:"Il répondra à ta lettre demain.", en:"He will reply to your letter tomorrow." },
+    "Conditionnel présent": { fr:"Il répondrait plus vite s'il n'était pas si occupé.", en:"He would answer faster if he weren't so busy." },
+    "Subjonctif présent": { fr:"Il faut qu'il réponde avant midi.", en:"He needs to answer before noon." },
+    "Impératif": { fr:"Réponds-moi vite !", en:"Answer me quickly!" }
+  },
+  "descendre (-re verbs)": {
+    "Présent": { fr:"Je descends à la prochaine station.", en:"I'm getting off at the next station." },
+    "Passé composé": { fr:"Je suis descendu(e) trop tôt.", en:"I got off too early." },
+    "Imparfait": { fr:"Je descendais toujours par l'escalier.", en:"I always used to go down by the stairs." },
+    "Plus-que-parfait": { fr:"J'étais déjà descendu(e) quand ils sont arrivés.", en:"I had already come down when they arrived." },
+    "Futur simple": { fr:"Je descendrai à la gare centrale.", en:"I will get off at the central station." },
+    "Conditionnel présent": { fr:"Je descendrais si j'avais le temps.", en:"I would go down if I had the time." },
+    "Subjonctif présent": { fr:"Il faut que je descende maintenant.", en:"I need to get off now." },
+    "Impératif": { fr:"Descends tout de suite !", en:"Come down right now!" }
+  },
+  "perdre (-re verbs)": {
+    "Présent": { fr:"Tu perds toujours tes clés.", en:"You always lose your keys." },
+    "Passé composé": { fr:"Tu as perdu ton téléphone.", en:"You lost your phone." },
+    "Imparfait": { fr:"Tu perdais souvent patience.", en:"You often used to lose patience." },
+    "Plus-que-parfait": { fr:"Tu avais déjà perdu ton passeport une fois.", en:"You had already lost your passport once." },
+    "Futur simple": { fr:"Tu perdras du temps si tu attends.", en:"You will waste time if you wait." },
+    "Conditionnel présent": { fr:"Tu perdrais moins de temps en voiture.", en:"You would waste less time by car." },
+    "Subjonctif présent": { fr:"Ce n'est pas grave que tu perdes parfois.", en:"It's fine that you sometimes lose." },
+    "Impératif": { fr:"Ne perds pas espoir !", en:"Don't lose hope!" }
+  },
+  "venir (to come)": {
+    "Présent": { fr:"Ils viennent de Paris.", en:"They come from Paris." },
+    "Passé composé": { fr:"Ils sont venus nous voir hier.", en:"They came to see us yesterday." },
+    "Imparfait": { fr:"Ils venaient nous rendre visite chaque été.", en:"They used to visit us every summer." },
+    "Plus-que-parfait": { fr:"Ils étaient déjà venus une fois.", en:"They had already come once before." },
+    "Futur simple": { fr:"Ils viendront dîner samedi soir.", en:"They will come for dinner Saturday evening." },
+    "Conditionnel présent": { fr:"Ils viendraient plus souvent s'ils avaient le temps.", en:"They would come more often if they had the time." },
+    "Subjonctif présent": { fr:"Il faut qu'ils viennent avant midi.", en:"They need to come before noon." },
+    "Impératif": { fr:"Viens vite !", en:"Come quickly!" }
+  },
+  "prendre (to take)": {
+    "Présent": { fr:"Elle prend le métro.", en:"She takes the subway." },
+    "Passé composé": { fr:"Elle a pris une décision difficile.", en:"She made a difficult decision." },
+    "Imparfait": { fr:"Elle prenait toujours le petit-déjeuner tôt.", en:"She always used to have breakfast early." },
+    "Plus-que-parfait": { fr:"Elle avait déjà pris son billet.", en:"She had already bought her ticket." },
+    "Futur simple": { fr:"Elle prendra l'avion demain matin.", en:"She will take the plane tomorrow morning." },
+    "Conditionnel présent": { fr:"Elle prendrait bien un café.", en:"She would love to have a coffee." },
+    "Subjonctif présent": { fr:"Il faut qu'elle prenne le train de huit heures.", en:"She needs to take the eight o'clock train." },
+    "Impératif": { fr:"Prends ton temps !", en:"Take your time!" }
+  },
+  "pouvoir (can/to be able)": {
+    "Présent": { fr:"Je peux t'aider.", en:"I can help you." },
+    "Passé composé": { fr:"J'ai enfin pu terminer le projet.", en:"I was finally able to finish the project." },
+    "Imparfait": { fr:"Je pouvais courir très vite quand j'étais jeune.", en:"I could run very fast when I was young." },
+    "Plus-que-parfait": { fr:"J'avais pu finir à temps.", en:"I had been able to finish in time." },
+    "Futur simple": { fr:"Je pourrai venir demain.", en:"I will be able to come tomorrow." },
+    "Conditionnel présent": { fr:"Je pourrais t'aider si tu veux.", en:"I could help you if you want." },
+    "Subjonctif présent": { fr:"Il faut que je puisse partir tôt.", en:"I need to be able to leave early." }
+  },
+  "vouloir (to want)": {
+    "Présent": { fr:"Nous voulons partir tôt.", en:"We want to leave early." },
+    "Passé composé": { fr:"Nous avons voulu essayer ce restaurant.", en:"We wanted to try this restaurant." },
+    "Imparfait": { fr:"Nous voulions toujours visiter le Japon.", en:"We always wanted to visit Japan." },
+    "Plus-que-parfait": { fr:"Nous avions voulu partir plus tôt.", en:"We had wanted to leave earlier." },
+    "Futur simple": { fr:"Nous voudrons sûrement rester plus longtemps.", en:"We will surely want to stay longer." },
+    "Conditionnel présent": { fr:"Nous voudrions réserver une table.", en:"We would like to book a table." },
+    "Subjonctif présent": { fr:"Bien que nous voulions rester, nous devons partir.", en:"Although we want to stay, we have to leave." },
+    "Impératif": { fr:"Veuillons rester calmes.", en:"Let's remain calm." }
+  },
+  "devoir (must/to have to)": {
+    "Présent": { fr:"Tu dois étudier ce soir.", en:"You have to study tonight." },
+    "Passé composé": { fr:"Tu as dû partir tôt ce matin.", en:"You had to leave early this morning." },
+    "Imparfait": { fr:"Tu devais appeler ta mère hier.", en:"You were supposed to call your mother yesterday." },
+    "Plus-que-parfait": { fr:"Tu avais dû annuler tes plans.", en:"You had had to cancel your plans." },
+    "Futur simple": { fr:"Tu devras finir ce rapport avant vendredi.", en:"You will have to finish this report before Friday." },
+    "Conditionnel présent": { fr:"Tu devrais te reposer un peu.", en:"You should rest a little." },
+    "Subjonctif présent": { fr:"Il est possible que tu doives partir tôt.", en:"It's possible you'll have to leave early." }
+  },
+  "savoir (to know)": {
+    "Présent": { fr:"Il sait la réponse.", en:"He knows the answer." },
+    "Passé composé": { fr:"Il a su garder son calme.", en:"He managed to stay calm." },
+    "Imparfait": { fr:"Il savait toujours quoi dire.", en:"He always knew what to say." },
+    "Plus-que-parfait": { fr:"Il avait su la vérité depuis le début.", en:"He had known the truth from the start." },
+    "Futur simple": { fr:"Il saura quoi faire.", en:"He will know what to do." },
+    "Conditionnel présent": { fr:"Il saurait sûrement répondre à cette question.", en:"He would surely know how to answer this question." },
+    "Subjonctif présent": { fr:"Il faut qu'il sache la vérité.", en:"He needs to know the truth." },
+    "Impératif": { fr:"Sache que je suis là pour toi.", en:"Know that I'm here for you." }
+  },
+  "voir (to see)": {
+    "Présent": { fr:"Nous voyons la mer d'ici.", en:"We can see the sea from here." },
+    "Passé composé": { fr:"Nous avons vu un bon film hier soir.", en:"We saw a good movie last night." },
+    "Imparfait": { fr:"Nous voyions souvent nos voisins.", en:"We used to see our neighbors often." },
+    "Plus-que-parfait": { fr:"Nous avions déjà vu ce film.", en:"We had already seen this movie." },
+    "Futur simple": { fr:"Nous verrons le résultat demain.", en:"We will see the result tomorrow." },
+    "Conditionnel présent": { fr:"Nous verrions mieux avec plus de lumière.", en:"We would see better with more light." },
+    "Subjonctif présent": { fr:"Il faut que nous voyions le médecin.", en:"We need to see the doctor." },
+    "Impératif": { fr:"Voyons ce que nous pouvons faire.", en:"Let's see what we can do." }
+  },
+  "dire (to say)": {
+    "Présent": { fr:"Elle dit toujours la vérité.", en:"She always tells the truth." },
+    "Passé composé": { fr:"Elle a dit quelque chose d'important.", en:"She said something important." },
+    "Imparfait": { fr:"Elle disait souvent qu'elle aimait voyager.", en:"She often used to say she loved traveling." },
+    "Plus-que-parfait": { fr:"Elle avait dit qu'elle viendrait.", en:"She had said she would come." },
+    "Futur simple": { fr:"Elle dira la vérité au juge.", en:"She will tell the truth to the judge." },
+    "Conditionnel présent": { fr:"Elle dirait la même chose à ta place.", en:"She would say the same thing in your place." },
+    "Subjonctif présent": { fr:"Il faut qu'elle dise ce qu'elle pense.", en:"She needs to say what she thinks." },
+    "Impératif": { fr:"Dis-moi la vérité !", en:"Tell me the truth!" }
+  },
+  "écrire (to write)": {
+    "Présent": { fr:"J'écris une lettre à mon ami.", en:"I'm writing a letter to my friend." },
+    "Passé composé": { fr:"J'ai écrit un roman l'année dernière.", en:"I wrote a novel last year." },
+    "Imparfait": { fr:"J'écrivais dans mon journal chaque soir.", en:"I used to write in my journal every evening." },
+    "Plus-que-parfait": { fr:"J'avais déjà écrit la première page.", en:"I had already written the first page." },
+    "Futur simple": { fr:"J'écrirai bientôt un nouveau livre.", en:"I will soon write a new book." },
+    "Conditionnel présent": { fr:"J'écrirais plus souvent si j'avais le temps.", en:"I would write more often if I had the time." },
+    "Subjonctif présent": { fr:"Il faut que j'écrive ce rapport ce soir.", en:"I need to write this report tonight." },
+    "Impératif": { fr:"Écris-moi bientôt !", en:"Write to me soon!" }
+  },
+  "lire (to read)": {
+    "Présent": { fr:"Vous lisez un bon livre.", en:"You are reading a good book." },
+    "Passé composé": { fr:"Vous avez lu cet article ?", en:"Did you read this article?" },
+    "Imparfait": { fr:"Vous lisiez beaucoup quand vous étiez enfant.", en:"You used to read a lot when you were a child." },
+    "Plus-que-parfait": { fr:"Vous aviez déjà lu ce roman.", en:"You had already read this novel." },
+    "Futur simple": { fr:"Vous lirez ce chapitre pour demain.", en:"You will read this chapter for tomorrow." },
+    "Conditionnel présent": { fr:"Vous liriez plus vite avec de la pratique.", en:"You would read faster with practice." },
+    "Subjonctif présent": { fr:"Il faut que vous lisiez ce document avant la réunion.", en:"You need to read this document before the meeting." },
+    "Impératif": { fr:"Lisez attentivement les instructions.", en:"Read the instructions carefully." }
+  },
+  "mettre (to put)": {
+    "Présent": { fr:"Il met la table.", en:"He's setting the table." },
+    "Passé composé": { fr:"Il a mis son manteau.", en:"He put on his coat." },
+    "Imparfait": { fr:"Il mettait toujours ses clés au même endroit.", en:"He always used to put his keys in the same place." },
+    "Plus-que-parfait": { fr:"Il avait déjà mis la table.", en:"He had already set the table." },
+    "Futur simple": { fr:"Il mettra son costume pour l'entretien.", en:"He will wear his suit for the interview." },
+    "Conditionnel présent": { fr:"Il mettrait plus de temps sans voiture.", en:"He would take more time without a car." },
+    "Subjonctif présent": { fr:"Il faut qu'il mette de l'ordre dans sa chambre.", en:"He needs to tidy up his room." },
+    "Impératif": { fr:"Mets ton manteau, il fait froid !", en:"Put on your coat, it's cold!" }
+  },
+  "boire (to drink)": {
+    "Présent": { fr:"Nous buvons de l'eau.", en:"We drink water." },
+    "Passé composé": { fr:"Nous avons bu un café ce matin.", en:"We had a coffee this morning." },
+    "Imparfait": { fr:"Nous buvions du thé tous les après-midis.", en:"We used to drink tea every afternoon." },
+    "Plus-que-parfait": { fr:"Nous avions déjà bu tout le café.", en:"We had already drunk all the coffee." },
+    "Futur simple": { fr:"Nous boirons du champagne pour fêter ça.", en:"We will drink champagne to celebrate." },
+    "Conditionnel présent": { fr:"Nous boirions volontiers un verre.", en:"We would happily have a drink." },
+    "Subjonctif présent": { fr:"Il faut que nous buvions plus d'eau.", en:"We need to drink more water." },
+    "Impératif": { fr:"Buvons à ta santé !", en:"Let's drink to your health!" }
+  },
+  "croire (to believe)": {
+    "Présent": { fr:"Je crois que c'est vrai.", en:"I believe it's true." },
+    "Passé composé": { fr:"J'ai cru entendre du bruit.", en:"I thought I heard a noise." },
+    "Imparfait": { fr:"Je croyais qu'il viendrait.", en:"I thought he would come." },
+    "Plus-que-parfait": { fr:"J'avais cru comprendre autre chose.", en:"I had thought I understood something else." },
+    "Futur simple": { fr:"Je te croirai si tu me le prouves.", en:"I will believe you if you prove it to me." },
+    "Conditionnel présent": { fr:"Je ne croirais jamais une histoire pareille.", en:"I would never believe a story like that." },
+    "Subjonctif présent": { fr:"Bien que je croie en son talent, je reste prudent.", en:"Although I believe in his talent, I remain cautious." },
+    "Impératif": { fr:"Crois en toi !", en:"Believe in yourself!" }
+  },
+  "connaître (to know/be acquainted with)": {
+    "Présent": { fr:"Elle connaît bien la ville.", en:"She knows the city well." },
+    "Passé composé": { fr:"Elle a connu des moments difficiles.", en:"She went through some difficult times." },
+    "Imparfait": { fr:"Elle connaissait tout le monde au bureau.", en:"She knew everyone at the office." },
+    "Plus-que-parfait": { fr:"Elle avait connu ce quartier étant enfant.", en:"She had known this neighborhood as a child." },
+    "Futur simple": { fr:"Elle connaîtra bientôt tous ses collègues.", en:"She will soon know all her colleagues." },
+    "Conditionnel présent": { fr:"Elle connaîtrait mieux la ville avec le temps.", en:"She would know the city better with time." },
+    "Subjonctif présent": { fr:"Il faut qu'elle connaisse les règles avant de commencer.", en:"She needs to know the rules before starting." },
+    "Impératif": { fr:"Connais tes limites !", en:"Know your limits!" }
+  },
+  "recevoir (to receive)": {
+    "Présent": { fr:"Ils reçoivent beaucoup de courrier.", en:"They receive a lot of mail." },
+    "Passé composé": { fr:"Ils ont reçu de bonnes nouvelles.", en:"They received good news." },
+    "Imparfait": { fr:"Ils recevaient souvent des invités.", en:"They often used to have guests over." },
+    "Plus-que-parfait": { fr:"Ils avaient déjà reçu la confirmation.", en:"They had already received the confirmation." },
+    "Futur simple": { fr:"Ils recevront le colis demain.", en:"They will receive the package tomorrow." },
+    "Conditionnel présent": { fr:"Ils recevraient plus d'aide s'ils la demandaient.", en:"They would receive more help if they asked for it." },
+    "Subjonctif présent": { fr:"Il faut qu'ils reçoivent une réponse rapide.", en:"They need to receive a quick answer." },
+    "Impératif": { fr:"Recevez toutes nos félicitations !", en:"Please accept our congratulations!" }
+  },
+  "se lever (reflexive, e→è)": {
+    "Présent": { fr:"Je me lève à sept heures.", en:"I get up at seven o'clock." },
+    "Passé composé": { fr:"Je me suis levé(e) tard ce matin.", en:"I got up late this morning." },
+    "Imparfait": { fr:"Je me levais toujours tôt à l'époque.", en:"I always used to get up early back then." },
+    "Plus-que-parfait": { fr:"Je m'étais déjà levé(e) quand le réveil a sonné.", en:"I had already gotten up when the alarm rang." },
+    "Futur simple": { fr:"Je me lèverai tôt demain.", en:"I will get up early tomorrow." },
+    "Conditionnel présent": { fr:"Je me lèverais plus tôt si je pouvais.", en:"I would get up earlier if I could." },
+    "Subjonctif présent": { fr:"Il faut que je me lève maintenant.", en:"I need to get up now." },
+    "Impératif": { fr:"Lève-toi, il est déjà huit heures !", en:"Get up, it's already eight o'clock!" }
+  },
+  "se laver (reflexive -er)": {
+    "Présent": { fr:"Elle se lave les mains.", en:"She washes her hands." },
+    "Passé composé": { fr:"Elle s'est lavé les cheveux ce matin.", en:"She washed her hair this morning." },
+    "Imparfait": { fr:"Elle se lavait toujours avant de dîner.", en:"She always used to wash up before dinner." },
+    "Plus-que-parfait": { fr:"Elle s'était déjà lavée avant notre arrivée.", en:"She had already washed up before we arrived." },
+    "Futur simple": { fr:"Elle se lavera après le sport.", en:"She will wash up after exercising." },
+    "Conditionnel présent": { fr:"Elle se laverait les mains plus souvent si possible.", en:"She would wash her hands more often if possible." },
+    "Subjonctif présent": { fr:"Il faut qu'elle se lave les mains avant de manger.", en:"She needs to wash her hands before eating." },
+    "Impératif": { fr:"Lave-toi les mains avant le dîner !", en:"Wash your hands before dinner!" }
+  },
+  "s'habiller (reflexive -er)": {
+    "Présent": { fr:"Nous nous habillons rapidement.", en:"We get dressed quickly." },
+    "Passé composé": { fr:"Nous nous sommes habillés pour la fête.", en:"We got dressed for the party." },
+    "Imparfait": { fr:"Nous nous habillions chaudement en hiver.", en:"We used to dress warmly in winter." },
+    "Plus-que-parfait": { fr:"Nous nous étions déjà habillés avant leur arrivée.", en:"We had already gotten dressed before they arrived." },
+    "Futur simple": { fr:"Nous nous habillerons élégamment ce soir.", en:"We will dress elegantly tonight." },
+    "Conditionnel présent": { fr:"Nous nous habillerions différemment pour l'occasion.", en:"We would dress differently for the occasion." },
+    "Subjonctif présent": { fr:"Il faut que nous nous habillions vite.", en:"We need to get dressed quickly." },
+    "Impératif": { fr:"Habillons-nous, on va être en retard !", en:"Let's get dressed, we're going to be late!" }
+  },
+  "s'asseoir (reflexive, irregular)": {
+    "Présent": { fr:"Il s'assied près de la fenêtre.", en:"He sits down near the window." },
+    "Passé composé": { fr:"Il s'est assis sur le canapé.", en:"He sat down on the sofa." },
+    "Imparfait": { fr:"Il s'asseyait toujours à la même place.", en:"He always used to sit in the same spot." },
+    "Plus-que-parfait": { fr:"Il s'était déjà assis quand nous sommes arrivés.", en:"He had already sat down when we arrived." },
+    "Futur simple": { fr:"Il s'assiéra à côté de moi.", en:"He will sit next to me." },
+    "Conditionnel présent": { fr:"Il s'assiérait volontiers avec nous.", en:"He would gladly sit with us." },
+    "Subjonctif présent": { fr:"Il faut qu'il s'asseye avant de commencer.", en:"He needs to sit down before starting." },
+    "Impératif": { fr:"Assieds-toi, je t'en prie.", en:"Sit down, please." }
+  },
+  "se souvenir (reflexive, irregular)": {
+    "Présent": { fr:"Je me souviens de mon enfance.", en:"I remember my childhood." },
+    "Passé composé": { fr:"Je me suis souvenu(e) de son nom.", en:"I remembered his name." },
+    "Imparfait": { fr:"Je me souvenais très bien de cette rue.", en:"I remembered that street very well." },
+    "Plus-que-parfait": { fr:"Je m'étais souvenu(e) de la date juste à temps.", en:"I had remembered the date just in time." },
+    "Futur simple": { fr:"Je me souviendrai toujours de ce jour.", en:"I will always remember that day." },
+    "Conditionnel présent": { fr:"Je me souviendrais mieux si j'avais pris des notes.", en:"I would remember better if I had taken notes." },
+    "Subjonctif présent": { fr:"Il faut que je me souvienne du code.", en:"I need to remember the code." },
+    "Impératif": { fr:"Souviens-toi de fermer la porte !", en:"Remember to close the door!" }
+  },
+  "se taire (reflexive, irregular)": {
+    "Présent": { fr:"Elle se tait pendant le film.", en:"She stays quiet during the movie." },
+    "Passé composé": { fr:"Elle s'est tue soudainement.", en:"She suddenly fell silent." },
+    "Imparfait": { fr:"Elle se taisait toujours en réunion.", en:"She always used to stay quiet in meetings." },
+    "Plus-que-parfait": { fr:"Elle s'était tue avant que je pose la question.", en:"She had fallen silent before I asked the question." },
+    "Futur simple": { fr:"Elle se taira si on ne lui pose pas de questions.", en:"She will stay quiet if no one asks her questions." },
+    "Conditionnel présent": { fr:"Elle se tairait probablement par timidité.", en:"She would probably stay quiet out of shyness." },
+    "Subjonctif présent": { fr:"Il faut qu'elle se taise pendant l'examen.", en:"She needs to stay quiet during the exam." },
+    "Impératif": { fr:"Tais-toi, s'il te plaît !", en:"Be quiet, please!" }
+  }
 };
 const TENSE_USAGE = {
   "Présent": { note:"Actions happening right now, general facts, and habits.", fr:"Je parle français.", en:"I speak French." },
@@ -1310,7 +1666,8 @@ function startConjQuiz(){
         const sub = [`${name} — ${translation}`];
         if(pattern) sub.push(`(${pattern})`);
         sub.push(t);
-        pool.push({ fr: `${prons[i]} _____`, en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i, sub, ctx:{type:'conj',key:v+'|'+t} });
+        const promptFr = t==='Impératif' ? `Command form: ${prons[i]}` : `${prons[i]} _____`;
+        pool.push({ fr: promptFr, en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i, sub, ctx:{type:'conj',key:v+'|'+t} });
       });
     });
   });
