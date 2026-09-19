@@ -154,6 +154,7 @@
       <button class="active" onclick="switchMode('essentials')">Essentials</button>
       <button onclick="switchMode('levels')">By Level</button>
       <button onclick="switchMode('conj')">Conjugation</button>
+      <button onclick="switchMode('conjquiz')">Quiz</button>
       <button onclick="switchMode('progress')">Progress</button>
     </nav>
   </header>
@@ -193,19 +194,25 @@
   <section class="view" id="view-conj">
     <div class="tabs" id="verbTabs"></div>
     <div class="tabs" id="tenseTabs"></div>
-    <div class="levelmeta"><span class="desc">Tenses:</span></div>
-    <div class="tabs" id="tenseCatTabs"></div>
-    <div class="levelmeta"><span class="desc">Quiz on:</span></div>
-    <div class="tabs" id="catTabs"></div>
     <div class="actionrow">
-      <button onclick="startConjQuiz()">Quiz me</button>
-      <button class="secondary" onclick="toggleConjQuiz(false)">Table</button>
+      <button onclick="goToConjQuiz()">Quiz me</button>
     </div>
     <div id="verbIntroArea"></div>
     <div id="conjTableArea"></div>
     <div id="tenseUsageArea"></div>
-    <div id="conjQuizArea" style="display:none;"></div>
     <p class="conjnote">Covers the 8 tenses/moods used in everyday spoken and written French. Literary-only tenses (passé simple, subjonctif imparfait, etc.) aren't included. Pronunciations in the table are a simplified, approximate guide — read them like English, stress the last syllable, and "(n)" means a light nasal touch rather than a hard N.</p>
+  </section>
+
+  <!-- CONJUGATION QUIZ -->
+  <section class="view" id="view-conjquiz">
+    <div class="levelmeta"><span class="desc">Tenses:</span></div>
+    <div class="tabs" id="tenseCatTabs"></div>
+    <div class="levelmeta"><span class="desc">Quiz on:</span></div>
+    <div class="tabs" id="catTabs"></div>
+    <div class="actionrow" id="conjQuizStartRow">
+      <button onclick="startConjQuiz()">Quiz me</button>
+    </div>
+    <div id="conjQuizArea" style="display:none;"></div>
   </section>
 
   <!-- PROGRESS -->
@@ -337,6 +344,50 @@ const ESSENTIALS = {
     ["l'obligation","obligation","loh-blee-gah-SYOH(N)"],["la limite","limit","lah lee-MEET"],["la frontière","border","lah frohn-TYEHR"],["le territoire","territory","luh teh-ree-TWAHR"],["la région","region","lah ray-ZHYOH(N)"],
     ["la zone","zone, area","lah zohn"],["l'espace","space","les-PAHS"],["la distance","distance","lah dees-TAH(N)S"],["la direction","direction","lah dee-rek-SYOH(N)"],["le chemin","path, way","luh shuh-MA(N)"],
     ["la route","road","lah root"],["le trajet","journey, route","luh trah-ZHEH"],["l'arrivée","arrival","lah-ree-VAY"],["le départ","departure","luh day-PAHR"],["la destination","destination","lah des-tee-nah-SYOH(N)"]
+  ],
+  "Tier 6 (~500–600)": [
+    ["l'ordinateur","computer","lor-dee-nah-TUHR"],["le téléphone","phone","luh tay-lay-FON"],["l'internet","internet","la(n)-tehr-NET"],["le logiciel","software","luh loh-zhee-SYEL"],["l'écran","screen","lay-KRAH(N)"],
+    ["le clavier","keyboard","luh klah-VYAY"],["la souris","mouse (computer)","lah soo-REE"],["le fichier","file","luh fee-SHYAY"],["le mot de passe","password","luh moh duh pahs"],["le réseau","network","luh ray-ZOH"],
+    ["télécharger","to download","tay-lay-shahr-ZHAY"],["envoyer","to send","ah(n)-vwah-YAY"],["imprimer","to print","a(n)-pree-MAY"],["sauvegarder","to save (a file)","sohv-gahr-DAY"],["supprimer","to delete","sew-pree-MAY"],
+    ["cliquer","to click","klee-KAY"],["la caméra","camera","lah kah-may-RAH"],["la vidéo","video","lah vee-day-OH"],["le message","message","luh meh-SAHZH"],["le courriel","email","luh koo-RYEL"],
+    ["le vêtement","clothing","veht-MAH(N)"],["la chemise","shirt","lah shuh-MEEZ"],["le pantalon","pants","luh pah(n)-tah-LOH(N)"],["la robe","dress","lah rohb"],["la jupe","skirt","lah zhewp"],
+    ["le manteau","coat","luh mah(n)-TOH"],["les chaussures","shoes","lay shoh-SEWR"],["le chapeau","hat","luh shah-POH"],["les lunettes","glasses","lay lew-NET"],["la ceinture","belt","lah sa(n)-TEWR"],
+    ["le tissu","fabric","luh tee-SEW"],["la taille","size","lah tahy"],["la mode","fashion","lah mod"],["élégant(e)","elegant","ay-lay-GAH(N)(T)"],["confortable","comfortable","kohn-for-TAH-bluh"],
+    ["le grand-père","grandfather","luh grah(n)-PEHR"],["la grand-mère","grandmother","lah grah(n)-MEHR"],["le petit-fils","grandson","luh puh-tee-FEES"],["la petite-fille","granddaughter","lah puh-teet-FEE-yuh"],["l'oncle","uncle","LOH(N)-kluh"],
+    ["la tante","aunt","lah tah(n)t"],["le cousin / la cousine","cousin","luh koo-ZA(N) / lah koo-ZEEN"],["le neveu","nephew","luh nuh-VUH"],["la nièce","niece","lah nyehs"],["le beau-père","father-in-law, stepfather","luh boh-PEHR"],
+    ["la belle-mère","mother-in-law, stepmother","lah behl-MEHR"],["le voisin / la voisine","neighbor","luh vwah-ZA(N) / lah vwah-ZEEN"],["l'étranger / l'étrangère","foreigner, stranger","lay-trah(n)-ZHAY / lay-trah(n)-ZHEHR"],["l'adulte","adult","lah-DEWLT"],["l'adolescent(e)","teenager","lah-doh-leh-SAH(N)(T)"],
+    ["le bus","bus","luh bews"],["le métro","subway","luh MAY-troh"],["le taxi","taxi","luh tahk-SEE"],["l'avion","airplane","lah-VYOH(N)"],["le bateau","boat","luh bah-TOH"],
+    ["le camion","truck","luh kah-MYOH(N)"],["la moto","motorcycle","lah moh-TOH"],["le permis de conduire","driver's license","luh pehr-MEE duh kohn-DWEER"],["l'essence","gasoline","leh-SAH(N)S"],["le feu (rouge)","traffic light","luh fuh (roozh)"],
+    ["le panneau","sign","luh pah-NOH"],["le trottoir","sidewalk","luh troh-TWAHR"],["le piéton","pedestrian","luh pyay-TOH(N)"],["embarquer","to board","ah(n)-bahr-KAY"],["atterrir","to land","ah-teh-REER"],
+    ["la viande","meat","lah vyah(n)d"],["le poisson","fish","luh pwah-SOH(N)"],["le légume","vegetable","luh lay-GEWM"],["le fruit","fruit","luh frwee"],["le fromage","cheese","luh froh-MAHZH"],
+    ["l'œuf","egg","luhf"],["le sucre","sugar","luh SEW-kruh"],["le sel","salt","luh sel"],["le poivre","pepper","luh PWAH-vruh"],["l'huile","oil","lweel"],
+    ["la sauce","sauce","lah sohs"],["la recette","recipe","lah ruh-SET"],["cuire","to cook (something)","kweer"],["couper","to cut","koo-PAY"],["mélanger","to mix","may-lah(n)-ZHAY"],
+    ["chauffer","to heat","shoh-FAY"],["le four","oven","luh foor"],["la casserole","saucepan","lah kah-SROL"],["la poêle","frying pan","lah pwahl"],["la cuillère","spoon","lah kwee-YEHR"],
+    ["la météo","weather forecast","lah may-tay-OH"],["le nuage","cloud","luh new-AHZH"],["le brouillard","fog","luh broo-YAHR"],["l'orage","storm","loh-RAHZH"],["l'éclair","lightning","lay-KLEHR"],
+    ["le tonnerre","thunder","luh toh-NEHR"],["la température","temperature","lah tah(n)-pay-rah-TEWR"],["le degré","degree","luh duh-GRAY"],["humide","humid","ew-MEED"],["sec / sèche","dry","sek / sehsh"],
+    ["ensoleillé(e)","sunny","ah(n)-soh-lay-YAY"],["nuageux / nuageuse","cloudy","new-ah-ZHUH / new-ah-ZHUHZ"],["pluvieux / pluvieuse","rainy","plew-VYUH / plew-VYUHZ"],["venteux / venteuse","windy","vah(n)-TUH / vah(n)-TUHZ"],["glacé(e)","icy, freezing","glah-SAY"]
+  ],
+  "Tier 7 (~600–700)": [
+    ["l'équipe","team","lay-KEEP"],["le match","match, game","luh match"],["l'entraînement","training","lah(n)-trehn-MAH(N)"],["s'entraîner","to train","sah(n)-treh-NAY"],["le joueur / la joueuse","player","luh zhoo-UHR / lah zhoo-UHZ"],
+    ["le terrain","field, court","luh teh-RA(N)"],["la compétition","competition","lah kohm-pay-tee-SYOH(N)"],["le loisir","hobby, leisure","luh lwah-ZEER"],["se promener","to go for a walk","suh prohm-NAY"],["la randonnée","hike","lah rah(n)-doh-NAY"],
+    ["pêcher","to fish","peh-SHAY"],["le client / la cliente","customer","luh klee-AH(N) / lah klee-AH(N)T"],["le vendeur / la vendeuse","salesperson","luh vah(n)-DUHR / lah vah(n)-DUHZ"],["la caisse","checkout, cash register","lah kehs"],["la monnaie","change (money)","lah moh-NAY"],
+    ["la carte de crédit","credit card","lah kahrt duh kray-DEE"],["le reçu","receipt","luh ruh-SEW"],["la réduction","discount","lah ray-dewk-SYOH(N)"],["le solde","sale (retail)","luh sold"],["l'étiquette","price tag, label","lay-tee-KET"],
+    ["rendre","to give back, return","RAH(N)-druh"],["échanger","to exchange","ay-shah(n)-ZHAY"],["rembourser","to refund","rah(n)-boor-SAY"],["la vitrine","shop window","lah vee-TREEN"],["le rayon","aisle, department","luh ray-YOH(N)"],
+    ["emprunter","to borrow","ah(n)-pruh(n)-TAY"],["la timidité","shyness","lah tee-mee-dee-TAY"],["timide","shy","tee-MEED"],["sociable","sociable","soh-SYAH-bluh"],["généreux / généreuse","generous","zhay-nay-RUH / zhay-nay-RUHZ"],
+    ["égoïste","selfish","ay-goh-EEST"],["paresseux / paresseuse","lazy","pah-reh-SUH / pah-reh-SUHZ"],["travailleur / travailleuse","hardworking","trah-vah-YUHR / trah-vah-YUHZ"],["sympathique","nice, likeable","sa(n)-pah-TEEK"],["antipathique","unpleasant, unlikeable","ah(n)-tee-pah-TEEK"],
+    ["jaloux / jalouse","jealous","zhah-LOO / zhah-LOOZ"],["optimiste","optimistic","op-tee-MEEST"],["pessimiste","pessimistic","peh-see-MEEST"],["sensible","sensitive","sah(n)-SEE-bluh"],["sérieux / sérieuse","serious","say-RYUH / say-RYUHZ"],
+    ["drôle","funny","drohl"],["l'arbre","tree","LAHR-bruh"],["la fleur","flower","lah fluhr"],["l'herbe","grass","lehrb"],["la feuille","leaf","lah fuhy"],
+    ["la branche","branch","lah brah(n)sh"],["la racine","root","lah rah-SEEN"],["le champ","field","luh shah(n)"],["la colline","hill","lah koh-LEEN"],["la vallée","valley","lah vah-LAY"],
+    ["le désert","desert","luh day-ZEHR"],["l'île","island","leel"],["le cheval","horse","luh shuh-VAHL"],["la vache","cow","lah vahsh"],["le mouton","sheep","luh moo-TOH(N)"],
+    ["le cochon","pig","luh koh-SHOH(N)"],["la poule","hen, chicken","lah pool"],["le lapin","rabbit","luh lah-PA(N)"],["l'insecte","insect","la(n)-SEKT"],["l'abeille","bee","lah-BAY"],
+    ["le papillon","butterfly","luh pah-pee-YOH(N)"],["sûr(e)","sure, safe","sewr"],["dangereux / dangereuse","dangerous","dah(n)-zhuh-RUH / dah(n)-zhuh-RUHZ"],["incroyable","incredible","a(n)-krwah-YAH-bluh"],["étonnant(e)","surprising","ay-toh-NAH(N)(T)"],
+    ["inattendu(e)","unexpected","ee-nah-tah(n)-DEW"],["évident(e)","obvious","ay-vee-DAH(N)(T)"],["clair(e)","clear","klehr"],["sombre","dark","SOHM-bruh"],["profondément","deeply","proh-fohn-day-MAH(N)"],
+    ["absolument","absolutely","ahp-soh-lew-MAH(N)"],["totalement","totally","toh-tahl-MAH(N)"],["franchement","frankly","frah(n)sh-MAH(N)"],["heureusement","fortunately","uh-ruhz-MAH(N)"],["malheureusement","unfortunately","mah-luh-ruhz-MAH(N)"],
+    ["finalement","finally","fee-nahl-MAH(N)"],["le calendrier","calendar","luh kah-lah(n)-DRYAY"],["la date","date","lah daht"],["l'horaire","schedule","loh-REHR"],["le matin","morning","luh mah-TA(N)"],
+    ["l'après-midi","afternoon","lah-preh-mee-DEE"],["le soir","evening","luh swahr"],["minuit","midnight","mee-NWEE"],["midi","noon","mee-DEE"],["la seconde","second (time)","lah suh-GOH(N)D"],
+    ["la minute","minute","lah mee-NEWT"],["lundi","Monday","luh(n)-DEE"],["mardi","Tuesday","mahr-DEE"],["mercredi","Wednesday","mehr-kruh-DEE"],["jeudi","Thursday","zhuh-DEE"],
+    ["vendredi","Friday","vah(n)-druh-DEE"],["samedi","Saturday","sahm-DEE"],["dimanche","Sunday","dee-MAH(N)SH"],["janvier","January","zhah(n)-VYAY"],["printemps","spring","pra(n)-TAH(N)"],
+    ["automne","autumn","oh-TON"]
   ]
 };
 const ESS_TIERS = Object.keys(ESSENTIALS);
@@ -942,10 +993,16 @@ function switchMode(mode){
   document.getElementById('view-essentials').classList.toggle('active', mode==='essentials');
   document.getElementById('view-levels').classList.toggle('active', mode==='levels');
   document.getElementById('view-conj').classList.toggle('active', mode==='conj');
+  document.getElementById('view-conjquiz').classList.toggle('active', mode==='conjquiz');
   document.getElementById('view-progress').classList.toggle('active', mode==='progress');
-  const order=['essentials','levels','conj','progress'];
+  const order=['essentials','levels','conj','conjquiz','progress'];
   document.querySelectorAll('nav.modes button').forEach((b,i)=>b.classList.toggle('active', order[i]===mode));
   if(mode==='progress'){ renderStats(); renderMistakes(); }
+}
+
+function goToConjQuiz(){
+  switchMode('conjquiz');
+  startConjQuiz();
 }
 
 /* =====================================================================
@@ -1110,7 +1167,7 @@ function buildVerbTabs(){
     const b = document.createElement('button');
     b.textContent = v.split(' (')[0];
     b.className = v===currentVerb?'active':'';
-    b.onclick = ()=>{ currentVerb=v; toggleConjQuiz(false); buildVerbTabs(); renderConjTable(); };
+    b.onclick = ()=>{ currentVerb=v; buildVerbTabs(); renderConjTable(); };
     el.appendChild(b);
   });
 }
@@ -1121,7 +1178,7 @@ function buildTenseTabs(){
     const b = document.createElement('button');
     b.textContent = t;
     b.className = t===currentTense?'active':'';
-    b.onclick = ()=>{ currentTense=t; toggleConjQuiz(false); buildTenseTabs(); renderConjTable(); };
+    b.onclick = ()=>{ currentTense=t; buildTenseTabs(); renderConjTable(); };
     el.appendChild(b);
   });
 }
@@ -1221,9 +1278,7 @@ function renderConjTable(){
 
 function toggleConjQuiz(show){
   document.getElementById('conjQuizArea').style.display = show?'block':'none';
-  document.getElementById('conjTableArea').style.display = show?'none':'block';
-  document.getElementById('verbIntroArea').style.display = show?'none':'block';
-  document.getElementById('tenseUsageArea').style.display = show?'none':'block';
+  document.getElementById('conjQuizStartRow').style.display = show?'none':'flex';
 }
 
 const VERB_TRANSLATIONS = {
