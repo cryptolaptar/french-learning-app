@@ -97,6 +97,12 @@
 
   /* essentials list */
   .wordrow{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);}
+  .fftable{width:100%;border-collapse:collapse;background:var(--paper-card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13px;}
+  .fftable th{background:var(--gold-soft);color:var(--ink);font-family:'Work Sans';font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;text-align:left;border-bottom:1px solid var(--gold);}
+  .fftable td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .fftable tr:last-child td{border-bottom:none;}
+  .fftable td.fr{font-family:'Fraunces',serif;font-weight:600;color:var(--ink);}
+  .fftable td.warn{color:var(--rust);}
   .wordrow .fr{font-family:'Fraunces',serif;font-weight:600;font-size:15px;}
   .wordrow .en{color:var(--ink-soft);font-size:14px;text-align:right;}
   input.search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper-card);font-family:'Work Sans';font-size:14px;margin-bottom:12px;}
@@ -169,7 +175,7 @@
     <div class="levelmeta">
       <span class="desc" id="essDesc"></span>
     </div>
-    <div class="actionrow">
+    <div class="actionrow" id="essActionRow">
       <button onclick="startEssQuiz()">Quiz me</button>
       <button class="secondary" onclick="toggleEssQuiz(false)">Word list</button>
     </div>
@@ -258,6 +264,59 @@
 /* =====================================================================
    ESSENTIALS — three tiers, most-frequent French words
    ===================================================================== */
+const FALSE_FRIENDS = [
+  // [French word, what it actually means, the English word it looks like, French for that English word]
+  ["actuellement","currently, at present","actually","en fait, en réalité"],
+  ["assister (à)","to attend","to assist","aider"],
+  ["attendre","to wait for","to attend","assister (à)"],
+  ["blesser","to injure, wound","to bless","bénir"],
+  ["le bras","arm","bra","le soutien-gorge"],
+  ["car","because, for; also \"coach/bus\"","car","la voiture"],
+  ["la cave","cellar","cave","la grotte"],
+  ["la chair","flesh","chair","la chaise"],
+  ["le coin","corner","coin (money)","la pièce (de monnaie)"],
+  ["le crayon","pencil","crayon","le crayon de couleur"],
+  ["la déception","disappointment","deception","la tromperie"],
+  ["avoir envie de","to want, to feel like","envy","l'envie, la jalousie"],
+  ["large","wide","large","grand(e)"],
+  ["la librairie","bookshop","library","la bibliothèque"],
+  ["la location","rental","location","l'emplacement, le lieu"],
+  ["la monnaie","change (coins)","money","l'argent"],
+  ["le pain","bread","pain","la douleur"],
+  ["la phrase","sentence","phrase","l'expression"],
+  ["le/la photographe","photographer","photograph","la photo"],
+  ["sensible","sensitive","sensible","raisonnable, sensé(e)"],
+  ["rester","to stay, remain","rest","se reposer"],
+  ["prétendre","to claim","pretend","faire semblant"],
+  ["sympathique","nice, likeable","sympathetic","compatissant(e)"],
+  ["la journée","day","journey","le voyage"],
+  ["ignorer","to not know, be unaware of","ignore","ne pas prêter attention à"],
+  ["introduire","to insert, bring in","introduce (a person)","présenter"],
+  ["éventuellement","possibly","eventually","finalement"],
+  ["formidable","great, wonderful","formidable","redoutable"],
+  ["génial(e)","great, brilliant","genial","affable, cordial(e)"],
+  ["le hasard","chance, luck","hazard","le danger"],
+  ["injurier","to insult","injure","blesser"],
+  ["joli(e)","pretty","jolly","jovial(e), gai(e)"],
+  ["l'agenda","datebook, planner","agenda (meeting topics)","l'ordre du jour"],
+  ["la lecture","reading","lecture (a talk)","la conférence"],
+  ["le médecin","doctor","medicine (the substance)","le médicament"],
+  ["la mode","fashion","mode (method)","le mode, la manière"],
+  ["le procès","trial (legal)","process","le processus"],
+  ["le roman","novel","Roman","romain(e)"],
+  ["la place","square, seat, spot","place (general location)","l'endroit, le lieu"],
+  ["le raisin","grape","raisin (dried grape)","le raisin sec"],
+  ["sale","dirty","sale (selling)","la vente, les soldes"],
+  ["le stage","internship, training course","stage (theater)","la scène"],
+  ["travailler","to work","travel","voyager"],
+  ["actuel(le)","current, present","actual","réel(le), véritable"],
+  ["assumer","to accept, take on (a responsibility)","assume (to suppose)","supposer"],
+  ["commander","to order (food, a product)","command (give orders)","ordonner"],
+  ["compréhensif / compréhensive","understanding (of a person)","comprehensive","complet, exhaustif"],
+  ["déranger","to disturb, bother","derange","rendre fou"],
+  ["dresser","to train (an animal), draw up (a list)","dress (get dressed)","s'habiller"],
+  ["l'entrée","appetizer, starter","entrée (English: main course)","le plat principal"]
+];
 const ESSENTIALS = {
   "Tier 1 (top ~100)": [
     ["de","of, from","duh"],["le","the (m.)","luh"],["la","the (f.)","lah"],["les","the (pl.)","lay"],["et","and","ay"],
@@ -1128,6 +1187,11 @@ function goToConjQuiz(){
 function buildEssTabs(){
   const el = document.getElementById('essTabs');
   el.innerHTML = '';
+  const b0 = document.createElement('button');
+  b0.textContent = 'False Friends';
+  b0.className = currentEssTier==='False Friends'?'active':'';
+  b0.onclick = ()=>{ currentEssTier='False Friends'; toggleEssQuiz(false); buildEssTabs(); renderEssentials(); };
+  el.appendChild(b0);
   ESS_TIERS.forEach(t=>{
     const b = document.createElement('button');
     b.textContent = t.split(' (')[0];
@@ -1138,10 +1202,36 @@ function buildEssTabs(){
 }
 
 function renderEssentials(){
-  document.getElementById('essDesc').textContent = 'Ranked roughly by frequency: '+currentEssTier.split('(')[1].replace(')','');
-  const q = document.getElementById('essSearch').value.trim().toLowerCase();
   const list = document.getElementById('essList');
   list.innerHTML = '';
+  const q = document.getElementById('essSearch').value.trim().toLowerCase();
+
+  if(currentEssTier==='False Friends'){
+    document.getElementById('essActionRow').style.display = 'none';
+    document.getElementById('essDesc').textContent = 'Words that look like an English word but mean something different.';
+    const rows = FALSE_FRIENDS.filter(([fr,truth,en,enFr])=> !q || fr.toLowerCase().includes(q) || truth.toLowerCase().includes(q) || en.toLowerCase().includes(q))
+      .map(([fr,truth,en,enFr])=>`
+        <tr>
+          <td class="fr">${fr}</td>
+          <td>${truth}</td>
+          <td class="warn">${en}</td>
+          <td>${enFr}</td>
+        </tr>`).join('');
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'overflow-x:auto;-webkit-overflow-scrolling:touch;';
+    const table = document.createElement('table');
+    table.className = 'fftable';
+    table.style.minWidth = '560px';
+    table.innerHTML = `
+      <thead><tr><th>French word</th><th>Actual meaning</th><th>Looks like (English)</th><th>Meaning of that English word</th></tr></thead>
+      <tbody>${rows}</tbody>`;
+    wrap.appendChild(table);
+    list.appendChild(wrap);
+    return;
+  }
+
+  document.getElementById('essActionRow').style.display = 'flex';
+  document.getElementById('essDesc').textContent = 'Ranked roughly by frequency: '+currentEssTier.split('(')[1].replace(')','');
   ESSENTIALS[currentEssTier].filter(([fr,en])=> !q || fr.toLowerCase().includes(q) || en.toLowerCase().includes(q))
     .forEach(([fr,en,pron])=>{
       const row = document.createElement('div');
