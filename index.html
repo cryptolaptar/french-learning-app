@@ -315,7 +315,57 @@ const FALSE_FRIENDS = [
   ["compréhensif / compréhensive","understanding (of a person)","comprehensive","complet, exhaustif"],
   ["déranger","to disturb, bother","derange","rendre fou"],
   ["dresser","to train (an animal), draw up (a list)","dress (get dressed)","s'habiller"],
-  ["l'entrée","appetizer, starter","entrée (English: main course)","le plat principal"]
+  ["l'entrée","appetizer, starter","entrée (English: main course)","le plat principal"],
+  ["la caution","deposit, guarantee","caution","la prudence"],
+  ["le collège","middle school","college","l'université"],
+  ["rude","harsh, rough","rude","impoli(e), grossier"],
+  ["le comédien","actor","comedian","le comique, l'humoriste"],
+  ["éventuel(le)","possible","eventual","final(e)"],
+  ["la chance","luck","chance (opportunity)","l'occasion"],
+  ["le résumé","summary","résumé (a CV)","le CV"],
+  ["la figure","face","figure (shape/number)","la silhouette, le chiffre"],
+  ["le carton","cardboard, box","cartoon","le dessin animé"],
+  ["le préservatif","condom","preservative","le conservateur"],
+  ["le conducteur","driver","conductor (music)","le chef d'orchestre"],
+  ["le pétrole","crude oil","petrol","l'essence"],
+  ["l'éditeur","publisher","editor","le rédacteur"],
+  ["la cantine","canteen (cafeteria)","canteen (water flask)","la gourde"],
+  ["le costume","suit (clothing)","costume (fancy dress)","le déguisement"],
+  ["versatile","fickle, changeable","versatile","polyvalent(e)"],
+  ["le parent","relative","parent (mother/father)","le père, la mère"],
+  ["la nouvelle","news item; short story","novel","le roman"],
+  ["le smoking","tuxedo","smoking (the act)","fumer, le tabagisme"],
+  ["le parking","parking lot","parking (the act)","le stationnement"],
+  ["le camping","campsite","camping (the act)","faire du camping"],
+  ["le footing","jogging","footing (balance, basis)","l'équilibre, la base"],
+  ["la veste","jacket","vest (undergarment)","le maillot de corps"],
+  ["la robe","dress","robe (bathrobe)","le peignoir"],
+  ["fastidieux / fastidieuse","tedious, tiresome","fastidious","méticuleux, pointilleux"],
+  ["consistant(e)","thick, substantial (food)","consistent","cohérent(e)"],
+  ["labourer","to plow (a field)","labor, labour","le travail"],
+  ["l'issue","outcome, exit","issue (a problem)","le problème"],
+  ["le délai","deadline, time limit","delay","le retard"],
+  ["la sentence","judgment, verdict (legal)","sentence (grammar)","la phrase"],
+  ["le conservatoire","music/arts school","conservatory (glass room)","la véranda"],
+  ["le délit","a (criminal) offense","delight","le plaisir, la joie"],
+  ["le store","window blind","store (shop)","le magasin"],
+  ["le slip","men's underwear briefs","slip (undergarment)","la combinaison"],
+  ["le cabinet","doctor's office; small cupboard","cabinet (furniture)","l'armoire"],
+  ["la façon","way, manner","fashion","la mode"],
+  ["le fabricant","manufacturer","fabricate (to lie)","inventer"],
+  ["le pupitre","school desk, lectern","pupil (student)","l'élève"],
+  ["les vacances","vacation, holiday(s)","vacancy","la chambre libre, le poste vacant"],
+  ["la prune","plum","prune (dried fruit)","le pruneau"],
+  ["supporter","to put up with, tolerate","support (cheer for/back)","soutenir"],
+  ["la pièce","room; coin; play (theater)","piece (general)","le morceau"],
+  ["réaliser","to carry out, achieve","realize (understand)","se rendre compte (de)"],
+  ["demander","to ask (for)","demand (forcefully require)","exiger"],
+  ["quitter","to leave (a place/person)","quit (a job/habit)","démissionner, arrêter"],
+  ["la lame","blade","lame (uncool, disappointing)","nul(le), minable"],
+  ["le gars","guy, fellow","gas (AmE: gasoline)","l'essence"],
+  ["le gentil","nice, kind","gentle","doux, douce"],
+  ["le trajet","route, commute","trajectory","la trajectoire"],
+  ["la manifestation","demonstration, protest","manifestation (a sign of something)","la preuve, le signe"]
 ];
 const ESSENTIALS = {
   "Tier 1 (top ~100)": [
@@ -1207,7 +1257,7 @@ function renderEssentials(){
   const q = document.getElementById('essSearch').value.trim().toLowerCase();
 
   if(currentEssTier==='False Friends'){
-    document.getElementById('essActionRow').style.display = 'none';
+    document.getElementById('essActionRow').style.display = 'flex';
     document.getElementById('essDesc').textContent = 'Words that look like an English word but mean something different.';
     const rows = FALSE_FRIENDS.filter(([fr,truth,en,enFr])=> !q || fr.toLowerCase().includes(q) || truth.toLowerCase().includes(q) || en.toLowerCase().includes(q))
       .map(([fr,truth,en,enFr])=>`
@@ -1249,6 +1299,17 @@ function toggleEssQuiz(show){
 
 function startEssQuiz(){
   toggleEssQuiz(true);
+  if(currentEssTier==='False Friends'){
+    const allTruths = FALSE_FRIENDS.map(f=>f[1]);
+    const words = FALSE_FRIENDS.map(([fr,truth,en,enFr], idx)=>{
+      const others = allTruths.filter((t,i)=> i!==idx && t!==enFr);
+      const extra = shuffleArray(others).slice(0,2);
+      const forcedDistractors = shuffleArray([enFr, ...extra]);
+      return { fr, en:truth, id:'ff:'+fr, forcedDistractors, sub:[`Looks like English "${en}"`] };
+    });
+    runQuiz(document.getElementById('essQuizArea'), words, startEssQuiz, ()=>toggleEssQuiz(false), { section: 'False Friends' });
+    return;
+  }
   const words = ESSENTIALS[currentEssTier].map(([fr,en])=>({fr,en,id:'ess:'+currentEssTier+':'+fr,ctx:{type:'ess',key:currentEssTier}}));
   runQuiz(document.getElementById('essQuizArea'), words, startEssQuiz, ()=>toggleEssQuiz(false), { section: 'Essentials — '+currentEssTier.split(' (')[0] });
 }
@@ -2060,6 +2121,7 @@ function poolForCtx(ctx){
   if(!ctx) return null;
   if(ctx.type==='level' && VOCAB[ctx.key]) return flatWords(ctx.key);
   if(ctx.type==='ess' && ESSENTIALS[ctx.key]) return ESSENTIALS[ctx.key].map(([fr,en])=>({fr,en}));
+  if(ctx.type==='ff') return FALSE_FRIENDS.map(([fr,truth])=>({fr,en:truth}));
   if(ctx.type==='conj'){
     const [v,t] = ctx.key.split('|');
     if(CONJUGATIONS[v] && CONJUGATIONS[v][t]){
@@ -2099,10 +2161,15 @@ function renderQuizQ(container, state, onRestart, onExit, opts){
     return;
   }
   const q = state.words[state.i];
-  let candidates = poolForCtx(q.ctx);
-  candidates = candidates ? candidates.filter(w=>w.en!==q.en) : null;
-  if(!candidates || candidates.length < 3){ candidates = state.pool.filter(w=>w.en!==q.en); }
-  const distractors = shuffleArray(candidates).slice(0,3).map(w=>w.en);
+  let distractors;
+  if(q.forcedDistractors){
+    distractors = q.forcedDistractors;
+  } else {
+    let candidates = poolForCtx(q.ctx);
+    candidates = candidates ? candidates.filter(w=>w.en!==q.en) : null;
+    if(!candidates || candidates.length < 3){ candidates = state.pool.filter(w=>w.en!==q.en); }
+    distractors = shuffleArray(candidates).slice(0,3).map(w=>w.en);
+  }
   const options = shuffleArray([...new Set([...distractors, q.en])]);
 
   const promptHtml = (q.sub && q.sub.length)
