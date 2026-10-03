@@ -1346,9 +1346,9 @@ function startEssQuiz(){
   if(currentEssTier==='False Friends'){
     const allTruths = FALSE_FRIENDS.map(f=>f[1]);
     const words = FALSE_FRIENDS.map(([fr,truth,en,enFr], idx)=>{
-      const others = allTruths.filter((t,i)=> i!==idx && t!==enFr);
+      const others = allTruths.filter((t,i)=> i!==idx && t!==en);
       const extra = shuffleArray(others).slice(0,2);
-      const forcedDistractors = shuffleArray([enFr, ...extra]);
+      const forcedDistractors = shuffleArray([en, ...extra]);
       return { fr, en:truth, id:'ff:'+fr, forcedDistractors, sub:[`Looks like English "${en}"`] };
     });
     runQuiz(document.getElementById('essQuizArea'), words, startEssQuiz, ()=>toggleEssQuiz(false), { section: 'False Friends' });
