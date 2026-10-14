@@ -219,6 +219,9 @@
     <div class="tabs" id="tenseCatTabs"></div>
     <div class="levelmeta"><span class="desc">Quiz on:</span></div>
     <div class="tabs" id="catTabs"></div>
+    <div class="levelmeta"><span class="desc">Difficulty:</span></div>
+    <div class="tabs" id="diffTabs"></div>
+    <p class="conjnote" id="diffDesc" style="margin:0 0 14px;"></p>
     <div class="actionrow" id="conjQuizStartRow">
       <button onclick="startConjQuiz()">Quiz me</button>
     </div>
@@ -1265,6 +1268,36 @@ function clearMistakes(){
   renderMistakes();
 }
 
+const CONJ_DIFFICULTIES = {
+  easy:   { label:'Easy',   desc:'Wrong answers are other forms of the same verb in the same tense.' },
+  medium: { label:'Medium', desc:'One wrong answer is the same verb in a different tense.' },
+  hard:   { label:'Hard',   desc:'Two wrong answers are the same verb in different tenses, and one is a very similar-looking form of another verb.' }
+};
+function getConjDifficulty(){
+  try{
+    const d = localStorage.getItem('motamot_conjdiff');
+    return CONJ_DIFFICULTIES[d] ? d : 'easy';
+  }catch(e){ return 'easy'; }
+}
+function setConjDifficulty(d){
+  try{ localStorage.setItem('motamot_conjdiff', d); }catch(e){}
+  buildDiffTabs();
+}
+function buildDiffTabs(){
+  const el = document.getElementById('diffTabs');
+  if(!el) return;
+  el.innerHTML = '';
+  const cur = getConjDifficulty();
+  Object.keys(CONJ_DIFFICULTIES).forEach(k=>{
+    const b = document.createElement('button');
+    b.textContent = CONJ_DIFFICULTIES[k].label;
+    b.className = k===cur ? 'active' : '';
+    b.onclick = ()=> setConjDifficulty(k);
+    el.appendChild(b);
+  });
+  document.getElementById('diffDesc').textContent = CONJ_DIFFICULTIES[cur].desc;
+}
+
 function getSelectedCats(){
   try{
     const raw = localStorage.getItem('motamot_conjcats');
@@ -2231,6 +2264,72 @@ const TENSE_USAGE = {
   "Impératif": { note:"Giving commands or instructions directly.", fr:"Parle plus lentement, s'il te plaît !", en:"Speak more slowly, please!" }
 };
 
+function levenshtein(a, b){
+  const m = a.length, n = b.length;
+  if(!m) return n;
+  if(!n) return m;
+  let prev = Array.from({length:n+1}, (_,j)=>j);
+  for(let i=1;i<=m;i++){
+    const cur = [i];
+    for(let j=1;j<=n;j++){
+      cur[j] = Math.min(prev[j]+1, cur[j-1]+1, prev[j-1] + (a[i-1]===b[j-1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+
+// Builds the 3 wrong answers for a conjugation question according to difficulty.
+//  easy:   other forms of the same verb + tense (existing behaviour)
+//  medium: 1 form of the same verb in a different tense (same person where possible) + 2 easy
+//  hard:   2 forms of the same verb in different tenses + the closest-looking form of another verb
+function buildConjDistractors(mode, v, t, i, correct){
+  const used = new Set([correct]);
+  const out = [];
+  const add = s => {
+    if(!s || s==='—' || used.has(s)) return false;
+    used.add(s); out.push(s); return true;
+  };
+  const needOtherTense = mode==='medium' ? 1 : (mode==='hard' ? 2 : 0);
+  if(needOtherTense){
+    const others = shuffleArray(TENSES.filter(x=>x!==t && CONJUGATIONS[v][x]));
+    // prefer the same person/slot in a different tense, from distinct tenses
+    for(const t2 of others){
+      if(out.length >= needOtherTense) break;
+      add(CONJUGATIONS[v][t2][i]);
+    }
+    // fall back to any other slot of a different tense
+    for(const t2 of others){
+      if(out.length >= needOtherTense) break;
+      for(const s of shuffleArray(CONJUGATIONS[v][t2])){ if(add(s)) break; }
+    }
+  }
+  if(mode==='hard'){
+    let best = [], bestD = Infinity;
+    VERBS.forEach(ov=>{
+      if(ov===v) return;
+      TENSES.forEach(t2=>{
+        const arr = CONJUGATIONS[ov][t2];
+        if(!arr) return;
+        arr.forEach(s=>{
+          if(s==='—' || used.has(s)) return;
+          const d = levenshtein(correct, s);
+          if(d < bestD){ bestD = d; best = [s]; }
+          else if(d === bestD){ best.push(s); }
+        });
+      });
+    });
+    if(best.length) add(best[Math.floor(Math.random()*best.length)]);
+  }
+  // top up with same-verb, same-tense forms (and the existing top-up logic in poolForCtx)
+  const easy = poolForCtx({type:'conj', key:v+'|'+t}) || [];
+  for(const w of shuffleArray(easy)){
+    if(out.length >= 3) break;
+    add(w.en);
+  }
+  return out.slice(0,3);
+}
+
 function startConjQuiz(){
   toggleConjQuiz(true);
   // Build a pool of {fr, en, sub} where fr = the pronoun (main prompt) and sub = the
@@ -2239,6 +2338,7 @@ function startConjQuiz(){
   const verbsInScope = [];
   CONJ_CAT_NAMES.forEach(name=>{ if(selected.includes(name)) verbsInScope.push(...CONJ_CATEGORIES[name]); });
   const tensesInScope = getSelectedQuizTenses();
+  const difficulty = getConjDifficulty();
   const pool = [];
   verbsInScope.forEach(v=>{
     const name = v.split(' (')[0];
@@ -2253,11 +2353,16 @@ function startConjQuiz(){
         if(pattern) sub.push(`(${pattern})`);
         sub.push(t);
         const promptFr = t==='Impératif' ? `Command form: ${prons[i]}` : `${prons[i]} _____`;
-        pool.push({ fr: promptFr, en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i, sub, ctx:{type:'conj',key:v+'|'+t} });
+        const item = { fr: promptFr, en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i, sub, ctx:{type:'conj',key:v+'|'+t} };
+        if(difficulty !== 'easy'){
+          item.distractorFn = ()=> buildConjDistractors(difficulty, v, t, i, f);
+        }
+        pool.push(item);
       });
     });
   });
-  runQuiz(document.getElementById('conjQuizArea'), pool, startConjQuiz, ()=>toggleConjQuiz(false), { isConj:true, section:'Conjugation' });
+  const section = difficulty==='easy' ? 'Conjugation' : 'Conjugation ('+CONJ_DIFFICULTIES[difficulty].label+')';
+  runQuiz(document.getElementById('conjQuizArea'), pool, startConjQuiz, ()=>toggleConjQuiz(false), { isConj:true, section });
 }
 
 /* =====================================================================
@@ -2329,13 +2434,16 @@ function renderQuizQ(container, state, onRestart, onExit, opts){
   }
   const q = state.words[state.i];
   let distractors;
-  if(q.forcedDistractors){
+  if(q.distractorFn){
+    distractors = q.distractorFn();
+  } else if(q.forcedDistractors){
     distractors = q.forcedDistractors;
   } else {
     let candidates = poolForCtx(q.ctx);
     candidates = candidates ? candidates.filter(w=>w.en!==q.en) : null;
     if(!candidates || candidates.length < 3){ candidates = state.pool.filter(w=>w.en!==q.en); }
-    distractors = shuffleArray(candidates).slice(0,3).map(w=>w.en);
+    const seenEn = new Set();
+    distractors = shuffleArray(candidates).filter(w=>{ if(seenEn.has(w.en)) return false; seenEn.add(w.en); return true; }).slice(0,3).map(w=>w.en);
   }
   const options = shuffleArray([...new Set([...distractors, q.en])]);
 
@@ -2468,6 +2576,7 @@ buildTenseTabs();
 renderConjTable();
 buildCatTabs();
 buildTenseCatTabs();
+buildDiffTabs();
 buildProgressTabs();
 </script>
 </body>
