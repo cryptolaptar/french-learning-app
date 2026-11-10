@@ -78,6 +78,7 @@
   .actionrow{display:flex;gap:8px;margin-bottom:16px;}
   .actionrow button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font-family:'Work Sans';font-weight:600;font-size:14px;cursor:pointer;}
   .actionrow button.secondary{background:none;color:var(--ink);}
+  .quizctl{margin-top:12px;margin-bottom:0;}
 
   .catchip{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);margin:0 0 6px;}
   .catgroup{margin-bottom:6px;}
@@ -2604,7 +2605,7 @@ function shuffleArray(arr){
 function runQuiz(container, words, onRestart, onExit, opts){
   opts = opts || {};
   const shuffled = shuffleArray(words).slice(0, Math.min(10, words.length));
-  const state = { words: shuffled, i:0, score:0, pool: words, recorded:false };
+  const state = { words: shuffled, i:0, score:0, answered:0, pool: words, recorded:false, ended:false };
   renderQuizQ(container, state, onRestart, onExit, opts);
 }
 
@@ -2638,7 +2639,7 @@ function renderQuizQ(container, state, onRestart, onExit, opts){
   if(state.i >= state.words.length){
     if(!state.recorded){
       state.recorded = true;
-      addHistoryEntry({ date: new Date().toISOString(), section: opts.section || 'Quiz', score: state.score, total: state.words.length });
+      addHistoryEntry({ date: new Date().toISOString(), section: opts.section || 'Quiz', score: state.score, total: state.words.length, answered: state.words.length, status: 'completed' });
     }
     container.innerHTML = `
       <div class="quizcard quizresult">
@@ -2678,11 +2679,26 @@ function renderQuizQ(container, state, onRestart, onExit, opts){
       <div class="prompt">${promptHtml}</div>
       <div class="quizopts" id="quizoptsLive"></div>
     </div>`;
+  container.insertAdjacentHTML('beforeend', `
+    <div class="actionrow quizctl">
+      <button class="secondary qc-restart">Restart</button>
+      <button class="secondary qc-quit">Quit</button>
+    </div>`);
+  const endEarly = (status, after)=>{
+    if(state.ended || state.recorded) return;
+    state.ended = true; state.recorded = true;
+    addHistoryEntry({ date: new Date().toISOString(), section: opts.section || 'Quiz', score: state.score, total: state.words.length, answered: state.answered, status });
+    after();
+  };
+  container.querySelector('.qc-restart').onclick = ()=> endEarly('restarted', ()=> onRestart());
+  container.querySelector('.qc-quit').onclick = ()=> endEarly('quit', ()=> onExit());
   const opts_el = container.querySelector('#quizoptsLive');
   options.forEach(opt=>{
     const b = document.createElement('button');
     b.textContent = opt;
     b.onclick = ()=>{
+      if(state.ended) return;
+      state.answered++;
       const correct = opt===q.en;
       Array.from(opts_el.children).forEach(btn=>{
         btn.disabled = true;
@@ -2695,7 +2711,7 @@ function renderQuizQ(container, state, onRestart, onExit, opts){
       } else if(q.id){
         addMistake(q.id, q.fr, q.en, opts.section || '', q.ctx || null);
       }
-      setTimeout(()=>{ state.i++; renderQuizQ(container, state, onRestart, onExit, opts); }, 700);
+      setTimeout(()=>{ if(state.ended) return; state.i++; renderQuizQ(container, state, onRestart, onExit, opts); }, 700);
     };
     opts_el.appendChild(b);
   });
@@ -2724,33 +2740,49 @@ function buildProgressTabs(){
 
 function renderStats(){
   const history = getHistory();
+  // Older entries have no status/answered fields: they were all completed quizzes.
+  const norm = history.map(h=>({
+    ...h,
+    status: h.status || 'completed',
+    answered: (typeof h.answered==='number') ? h.answered : h.total
+  }));
   const summaryEl = document.getElementById('statsSummary');
-  if(history.length===0){
-    summaryEl.innerHTML = `<p style="font-size:13px;color:var(--ink-soft);">No quizzes taken yet — results will show up here once you complete one.</p>`;
+  if(norm.length===0){
+    summaryEl.innerHTML = `<p style="font-size:13px;color:var(--ink-soft);">No quizzes taken yet — results will show up here once you start one.</p>`;
   } else {
     const bySection = {};
-    history.forEach(h=>{
-      if(!bySection[h.section]) bySection[h.section] = { attempts:0, correct:0, total:0, best:0 };
+    norm.forEach(h=>{
+      if(!bySection[h.section]) bySection[h.section] = { completed:0, restarted:0, quit:0, best:0 };
       const s = bySection[h.section];
-      s.attempts++; s.correct += h.score; s.total += h.total;
-      s.best = Math.max(s.best, Math.round(100*h.score/h.total));
+      s[h.status] = (s[h.status]||0) + 1;
+      if(h.status==='completed' && h.total>0) s.best = Math.max(s.best, Math.round(100*h.score/h.total));
     });
-    const totalAttempts = history.length;
-    const totalCorrect = history.reduce((a,h)=>a+h.score,0);
-    const totalQ = history.reduce((a,h)=>a+h.total,0);
-    let html = `<div class="levelmeta"><span class="progress-pill">${totalAttempts} quiz${totalAttempts===1?'':'zes'} taken</span><span class="progress-pill">${Math.round(100*totalCorrect/totalQ)}% overall</span></div>`;
+    const count = st => norm.filter(h=>h.status===st).length;
+    const totalCorrect = norm.reduce((a,h)=>a+h.score,0);
+    const totalAnswered = norm.reduce((a,h)=>a+h.answered,0);
+    const nC = count('completed'), nR = count('restarted'), nQ = count('quit');
+    let html = `<div class="levelmeta"><span class="progress-pill">${nC} completed</span>`+
+      `<span class="progress-pill">${nR} restarted</span><span class="progress-pill">${nQ} quit</span>`+
+      (totalAnswered>0 ? `<span class="progress-pill">${Math.round(100*totalCorrect/totalAnswered)}% correct overall</span>` : '')+`</div>`;
     html += Object.keys(bySection).map(sec=>{
       const s = bySection[sec];
-      return `<div class="wordrow"><span class="fr">${sec}</span><span class="en">${s.attempts} attempt${s.attempts===1?'':'s'} · best ${s.best}%</span></div>`;
+      const parts = [`${s.completed} completed`];
+      if(s.restarted) parts.push(`${s.restarted} restarted`);
+      if(s.quit) parts.push(`${s.quit} quit`);
+      if(s.completed) parts.push(`best ${s.best}%`);
+      return `<div class="wordrow"><span class="fr">${sec}</span><span class="en">${parts.join(' · ')}</span></div>`;
     }).join('');
     summaryEl.innerHTML = html;
   }
 
   const histEl = document.getElementById('statsHistory');
-  histEl.innerHTML = history.slice(0,25).map(h=>{
+  histEl.innerHTML = norm.slice(0,25).map(h=>{
     const d = new Date(h.date);
     const dateStr = d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' · ' + d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
-    return `<div class="wordrow"><span class="fr" style="font-size:14px;">${h.section}</span><span class="en">${h.score}/${h.total} · ${dateStr}</span></div>`;
+    const result = h.status==='completed'
+      ? `${h.score}/${h.total}`
+      : `${h.score}/${h.answered} answered · ${h.status==='quit'?'Quit':'Restarted'}`;
+    return `<div class="wordrow"><span class="fr" style="font-size:14px;">${h.section}</span><span class="en">${result} · ${dateStr}</span></div>`;
   }).join('') || `<p style="font-size:13px;color:var(--ink-soft);">—</p>`;
 }
 
