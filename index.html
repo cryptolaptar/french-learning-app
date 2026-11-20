@@ -2572,7 +2572,7 @@ function startConjQuiz(){
         const sub = [`${name} — ${translation}`];
         if(pattern) sub.push(`(${pattern})`);
         sub.push(t);
-        const promptFr = t==='Impératif' ? `Command form: ${prons[i]}` : `${prons[i]} _____`;
+        const promptFr = `${prons[i]} _____`;
         const item = { fr: promptFr, en: f, group: v+'|'+t, id: 'conj:'+v+'|'+t+'|'+i, sub, ctx:{type:'conj',key:v+'|'+t} };
         if(difficulty !== 'easy'){
           item.distractorFn = ()=> buildConjDistractors(difficulty, v, t, i, f);
@@ -2786,6 +2786,9 @@ function renderStats(){
   }).join('') || `<p style="font-size:13px;color:var(--ink-soft);">—</p>`;
 }
 
+// Older saved mistakes used a different wording for imperative prompts; show them the standard way.
+function normPrompt(fr){ const m = /^Command form: (.+)$/.exec(fr||''); return m ? m[1]+' _____' : fr; }
+
 function mistakeSub(id){
   if(id.indexOf('conj:')===0){
     const parts = id.slice(5).split('|');
@@ -2815,7 +2818,7 @@ function renderMistakes(){
     const m = mistakes[id];
     const sub = mistakeSub(id);
     const ctxLine = sub ? `<div style="font-size:12px;color:var(--ink-soft);font-weight:400;">${sub.join(' · ')}</div>` : '';
-    return `<div class="wordrow"><span class="fr">${m.fr}${ctxLine}</span><span class="en">${m.en} <span style="opacity:.6;">· ${m.section}</span></span></div>`;
+    return `<div class="wordrow"><span class="fr">${normPrompt(m.fr)}${ctxLine}</span><span class="en">${m.en} <span style="opacity:.6;">· ${m.section}</span></span></div>`;
   }).join('');
   toggleMistakesQuiz(false);
 }
@@ -2832,7 +2835,7 @@ function startMistakesQuiz(){
   toggleMistakesQuiz(true);
   const allTruths = FALSE_FRIENDS.map(f=>f[1]);
   const words = ids.map(id=>{
-    const w = { fr: mistakes[id].fr, en: mistakes[id].en, id, ctx: mistakes[id].ctx || null };
+    const w = { fr: normPrompt(mistakes[id].fr), en: mistakes[id].en, id, ctx: mistakes[id].ctx || null };
     const sub = mistakeSub(id);
     if(sub) w.sub = sub;
     if(id.indexOf('ff:')===0){
