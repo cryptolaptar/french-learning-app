@@ -704,6 +704,105 @@ const PRONOUNS = ["je","tu","il / elle / on","nous","vous","ils / elles"];
 const IMP_PRONOUNS = ["—","tu","—","nous","vous","—"]; // impératif only has 3 real forms
 
 const CONJUGATIONS = {
+  "aimer (to love, like, -er verbs)": {
+    "Présent": ["aime", "aimes", "aime", "aimons", "aimez", "aiment"],
+    "Passé composé": ["ai aimé", "as aimé", "a aimé", "avons aimé", "avez aimé", "ont aimé"],
+    "Imparfait": ["aimais", "aimais", "aimait", "aimions", "aimiez", "aimaient"],
+    "Plus-que-parfait": ["avais aimé", "avais aimé", "avait aimé", "avions aimé", "aviez aimé", "avaient aimé"],
+    "Futur antérieur": ["aurai aimé", "auras aimé", "aura aimé", "aurons aimé", "aurez aimé", "auront aimé"],
+    "Futur simple": ["aimerai", "aimeras", "aimera", "aimerons", "aimerez", "aimeront"],
+    "Conditionnel présent": ["aimerais", "aimerais", "aimerait", "aimerions", "aimeriez", "aimeraient"],
+    "Subjonctif présent": ["aime", "aimes", "aime", "aimions", "aimiez", "aiment"],
+    "Impératif": ["—", "aime", "—", "aimons", "aimez", "—"]
+  },
+  "penser (to think, -er verbs)": {
+    "Présent": ["pense", "penses", "pense", "pensons", "pensez", "pensent"],
+    "Passé composé": ["ai pensé", "as pensé", "a pensé", "avons pensé", "avez pensé", "ont pensé"],
+    "Imparfait": ["pensais", "pensais", "pensait", "pensions", "pensiez", "pensaient"],
+    "Plus-que-parfait": ["avais pensé", "avais pensé", "avait pensé", "avions pensé", "aviez pensé", "avaient pensé"],
+    "Futur antérieur": ["aurai pensé", "auras pensé", "aura pensé", "aurons pensé", "aurez pensé", "auront pensé"],
+    "Futur simple": ["penserai", "penseras", "pensera", "penserons", "penserez", "penseront"],
+    "Conditionnel présent": ["penserais", "penserais", "penserait", "penserions", "penseriez", "penseraient"],
+    "Subjonctif présent": ["pense", "penses", "pense", "pensions", "pensiez", "pensent"],
+    "Impératif": ["—", "pense", "—", "pensons", "pensez", "—"]
+  },
+  "donner (to give, -er verbs)": {
+    "Présent": ["donne", "donnes", "donne", "donnons", "donnez", "donnent"],
+    "Passé composé": ["ai donné", "as donné", "a donné", "avons donné", "avez donné", "ont donné"],
+    "Imparfait": ["donnais", "donnais", "donnait", "donnions", "donniez", "donnaient"],
+    "Plus-que-parfait": ["avais donné", "avais donné", "avait donné", "avions donné", "aviez donné", "avaient donné"],
+    "Futur antérieur": ["aurai donné", "auras donné", "aura donné", "aurons donné", "aurez donné", "auront donné"],
+    "Futur simple": ["donnerai", "donneras", "donnera", "donnerons", "donnerez", "donneront"],
+    "Conditionnel présent": ["donnerais", "donnerais", "donnerait", "donnerions", "donneriez", "donneraient"],
+    "Subjonctif présent": ["donne", "donnes", "donne", "donnions", "donniez", "donnent"],
+    "Impératif": ["—", "donne", "—", "donnons", "donnez", "—"]
+  },
+  "réussir (to succeed, -ir verbs)": {
+    "Présent": ["réussis", "réussis", "réussit", "réussissons", "réussissez", "réussissent"],
+    "Passé composé": ["ai réussi", "as réussi", "a réussi", "avons réussi", "avez réussi", "ont réussi"],
+    "Imparfait": ["réussissais", "réussissais", "réussissait", "réussissions", "réussissiez", "réussissaient"],
+    "Plus-que-parfait": ["avais réussi", "avais réussi", "avait réussi", "avions réussi", "aviez réussi", "avaient réussi"],
+    "Futur antérieur": ["aurai réussi", "auras réussi", "aura réussi", "aurons réussi", "aurez réussi", "auront réussi"],
+    "Futur simple": ["réussirai", "réussiras", "réussira", "réussirons", "réussirez", "réussiront"],
+    "Conditionnel présent": ["réussirais", "réussirais", "réussirait", "réussirions", "réussiriez", "réussiraient"],
+    "Subjonctif présent": ["réussisse", "réussisses", "réussisse", "réussissions", "réussissiez", "réussissent"],
+    "Impératif": ["—", "réussis", "—", "réussissons", "réussissez", "—"]
+  },
+  "remplir (to fill, -ir verbs)": {
+    "Présent": ["remplis", "remplis", "remplit", "remplissons", "remplissez", "remplissent"],
+    "Passé composé": ["ai rempli", "as rempli", "a rempli", "avons rempli", "avez rempli", "ont rempli"],
+    "Imparfait": ["remplissais", "remplissais", "remplissait", "remplissions", "remplissiez", "remplissaient"],
+    "Plus-que-parfait": ["avais rempli", "avais rempli", "avait rempli", "avions rempli", "aviez rempli", "avaient rempli"],
+    "Futur antérieur": ["aurai rempli", "auras rempli", "aura rempli", "aurons rempli", "aurez rempli", "auront rempli"],
+    "Futur simple": ["remplirai", "rempliras", "remplira", "remplirons", "remplirez", "rempliront"],
+    "Conditionnel présent": ["remplirais", "remplirais", "remplirait", "remplirions", "rempliriez", "rempliraient"],
+    "Subjonctif présent": ["remplisse", "remplisses", "remplisse", "remplissions", "remplissiez", "remplissent"],
+    "Impératif": ["—", "remplis", "—", "remplissons", "remplissez", "—"]
+  },
+  "sortir (to go out, -ir, drop consonant)": {
+    "Présent": ["sors", "sors", "sort", "sortons", "sortez", "sortent"],
+    "Passé composé": ["suis sorti(e)", "es sorti(e)", "est sorti(e)", "sommes sorti(e)s", "êtes sorti(e)(s)", "sont sorti(e)s"],
+    "Imparfait": ["sortais", "sortais", "sortait", "sortions", "sortiez", "sortaient"],
+    "Plus-que-parfait": ["étais sorti(e)", "étais sorti(e)", "était sorti(e)", "étions sorti(e)s", "étiez sorti(e)(s)", "étaient sorti(e)s"],
+    "Futur antérieur": ["serai sorti(e)", "seras sorti(e)", "sera sorti(e)", "serons sorti(e)s", "serez sorti(e)(s)", "seront sorti(e)s"],
+    "Futur simple": ["sortirai", "sortiras", "sortira", "sortirons", "sortirez", "sortiront"],
+    "Conditionnel présent": ["sortirais", "sortirais", "sortirait", "sortirions", "sortiriez", "sortiraient"],
+    "Subjonctif présent": ["sorte", "sortes", "sorte", "sortions", "sortiez", "sortent"],
+    "Impératif": ["—", "sors", "—", "sortons", "sortez", "—"]
+  },
+  "dépendre (to depend, -re verbs)": {
+    "Présent": ["dépends", "dépends", "dépend", "dépendons", "dépendez", "dépendent"],
+    "Passé composé": ["ai dépendu", "as dépendu", "a dépendu", "avons dépendu", "avez dépendu", "ont dépendu"],
+    "Imparfait": ["dépendais", "dépendais", "dépendait", "dépendions", "dépendiez", "dépendaient"],
+    "Plus-que-parfait": ["avais dépendu", "avais dépendu", "avait dépendu", "avions dépendu", "aviez dépendu", "avaient dépendu"],
+    "Futur antérieur": ["aurai dépendu", "auras dépendu", "aura dépendu", "aurons dépendu", "aurez dépendu", "auront dépendu"],
+    "Futur simple": ["dépendrai", "dépendras", "dépendra", "dépendrons", "dépendrez", "dépendront"],
+    "Conditionnel présent": ["dépendrais", "dépendrais", "dépendrait", "dépendrions", "dépendriez", "dépendraient"],
+    "Subjonctif présent": ["dépende", "dépendes", "dépende", "dépendions", "dépendiez", "dépendent"],
+    "Impératif": ["—", "dépends", "—", "dépendons", "dépendez", "—"]
+  },
+  "correspondre (to correspond, match, -re verbs)": {
+    "Présent": ["corresponds", "corresponds", "correspond", "correspondons", "correspondez", "correspondent"],
+    "Passé composé": ["ai correspondu", "as correspondu", "a correspondu", "avons correspondu", "avez correspondu", "ont correspondu"],
+    "Imparfait": ["correspondais", "correspondais", "correspondait", "correspondions", "correspondiez", "correspondaient"],
+    "Plus-que-parfait": ["avais correspondu", "avais correspondu", "avait correspondu", "avions correspondu", "aviez correspondu", "avaient correspondu"],
+    "Futur antérieur": ["aurai correspondu", "auras correspondu", "aura correspondu", "aurons correspondu", "aurez correspondu", "auront correspondu"],
+    "Futur simple": ["correspondrai", "correspondras", "correspondra", "correspondrons", "correspondrez", "correspondront"],
+    "Conditionnel présent": ["correspondrais", "correspondrais", "correspondrait", "correspondrions", "correspondriez", "correspondraient"],
+    "Subjonctif présent": ["corresponde", "correspondes", "corresponde", "correspondions", "correspondiez", "correspondent"],
+    "Impératif": ["—", "corresponds", "—", "correspondons", "correspondez", "—"]
+  },
+  "confondre (to confuse, mix up, -re verbs)": {
+    "Présent": ["confonds", "confonds", "confond", "confondons", "confondez", "confondent"],
+    "Passé composé": ["ai confondu", "as confondu", "a confondu", "avons confondu", "avez confondu", "ont confondu"],
+    "Imparfait": ["confondais", "confondais", "confondait", "confondions", "confondiez", "confondaient"],
+    "Plus-que-parfait": ["avais confondu", "avais confondu", "avait confondu", "avions confondu", "aviez confondu", "avaient confondu"],
+    "Futur antérieur": ["aurai confondu", "auras confondu", "aura confondu", "aurons confondu", "aurez confondu", "auront confondu"],
+    "Futur simple": ["confondrai", "confondras", "confondra", "confondrons", "confondrez", "confondront"],
+    "Conditionnel présent": ["confondrais", "confondrais", "confondrait", "confondrions", "confondriez", "confondraient"],
+    "Subjonctif présent": ["confonde", "confondes", "confonde", "confondions", "confondiez", "confondent"],
+    "Impératif": ["—", "confonds", "—", "confondons", "confondez", "—"]
+  },
   "être (to be)": {
     "Présent": ["suis","es","est","sommes","êtes","sont"],
     "Passé composé": ["ai été","as été","a été","avons été","avez été","ont été"],
@@ -1301,15 +1400,15 @@ const CONJUGATIONS = {
 };
 const CONJ_CATEGORIES = {
   "Core irregular": ["être (to be)","avoir (to have)","aller (to go)","faire (to do/make)"],
-  "Regular -er": ["parler (to speak, -er verbs)","manger (to eat, -er, soft g)","commencer (to begin, -er, soft c)","acheter (to buy, -er, e→è)","appeler (to call, -er, doubling)","préférer (to prefer, -er, é→è)","regarder (to watch, -er verbs)","travailler (to work, -er verbs)","chanter (to sing, -er verbs)"],
-  "Regular -ir": ["finir (to finish, -ir verbs)","partir (to leave, -ir, drop consonant)","ouvrir (to open, -ir, like -er)","choisir (to choose, -ir verbs)","dormir (to sleep, -ir, drop consonant)","offrir (to offer, -ir, like -er)"],
-  "Regular -re": ["vendre (to sell, -re verbs)","attendre (to wait, -re verbs)","répondre (to answer, -re verbs)","descendre (to go down, -re verbs)","perdre (to lose, -re verbs)","entendre (to hear, -re verbs)","rendre (to return, -re verbs)","défendre (to defend, -re verbs)"],
+  "Regular -er": ["parler (to speak, -er verbs)","manger (to eat, -er, soft g)","commencer (to begin, -er, soft c)","acheter (to buy, -er, e→è)","appeler (to call, -er, doubling)","préférer (to prefer, -er, é→è)","regarder (to watch, -er verbs)","travailler (to work, -er verbs)","chanter (to sing, -er verbs)","aimer (to love, like, -er verbs)","penser (to think, -er verbs)","donner (to give, -er verbs)"],
+  "Regular -ir": ["finir (to finish, -ir verbs)","partir (to leave, -ir, drop consonant)","ouvrir (to open, -ir, like -er)","choisir (to choose, -ir verbs)","dormir (to sleep, -ir, drop consonant)","offrir (to offer, -ir, like -er)","réussir (to succeed, -ir verbs)","remplir (to fill, -ir verbs)","sortir (to go out, -ir, drop consonant)"],
+  "Regular -re": ["vendre (to sell, -re verbs)","attendre (to wait, -re verbs)","répondre (to answer, -re verbs)","descendre (to go down, -re verbs)","perdre (to lose, -re verbs)","entendre (to hear, -re verbs)","rendre (to return, -re verbs)","défendre (to defend, -re verbs)","dépendre (to depend, -re verbs)","correspondre (to correspond, match, -re verbs)","confondre (to confuse, mix up, -re verbs)"],
   "Verbs like venir": ["venir (to come)","devenir (to become, like venir)","revenir (to come back, like venir)","parvenir (to reach, manage to, like venir)","prévenir (to warn, notify, like venir)","convenir (to suit, agree, like venir)","intervenir (to intervene, like venir)"],
   "Other irregular": ["prendre (to take)","pouvoir (can/to be able)","vouloir (to want)","devoir (must/to have to)","savoir (to know)","voir (to see)","dire (to say)","écrire (to write)","lire (to read)","mettre (to put)","boire (to drink)","croire (to believe)","connaître (to know/be acquainted with)","recevoir (to receive)"],
   "Reflexive (pronominal)": ["se lever (to get up, reflexive, e→è)","se laver (to wash oneself, reflexive -er)","s'habiller (to get dressed, reflexive -er)","s'asseoir (to sit down, reflexive, irregular)","se souvenir (to remember, reflexive, irregular)","se taire (to be quiet, reflexive, irregular)"]
 };
 const CONJ_CAT_NAMES = Object.keys(CONJ_CATEGORIES);
-const VERBS = Object.keys(CONJUGATIONS);
+const VERBS = CONJ_CAT_NAMES.flatMap(c=>CONJ_CATEGORIES[c]);
 let currentVerb = VERBS[0];
 let currentTense = TENSES[0];
 
@@ -1853,6 +1952,7 @@ function toggleConjQuiz(show){
 }
 
 const VERB_TRANSLATIONS = {
+  "aimer":"to love, like",  "penser":"to think",  "donner":"to give",  "réussir":"to succeed",  "remplir":"to fill",  "sortir":"to go out",  "dépendre":"to depend",  "correspondre":"to correspond, match",  "confondre":"to confuse, mix up",
   "être":"to be", "avoir":"to have", "aller":"to go", "faire":"to do, make",
   "parler":"to speak", "manger":"to eat", "commencer":"to begin, start", "acheter":"to buy", "appeler":"to call", "préférer":"to prefer",
   "regarder":"to watch, look at", "travailler":"to work", "chanter":"to sing",
@@ -1868,6 +1968,7 @@ const VERB_TRANSLATIONS = {
   "s'asseoir":"to sit down", "se souvenir":"to remember", "se taire":"to be quiet, stop talking"
 };
 const VERB_PATTERNS = {
+  "aimer":"-er verbs",  "penser":"-er verbs",  "donner":"-er verbs",  "réussir":"-ir verbs",  "remplir":"-ir verbs",  "sortir":"-ir, drop consonant",  "dépendre":"-re verbs",  "correspondre":"-re verbs",  "confondre":"-re verbs",
   "parler":"-er verbs", "manger":"-er, soft g", "commencer":"-er, soft c", "acheter":"-er, e→è", "appeler":"-er, doubling", "préférer":"-er, é→è",
   "regarder":"-er verbs", "travailler":"-er verbs", "chanter":"-er verbs",
   "finir":"-ir verbs", "partir":"-ir, drop consonant", "ouvrir":"-ir, like -er",
@@ -1879,6 +1980,105 @@ const VERB_PATTERNS = {
   "s'asseoir":"reflexive, irregular", "se souvenir":"reflexive, irregular (like venir)", "se taire":"reflexive, irregular"
 };
 const VERB_EXAMPLES = {
+  "aimer (to love, like, -er verbs)": {
+    "Présent": { fr:"J'aime le chocolat chaud.", en:"I love hot chocolate." },
+    "Passé composé": { fr:"Nous avons aimé le film.", en:"We liked the film." },
+    "Imparfait": { fr:"J'aimais jouer dehors quand j'étais petit.", en:"I used to love playing outside when I was little." },
+    "Plus-que-parfait": { fr:"Elle avait aimé cette ville dès le premier jour.", en:"She had liked this city from the first day." },
+    "Futur antérieur": { fr:"À la fin du mois, j'aurai aimé chaque page de ce livre.", en:"By the end of the month, I will have loved every page of this book." },
+    "Futur simple": { fr:"Tu aimeras ce livre.", en:"You will like this book." },
+    "Conditionnel présent": { fr:"J'aimerais visiter Paris.", en:"I would like to visit Paris." },
+    "Subjonctif présent": { fr:"Il faut que tu aimes ce travail.", en:"You have to like this job." },
+    "Impératif": { fr:"Aimez-vous les uns les autres !", en:"Love one another!" }
+  },
+  "penser (to think, -er verbs)": {
+    "Présent": { fr:"Je pense à toi.", en:"I am thinking of you." },
+    "Passé composé": { fr:"Nous avons pensé à tout.", en:"We thought of everything." },
+    "Imparfait": { fr:"Je pensais qu'il viendrait.", en:"I thought he would come." },
+    "Plus-que-parfait": { fr:"Elle avait pensé à prendre un parapluie.", en:"She had thought to bring an umbrella." },
+    "Futur antérieur": { fr:"Quand tu auras bien pensé à ça, tu me diras.", en:"When you have thought it over, you will tell me." },
+    "Futur simple": { fr:"Je penserai à vous demain.", en:"I will think of you tomorrow." },
+    "Conditionnel présent": { fr:"À ta place, je penserais à l'avenir.", en:"In your place, I would think about the future." },
+    "Subjonctif présent": { fr:"Il faut que tu penses à ta santé.", en:"You must think about your health." },
+    "Impératif": { fr:"Pense à fermer la porte !", en:"Remember to close the door!" }
+  },
+  "donner (to give, -er verbs)": {
+    "Présent": { fr:"Je donne un cadeau à ma sœur.", en:"I give a present to my sister." },
+    "Passé composé": { fr:"Il a donné son numéro au vendeur.", en:"He gave his number to the salesman." },
+    "Imparfait": { fr:"Mon grand-père donnait toujours des bonbons aux enfants.", en:"My grandfather always used to give sweets to the children." },
+    "Plus-que-parfait": { fr:"Nous avions donné notre réponse la veille.", en:"We had given our answer the day before." },
+    "Futur antérieur": { fr:"Quand j'aurai donné mon avis, je partirai.", en:"When I have given my opinion, I will leave." },
+    "Futur simple": { fr:"Je te donnerai la clé demain.", en:"I will give you the key tomorrow." },
+    "Conditionnel présent": { fr:"Je te donnerais mon avis si tu voulais.", en:"I would give you my opinion if you wanted." },
+    "Subjonctif présent": { fr:"Il faut que tu donnes ce livre à Paul.", en:"You must give this book to Paul." },
+    "Impératif": { fr:"Donne-moi la main !", en:"Give me your hand!" }
+  },
+  "réussir (to succeed, -ir verbs)": {
+    "Présent": { fr:"Elle réussit toujours ses examens.", en:"She always passes her exams." },
+    "Passé composé": { fr:"J'ai réussi mon permis de conduire.", en:"I passed my driving test." },
+    "Imparfait": { fr:"Il réussissait bien à l'école.", en:"He used to do well at school." },
+    "Plus-que-parfait": { fr:"Nous avions réussi grâce à vous.", en:"We had succeeded thanks to you." },
+    "Futur antérieur": { fr:"Quand tu auras réussi, nous fêterons ça.", en:"When you have succeeded, we will celebrate." },
+    "Futur simple": { fr:"Vous réussirez si vous travaillez.", en:"You will succeed if you work." },
+    "Conditionnel présent": { fr:"Elle réussirait mieux avec plus de temps.", en:"She would succeed better with more time." },
+    "Subjonctif présent": { fr:"Il faut que nous réussissions ce projet.", en:"We have to make this project succeed." },
+    "Impératif": { fr:"Réussis ton examen, je compte sur toi !", en:"Pass your exam, I'm counting on you!" }
+  },
+  "remplir (to fill, -ir verbs)": {
+    "Présent": { fr:"Je remplis le formulaire.", en:"I fill in the form." },
+    "Passé composé": { fr:"Elle a rempli son verre d'eau.", en:"She filled her glass with water." },
+    "Imparfait": { fr:"Il remplissait les bouteilles chaque matin.", en:"He used to fill the bottles every morning." },
+    "Plus-que-parfait": { fr:"Nous avions déjà rempli le réservoir.", en:"We had already filled the tank." },
+    "Futur antérieur": { fr:"Quand j'aurai rempli ce dossier, je t'appellerai.", en:"When I have filled out this file, I will call you." },
+    "Futur simple": { fr:"Je remplirai la fiche demain.", en:"I will fill in the form tomorrow." },
+    "Conditionnel présent": { fr:"Vous rempliriez la salle avec ce concert.", en:"You would fill the hall with this concert." },
+    "Subjonctif présent": { fr:"Il faut que vous remplissiez ce formulaire.", en:"You must fill in this form." },
+    "Impératif": { fr:"Remplis la bouteille, s'il te plaît !", en:"Fill the bottle, please!" }
+  },
+  "sortir (to go out, -ir, drop consonant)": {
+    "Présent": { fr:"Elle sort du bureau à six heures.", en:"She leaves the office at six o'clock." },
+    "Passé composé": { fr:"Nous sommes sortis hier soir.", en:"We went out last night." },
+    "Imparfait": { fr:"Je sortais souvent avec mes amis.", en:"I used to go out often with my friends." },
+    "Plus-que-parfait": { fr:"Ils étaient sortis avant la pluie.", en:"They had gone out before the rain." },
+    "Futur antérieur": { fr:"Quand tu seras sorti, appelle-moi.", en:"When you have gone out, call me." },
+    "Futur simple": { fr:"Je sortirai demain soir.", en:"I will go out tomorrow night." },
+    "Conditionnel présent": { fr:"Tu sortirais avec nous si tu pouvais ?", en:"Would you go out with us if you could?" },
+    "Subjonctif présent": { fr:"Il faut que tu sortes un peu.", en:"You need to get out a bit." },
+    "Impératif": { fr:"Sortez immédiatement !", en:"Get out immediately!" }
+  },
+  "dépendre (to depend, -re verbs)": {
+    "Présent": { fr:"Ça dépend du temps.", en:"It depends on the weather." },
+    "Passé composé": { fr:"Tout a dépendu de lui.", en:"Everything depended on him." },
+    "Imparfait": { fr:"Mon humeur dépendait de la météo.", en:"My mood used to depend on the weather." },
+    "Plus-que-parfait": { fr:"Le résultat avait dépendu d'un seul vote.", en:"The result had depended on a single vote." },
+    "Futur antérieur": { fr:"Demain, ce projet aura dépendu de ton choix.", en:"Tomorrow, this project will have depended on your choice." },
+    "Futur simple": { fr:"Cela dépendra de toi.", en:"That will depend on you." },
+    "Conditionnel présent": { fr:"Ça dépendrait de la situation.", en:"It would depend on the situation." },
+    "Subjonctif présent": { fr:"Il faut que ça dépende de nous.", en:"It has to depend on us." },
+    "Impératif": { fr:"Ne dépendez pas trop des autres !", en:"Don't depend too much on others!" }
+  },
+  "correspondre (to correspond, match, -re verbs)": {
+    "Présent": { fr:"Cette clé correspond à la porte.", en:"This key matches the door." },
+    "Passé composé": { fr:"Les résultats ont correspondu à nos attentes.", en:"The results matched our expectations." },
+    "Imparfait": { fr:"Nous correspondions par lettres.", en:"We used to write to each other by letter." },
+    "Plus-que-parfait": { fr:"Elles avaient correspondu pendant des années.", en:"They had corresponded for years." },
+    "Futur antérieur": { fr:"Quand j'aurai correspondu avec lui, je saurai.", en:"When I have corresponded with him, I will know." },
+    "Futur simple": { fr:"Je correspondrai avec elle.", en:"I will correspond with her." },
+    "Conditionnel présent": { fr:"Cette description correspondrait à mon frère.", en:"This description would match my brother." },
+    "Subjonctif présent": { fr:"Il faut que les chiffres correspondent.", en:"The figures have to match." },
+    "Impératif": { fr:"Correspondons par e-mail !", en:"Let's keep in touch by email!" }
+  },
+  "confondre (to confuse, mix up, -re verbs)": {
+    "Présent": { fr:"Tu confonds toujours ces deux mots.", en:"You always mix up these two words." },
+    "Passé composé": { fr:"J'ai confondu les deux clés.", en:"I mixed up the two keys." },
+    "Imparfait": { fr:"Je les confondais quand j'étais petit.", en:"I used to mix them up when I was little." },
+    "Plus-que-parfait": { fr:"Elle avait confondu les dates.", en:"She had mixed up the dates." },
+    "Futur antérieur": { fr:"Quand tu auras confondu les deux, tu comprendras.", en:"When you have mixed the two up, you will understand." },
+    "Futur simple": { fr:"Tu confondras encore les deux frères.", en:"You will mix up the two brothers again." },
+    "Conditionnel présent": { fr:"Je confondrais facilement ces mots.", en:"I would easily mix up these words." },
+    "Subjonctif présent": { fr:"Il ne faut pas que tu confondes ces dates.", en:"You mustn't mix up these dates." },
+    "Impératif": { fr:"Ne confonds pas ces deux mots !", en:"Don't mix up these two words!" }
+  },
   "être (to be)": {
     "Présent": { fr:"Elle est médecin.", en:"She is a doctor." },
     "Passé composé": { fr:"Elle a été malade la semaine dernière.", en:"She was sick last week." },
